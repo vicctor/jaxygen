@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+
+  <!-- The Basics -->
+ <groupId>pl.devservices.netservice</groupId>
+ <artifactId>netservice-project</artifactId>
+ <version>1.0.1-SNAPSHOT</version>
+ <packaging>pom</packaging>
+
+ <name>netservice-project</name>
+
+ <repositories>
+  <repository>
+   <id>libiblio</id>
+   <url>http://mirrors.ibiblio.org/pub/mirrors/maven/</url>
+  </repository>
+  <repository>
+   <id>mr</id>
+   <url>http://mvnrepository.com/artifact</url>
+  </repository>        
+ </repositories>
+    
+ <dependencies>
+  <dependency>
+   <groupId>commons-fileupload</groupId>
+   <artifactId>commons-fileupload</artifactId>
+   <version>1.2</version>
+  </dependency>
+        
+  <dependency>
+   <groupId>org.apache.commons</groupId>
+   <artifactId>commons-io</artifactId>
+   <version>1.3.2</version>
+  </dependency>
+        
+  <dependency>
+   <groupId>org.xhtmlrenderer</groupId>
+   <artifactId>core-renderer</artifactId>
+   <version>R8pre2</version>
+  </dependency>
+
+
+  <dependency>
+   <groupId>commons-collections</groupId>
+   <artifactId>commons-collections</artifactId>
+   <version>20040616</version>
+  </dependency>
+        
+  <dependency>
+   <groupId>commons-logging</groupId>
+   <artifactId>commons-logging</artifactId>
+   <version>1.1.1</version>
+  </dependency>
+        
+  <dependency>
+   <groupId>com.google.code.gson</groupId>
+   <artifactId>gson</artifactId>
+   <version>2.2.2</version>
+  </dependency>
+        
+  <dependency>
+   <groupId>commons-beanutils</groupId>
+   <artifactId>commons-beanutils</artifactId>
+   <version>20030211.134440</version>
+  </dependency>
+
+
+  
+ </dependencies>
+
+
+  <modules>
+    <module>netservice-framework</module>
+    <module>netservice-api-sample</module>
+  </modules>
+</project>
