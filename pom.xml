@@ -3,14 +3,14 @@
  <modelVersion>4.0.0</modelVersion>
 
   <!-- The Basics -->
- <groupId>pl.devservices.netservice</groupId>
- <artifactId>netservice-project</artifactId>
+ <groupId>org.jaxygen</groupId>
+ <artifactId>jaxygen-project</artifactId>
  <version>1.0.1-SNAPSHOT</version>
  <packaging>pom</packaging>
 
- <name>netservice-project</name>
+ <name>jaxygen-project</name>
 
- <repositories>
+<!-- <repositories>
   <repository>
    <id>libiblio</id>
    <url>http://mirrors.ibiblio.org/pub/mirrors/maven/</url>
@@ -19,7 +19,7 @@
    <id>mr</id>
    <url>http://mvnrepository.com/artifact</url>
   </repository>        
- </repositories>
+ </repositories>-->
     
  <dependencies>
   <dependency>
@@ -71,7 +71,7 @@
 
 
   <modules>
-    <module>netservice-framework</module>
-    <module>netservice-api-sample</module>
+    <module>jaxygen-core</module>
+    <module>jaxygen-api-sample</module>
   </modules>
 </project>
