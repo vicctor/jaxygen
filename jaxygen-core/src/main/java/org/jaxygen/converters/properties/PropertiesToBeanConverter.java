@@ -30,7 +30,7 @@ import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.converters.*;
 import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.converters.RequestConverter;
-import org.jaxygen.dto.UploadedFile;
+import org.jaxygen.network.UploadedFile;
 import org.jaxygen.exceptions.MissingArgumentException;
 import org.jaxygen.exceptions.WrongProperyIndex;
 import org.jaxygen.http.HttpRequestParams;

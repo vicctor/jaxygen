@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.jaxygen.dto.UploadedFile;
+import org.jaxygen.network.UploadedFile;
 import org.jaxygen.exceptions.InvalidRequestParameter;
 
 
