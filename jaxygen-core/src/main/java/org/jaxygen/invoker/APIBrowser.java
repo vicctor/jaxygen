@@ -5,25 +5,15 @@
 package org.jaxygen.invoker;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.rmi.ServerException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.converters.BeanUtil;
 import org.jaxygen.invoker.apibrowser.ClassesListPage;
 import org.jaxygen.invoker.apibrowser.MethodInvokerPage;
 import org.jaxygen.invoker.apibrowser.Page;
-import org.jaxygen.security.basic.annotations.UserProfile;
-import org.jaxygen.url.UrlQuery;
 
 /**
  *
@@ -31,9 +21,6 @@ import org.jaxygen.url.UrlQuery;
  */
 public class APIBrowser extends HttpServlet {
 
- private String browserPath;
- private String invokerPath;
- private String beensPath;
  private ClassRegistry registry;
 
  /**
@@ -50,9 +37,6 @@ public class APIBrowser extends HttpServlet {
          throws ServletException, IOException {
   response.setContentType("text/html;charset=UTF-8");
   //PrintWriter out = response.getWriter();
-  beensPath = getServletContext().getInitParameter("servicePath");
-  browserPath = request.getContextPath() + "/APIBrowser";
-  invokerPath = request.getContextPath() + "/invoker";
   openClassRegistry();
   try {
    final String className = request.getParameter("className");

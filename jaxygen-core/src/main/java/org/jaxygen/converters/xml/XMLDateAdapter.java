@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.jaxygen.converters;
+package org.jaxygen.converters.xml;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -23,11 +23,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.jaxygen.dto.ExceptionResponse;
 import org.jaxygen.dto.Response;
-import org.jaxygen.converters.BeanUtil;
+import org.jaxygen.util.BeanUtil;
 import org.jaxygen.http.HttpRequestParams;
 import org.jaxygen.http.HttpRequestParser;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Validable;
+import org.jaxygen.converters.ConvertersFactory;
+import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.exceptions.InvalidPropertyFormat;
 import org.jaxygen.security.SecurityProfile;
 
@@ -62,8 +64,8 @@ public class ServiceInvoker extends HttpServlet {
   }
 
   log("Requesting resource" + resourcePath);
-  System.out.println("Requesting resource" + resourcePath);
-  System.out.println("Query" + request.getQueryString());
+//  System.out.println("Requesting resource" + resourcePath);
+//  System.out.println("Query" + request.getQueryString());
   String[] chunks = resourcePath.split("/");
   if (chunks.length < 2) {
    Logger.getLogger(ServiceInvoker.class.getName()).log(Level.SEVERE, "Invalid request, must be in format class/method");
@@ -125,6 +127,10 @@ public class ServiceInvoker extends HttpServlet {
   } catch (ClassNotFoundException ex) {
    throwError(response, "Class '" + className + "' not fount", ex);
 
+  } finally {
+      if (params != null) {
+          params.dispose();
+      }
   }
 
 
@@ -136,11 +142,12 @@ public class ServiceInvoker extends HttpServlet {
   int i = 0;
   for (Class<?> p : parameterTypes) {
    try {
-    if ("PROPERTIES".equals(inputFormat)) {
-     parameters[i] = BeanUtil.convertPropertiesToBean(params.getParameters(), p);
-    } else {
-     parameters[i] = gson.fromJson(query, p);
-    }
+     RequestConverter converter = ConvertersFactory.getRequestConverter(inputFormat);
+     if (converter != null) {
+       parameters[i] = converter.deserialise(params, p);
+     } else {
+       log.log(Level.WARNING, "Could not find converter for name ''{0}''", inputFormat);
+     }    
    } catch (Exception ex) {
     throw new ParametersError("Cann not parse parameters for parameters class " + p.getCanonicalName(), ex);
    }

@@ -1,6 +1,6 @@
 package org.jaxygen.http;
 
-import org.jaxygen.converters.XMLDateAdapter;
+import org.jaxygen.converters.xml.XMLDateAdapter;
 import org.jaxygen.dto.UploadedFile;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -25,429 +25,427 @@ import org.jaxygen.exceptions.InvalidRequestParameter;
 
 /**
  * This class implements an interface of accessing HTTP request parameters.
- * 
+ *
  * @author Artur Keska
- * 
+ *
  */
 public class HttpRequestParser implements HttpRequestParams {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -377032102000216172L;
-    private HttpServletRequest request;
-    private Hashtable<String, UploadedFile> files = new Hashtable<String, UploadedFile>();
-    private Hashtable<String, Object> parameters = new Hashtable<String, Object>();
-    private final static DateFormat dateFormater = XMLDateAdapter.dateFormater;
-    private HttpFileUploadHandler uploadHandler;
+  /**
+   *
+   */
+  private static final long serialVersionUID = -377032102000216172L;
+  private HttpServletRequest request;
+  private Hashtable<String, UploadedFile> files = new Hashtable<String, UploadedFile>();
+  private Hashtable<String, String> parameters = new Hashtable<String, String>();
+  private final static DateFormat dateFormater = XMLDateAdapter.dateFormater;
+  private HttpFileUploadHandler uploadHandler;
 
-    /**
-     * @param request
-     * @throws Exception
-     */
-    public HttpRequestParser(HttpServletRequest request) throws Exception {
-        this.request = request;
-        process();
+  /**
+   * @param request
+   * @throws Exception
+   */
+  public HttpRequestParser(HttpServletRequest request) throws Exception {
+    this.request = request;
+    process();
+  }
+
+  /**
+   * @param request
+   * @param uploadHandler
+   * @throws Exception
+   */
+  public HttpRequestParser(HttpServletRequest request,
+          HttpFileUploadHandler uploadHandler) throws Exception {
+    this.request = request;
+    this.uploadHandler = uploadHandler;
+    process();
+  }
+
+  /**
+   * @param item
+   */
+  private void processRegularField(FileItem item) {
+    String name = item.getFieldName();
+    String value = item.getString();
+    parameters.put(name, value);
+  }
+
+  /**
+   * @param item
+   * @throws Exception
+   */
+  private void processUploadedFile(FileItem item) throws Exception {
+    String fieldName = item.getFieldName();
+    String fileName = item.getName();
+    String contentType = item.getContentType();
+    // boolean isInMemory = item.isInMemory();
+    long sizeInBytes = item.getSize();
+    // skipp moving files without name - assume as error
+    if (fileName.length() > 0) {
+      //System.out.println("File upload: " + fieldName + " " + fileName + " "
+      //    + contentType + " " + sizeInBytes);
+      File uploadedFile = null;
+      if (this.uploadHandler != null) {
+        uploadedFile = this.uploadHandler.beginUpload(fieldName, fileName,
+                contentType, sizeInBytes);
+      } else {
+        String[] fileNameParts = splitFileName(fileName);
+        uploadedFile = File.createTempFile("tmp" + fileNameParts[0], "resource." + fileNameParts[1]);
+      }
+      //uploadedFile.deleteOnExit();
+      item.write(uploadedFile);
+      UploadedFile upf = new UploadedFile();
+      upf.setFile(uploadedFile);
+      upf.setMimeType(contentType);
+      upf.setOriginalName(fileName);
+      files.put(fieldName, upf);
     }
+  }
 
-    /**
-     * @param request
-     * @param uploadHandler
-     * @throws Exception
-     */
-    public HttpRequestParser(HttpServletRequest request,
-            HttpFileUploadHandler uploadHandler) throws Exception {
-        this.request = request;
-        this.uploadHandler = uploadHandler;
-        process();
-    }
+  /**
+   * @throws Exception
+   */
+  @SuppressWarnings("unchecked")
+  private void process() throws Exception {
+    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    if (isMultipart) {
+      // Create a factory for disk-based file items
+      FileItemFactory factory = null;
+      // check if the handler initialized other repository then default
+      if (uploadHandler != null) {
+        File repository = uploadHandler.initUpload();
+        factory = new DiskFileItemFactory(
+                DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, repository);
+      }
+      if (factory == null) {
+        factory = new DiskFileItemFactory();
+      }
 
-    /**
-     * @param item
-     */
-    private void processRegularField(FileItem item) {
-        String name = item.getFieldName();
-        String value = item.getString();
-        parameters.put(name, value);
-    }
-
-    /**
-     * @param item
-     * @throws Exception
-     */
-    private void processUploadedFile(FileItem item) throws Exception {
-        String fieldName = item.getFieldName();
-        String fileName = item.getName();
-        String contentType = item.getContentType();
-        // boolean isInMemory = item.isInMemory();
-        long sizeInBytes = item.getSize();
-        // skipp moving files without name - assume as error
-        if (fileName.length() > 0) {
-            //System.out.println("File upload: " + fieldName + " " + fileName + " "
-            //    + contentType + " " + sizeInBytes);
-            File uploadedFile = null;
-            if (this.uploadHandler != null) {
-                uploadedFile = this.uploadHandler.beginUpload(fieldName, fileName,
-                        contentType, sizeInBytes);
-            } else {
-                String[] fileNameParts = splitFileName(fileName);
-                uploadedFile = File.createTempFile("tmp"+fileNameParts[0], "resource." + fileNameParts[1]);
-            }
-            uploadedFile.deleteOnExit();
-            item.write(uploadedFile);
-            UploadedFile upf = new UploadedFile();
-            upf.setFile(uploadedFile);
-            upf.setMimeType(contentType);
-            upf.setOriginalName(fileName);
-            files.put(fieldName, upf);
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-    private void process() throws Exception {
-
-//    Enumeration<String> e = request.getHeaderNames();
-//    while (e.hasMoreElements()) {
-//      String name = e.nextElement(); 
-//      //System.out.println(name+"="+request.getHeader(name));
-//    }
-
-
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-        if (isMultipart) {
-            // Create a factory for disk-based file items
-            FileItemFactory factory = null;
-            // check if the handler initialized other repository then default
-            if (uploadHandler != null) {
-                File repository = uploadHandler.initUpload();
-                factory = new DiskFileItemFactory(
-                        DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, repository);
-            }
-            if (factory == null) {
-                factory = new DiskFileItemFactory();
-            }
-
-            // Create a new file upload handler
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            // Parse the request
-            List<FileItem> items = upload.parseRequest(request);
-            for (FileItem item : items) {
-                if (item.isFormField()) {
-                    processRegularField(item);
-                } else {
-                    processUploadedFile(item);
-                }
-            }
-        }
-        processParameters();
-    }
-
-    /**
-     * 
-     */
-    private void processParameters() {
-        Enumeration<?> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String name = (String) parameterNames.nextElement();
-            Object value = request.getParameter(name);
-            parameters.put(name, value);
-        }
-
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see pl.xdsnet.util.HttpRequestParams#getAsDate(java.lang.String, boolean)
-     */
-    @Override
-    public Date getAsDate(String paramName, boolean mandatory)
-            throws InvalidRequestParameter {
-        Date rc = null;
-        try {
-            String s = null;
-            Object v = parameters.get(paramName);
-            if (v != null) {
-                s = v.toString();
-            }
-            if (s != null && s.length() > 0) {
-                rc = dateFormater.parse(s);
-            } else if (mandatory) {
-                throw new InvalidRequestParameter("Missing mandatory parameter :" + paramName);
-            }
-        } catch (Exception e) {
-            throw new InvalidRequestParameter("Invalid date format of the parameter " + paramName);
-        }
-        return rc;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see pl.xdsnet.util.HttpRequestParams#getAsEnum(java.lang.String,
-     * java.lang.Class, boolean)
-     */
-    @Override
-    public Object getAsEnum(String paramName, Class<?> enumClass,
-            boolean mandatory) throws InvalidRequestParameter {
-        Object rc = null;
-        try {
-            String value = null;
-            Object v = parameters.get(paramName);
-            if (v != null) {
-                value = v.toString();
-            }
-
-            if (value != null && value.length() > 0) {
-                Method m = enumClass.getDeclaredMethod("valueOf", value.getClass());
-                rc = m.invoke(null, value);
-            } else if (mandatory) {
-                throw new InvalidRequestParameter("Missing mandatory parameter :" + paramName);
-            }
-        } catch (Exception e) {
-            throw new InvalidRequestParameter(
-                    "Could not determinalte value of parameter " + paramName + " for enum class " + enumClass.getName());
-        }
-        return rc;
-    }
-
-    @Override
-    public Object getAsEnum(String paramName, Class<?> enumClass,
-            Object defaultValue) throws InvalidRequestParameter {
-        Object rc = getAsEnum(paramName, enumClass, false);
-        if (rc == null) {
-            rc = defaultValue;
-        }
-        return rc;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see pl.xdsnet.util.HttpRequestParams#getAsInt(java.lang.String, int, int,
-     * int)
-     */
-    @Override
-    public int getAsInt(String paramName, int min, int max, int defaultValue)
-            throws InvalidRequestParameter {
-        int rc = defaultValue;
-        String valStr = null;
-        Object v = parameters.get(paramName);
-        if (v != null) {
-            valStr = v.toString();
-        }
-        if (valStr != null && valStr.length() > 0) {
-            try {
-                rc = Integer.parseInt(valStr);
-            } catch (Exception e) {
-                throw new InvalidRequestParameter("Value of parameter " + paramName + " is not in valid numerical format");
-            }
-        }
-        return rc;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see pl.xdsnet.util.HttpRequestParams#getAsInt(java.lang.String, int, int,
-     * boolean)
-     */
-    @Override
-    public int getAsInt(String paramName, int min, int max, boolean mandatory)
-            throws InvalidRequestParameter {
-        int rc = 0;
-        Object v = parameters.get(paramName);
-        String valStr = null;
-        if (v != null) {
-            valStr = v.toString();
-        }
-        if (valStr != null && valStr.length() > 0) {
-            try {
-                rc = Integer.parseInt(valStr);
-            } catch (Exception e) {
-                throw new InvalidRequestParameter("Value of parameter " + paramName + " is not in valid numerical format");
-            }
-        } else if (mandatory) {
-            throw new InvalidRequestParameter("Missing mandatory parameter :" + paramName);
-        }
-        return rc;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see pl.xdsnet.util.HttpRequestParams#getAsString(java.lang.String, int,
-     * int, boolean)
-     */
-    @Override
-    public String getAsString(String paramName, int minLen, int maxLen,
-            boolean mandatory) throws InvalidRequestParameter {
-
-        String rc = null;
-        Object v = parameters.get(paramName);
-        if (v != null) {
-            rc = v.toString();
-        }
-        if (rc == null && mandatory) {
-            throw new InvalidRequestParameter("Missing mandatory parameter :" + paramName);
-        }
-        if (rc != null && rc.length() > maxLen) {
-            throw new InvalidRequestParameter("String value of parameter " + paramName + " to long. (maximal size is " + maxLen + ")");
-        }
-        if (rc != null && rc.length() < minLen) {
-            throw new InvalidRequestParameter("String value of parameter " + paramName + " too short. The minilam expected length is " + minLen);
-        }
-        return rc;
-    }
-
-    @Override
-    public String getAsString(String paramName, int minLen, int maxLen,
-            final String defaultValue) throws InvalidRequestParameter {
-        String rc = null;
-        Object v = parameters.get(paramName);
-        if (v != null) {
-            rc = v.toString();
-        }
-        if (rc == null) {
-            rc = defaultValue;
-        }
-        if (rc != null && rc.length() > maxLen) {
-            throw new InvalidRequestParameter("String value of parameter " + paramName + " to long. (maximal size is " + maxLen + ")");
-        }
-        if (rc != null && rc.length() < minLen) {
-            throw new InvalidRequestParameter("String value of parameter " + paramName + " too short. The minilam expected length is " + minLen);
-        }
-        return rc;
-    }
-
-    @Override
-    public Map<String, UploadedFile> getFiles() {
-        return files;
-    }
-
-    /**
-     * @param request
-     * @param listName
-     * @return
-     * @throws InvalidRequestParameter
-     */
-    @SuppressWarnings("unchecked")
-    private final static List<String> getIndexedList(HttpServletRequest request,
-            String listName) throws InvalidRequestParameter {
-        Vector<String> rc = new Vector<String>();
-        Enumeration<String> names = request.getParameterNames();
-        Pattern p = Pattern.compile(listName + "\\[(\\d+)\\]");
-
-        int maxIndex = -1;
-        while (names.hasMoreElements()) {
-            String name = names.nextElement();
-            Matcher m = p.matcher(name);
-            if (m.matches()) {
-                int id = Integer.parseInt(m.group(1));
-                if (id != -1) {
-                    if (id > maxIndex) {
-                        maxIndex = id;
-                    }
-                }
-            }
-        }
-        if (maxIndex > -1) {
-            // rc.setSize(maxIndex+1);
-            for (int i = 0; i <= maxIndex; i++) {
-                String value = request.getParameter(listName + "[" + i + "]");
-                if (value.length() > 0) {
-                    rc.add(i, value);
-                }
-            }
-        }
-        return rc;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see pl.xdsnet.util.HttpRequestParams#getAsListOfInt(java.lang.String)
-     */
-    @Override
-    public List<Integer> getAsListOfInt(String listName)
-            throws InvalidRequestParameter {
-        Vector<Integer> rc = new Vector<Integer>();
-        List<String> sl = getIndexedList(request, listName);
-        for (String s : sl) {
-            if (s != null) {
-                rc.add(Integer.decode(s));
-            }
-        }
-        return rc;
-    }
-
-    @Override
-    public List<String> getAsListOfStrings(String listName)
-            throws InvalidRequestParameter {
-        return getIndexedList(request, listName);
-    }
-
-    @Override
-    public List<?> getAsEnums(String name, Class<?> clazz)
-            throws InvalidRequestParameter {
-        List<String> names = getAsListOfStrings(name);
-        List<Object> rc = new ArrayList<Object>();
-        try {
-            for (String value : names) {
-                if (value != null && value.length() > 0) {
-                    Method m = clazz.getDeclaredMethod("valueOf", value.getClass());
-                    Object e = m.invoke(null, value);
-                    rc.add(e);
-                }
-            }
-        } catch (Exception e) {
-            throw new InvalidRequestParameter(name);
-        }
-        return rc;
-    }
-
-    @Override
-    public boolean getAsBoolean(String paramName, boolean mandatory)
-            throws InvalidRequestParameter {
-        String value = getAsString(paramName, 0, 20, mandatory);
-        if (value == null) {
-            value = "";
-        }
-        return value.toUpperCase().equals("TRUE");
-    }
-
-    @Override
-    public boolean getAsBooleanWithDefault(String paramName, boolean defaultVal)
-            throws InvalidRequestParameter {
-        String value = getAsString(paramName, 0, 20, false);
-        if (value == null) {
-            value = "";
-        }
-        boolean rc = defaultVal;
-        if (value.length() > 0) {
-            rc = value.toUpperCase().equals("TRUE");
-        }
-        return rc;
-    }
-
-    @Override
-    public Map<String, Object> getParameters() {
-        return parameters;
-    }
-
-    private static String[] splitFileName(String fileName) {
-        String[] rc = new String[2];
-        int lastDotPos = fileName.lastIndexOf('.');
-        if (lastDotPos >= 0) {
-            rc[0] = fileName.substring(0, lastDotPos);
-            rc[1] = fileName.substring(lastDotPos + 1);
+      // Create a new file upload handler
+      ServletFileUpload upload = new ServletFileUpload(factory);
+      // Parse the request
+      List<FileItem> items = upload.parseRequest(request);
+      for (FileItem item : items) {
+        if (item.isFormField()) {
+          processRegularField(item);
         } else {
-            rc[0] = fileName;
-            rc[1] = "";
+          processUploadedFile(item);
         }
-        return rc;
+      }
     }
+    processParameters();
+  }
+
+  /**
+   *
+   */
+  private void processParameters() {
+    Enumeration<?> parameterNames = request.getParameterNames();
+    while (parameterNames.hasMoreElements()) {
+      String name = (String) parameterNames.nextElement();
+      Object value = request.getParameter(name);
+      parameters.put(name, value.toString());
+    }
+
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see pl.xdsnet.util.HttpRequestParams#getAsDate(java.lang.String, boolean)
+   */
+  @Override
+  public Date getAsDate(String paramName, boolean mandatory)
+          throws InvalidRequestParameter {
+    Date rc = null;
+    try {
+      String s = null;
+      Object v = parameters.get(paramName);
+      if (v != null) {
+        s = v.toString();
+      }
+      if (s != null && s.length() > 0) {
+        rc = dateFormater.parse(s);
+      } else if (mandatory) {
+        throw new InvalidRequestParameter("Missing mandatory parameter :" + paramName);
+      }
+    } catch (Exception e) {
+      throw new InvalidRequestParameter("Invalid date format of the parameter " + paramName);
+    }
+    return rc;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see pl.xdsnet.util.HttpRequestParams#getAsEnum(java.lang.String,
+   * java.lang.Class, boolean)
+   */
+  @Override
+  public Object getAsEnum(String paramName, Class<?> enumClass,
+          boolean mandatory) throws InvalidRequestParameter {
+    Object rc = null;
+    try {
+      String value = null;
+      Object v = parameters.get(paramName);
+      if (v != null) {
+        value = v.toString();
+      }
+
+      if (value != null && value.length() > 0) {
+        Method m = enumClass.getDeclaredMethod("valueOf", value.getClass());
+        rc = m.invoke(null, value);
+      } else if (mandatory) {
+        throw new InvalidRequestParameter("Missing mandatory parameter :" + paramName);
+      }
+    } catch (Exception e) {
+      throw new InvalidRequestParameter(
+              "Could not determinalte value of parameter " + paramName + " for enum class " + enumClass.getName());
+    }
+    return rc;
+  }
+
+  @Override
+  public Object getAsEnum(String paramName, Class<?> enumClass,
+          Object defaultValue) throws InvalidRequestParameter {
+    Object rc = getAsEnum(paramName, enumClass, false);
+    if (rc == null) {
+      rc = defaultValue;
+    }
+    return rc;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see pl.xdsnet.util.HttpRequestParams#getAsInt(java.lang.String, int, int,
+   * int)
+   */
+  @Override
+  public int getAsInt(String paramName, int min, int max, int defaultValue)
+          throws InvalidRequestParameter {
+    int rc = defaultValue;
+    String valStr = null;
+    Object v = parameters.get(paramName);
+    if (v != null) {
+      valStr = v.toString();
+    }
+    if (valStr != null && valStr.length() > 0) {
+      try {
+        rc = Integer.parseInt(valStr);
+      } catch (Exception e) {
+        throw new InvalidRequestParameter("Value of parameter " + paramName + " is not in valid numerical format");
+      }
+    }
+    return rc;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see pl.xdsnet.util.HttpRequestParams#getAsInt(java.lang.String, int, int,
+   * boolean)
+   */
+  @Override
+  public int getAsInt(String paramName, int min, int max, boolean mandatory)
+          throws InvalidRequestParameter {
+    int rc = 0;
+    Object v = parameters.get(paramName);
+    String valStr = null;
+    if (v != null) {
+      valStr = v.toString();
+    }
+    if (valStr != null && valStr.length() > 0) {
+      try {
+        rc = Integer.parseInt(valStr);
+      } catch (Exception e) {
+        throw new InvalidRequestParameter("Value of parameter " + paramName + " is not in valid numerical format");
+      }
+    } else if (mandatory) {
+      throw new InvalidRequestParameter("Missing mandatory parameter :" + paramName);
+    }
+    return rc;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see pl.xdsnet.util.HttpRequestParams#getAsString(java.lang.String, int,
+   * int, boolean)
+   */
+  @Override
+  public String getAsString(String paramName, int minLen, int maxLen,
+          boolean mandatory) throws InvalidRequestParameter {
+
+    String rc = null;
+    Object v = parameters.get(paramName);
+    if (v != null) {
+      rc = v.toString();
+    }
+    if (rc == null && mandatory) {
+      throw new InvalidRequestParameter("Missing mandatory parameter :" + paramName);
+    }
+    if (rc != null && rc.length() > maxLen) {
+      throw new InvalidRequestParameter("String value of parameter " + paramName + " to long. (maximal size is " + maxLen + ")");
+    }
+    if (rc != null && rc.length() < minLen) {
+      throw new InvalidRequestParameter("String value of parameter " + paramName + " too short. The minilam expected length is " + minLen);
+    }
+    return rc;
+  }
+
+  @Override
+  public String getAsString(String paramName, int minLen, int maxLen,
+          final String defaultValue) throws InvalidRequestParameter {
+    String rc = null;
+    Object v = parameters.get(paramName);
+    if (v != null) {
+      rc = v.toString();
+    }
+    if (rc == null) {
+      rc = defaultValue;
+    }
+    if (rc != null && rc.length() > maxLen) {
+      throw new InvalidRequestParameter("String value of parameter " + paramName + " to long. (maximal size is " + maxLen + ")");
+    }
+    if (rc != null && rc.length() < minLen) {
+      throw new InvalidRequestParameter("String value of parameter " + paramName + " too short. The minilam expected length is " + minLen);
+    }
+    return rc;
+  }
+
+  @Override
+  public Map<String, UploadedFile> getFiles() {
+    return files;
+  }
+
+  /**
+   * @param request
+   * @param listName
+   * @return
+   * @throws InvalidRequestParameter
+   */
+  @SuppressWarnings("unchecked")
+  private final static List<String> getIndexedList(HttpServletRequest request,
+          String listName) throws InvalidRequestParameter {
+    Vector<String> rc = new Vector<String>();
+    Enumeration<String> names = request.getParameterNames();
+    Pattern p = Pattern.compile(listName + "\\[(\\d+)\\]");
+
+    int maxIndex = -1;
+    while (names.hasMoreElements()) {
+      String name = names.nextElement();
+      Matcher m = p.matcher(name);
+      if (m.matches()) {
+        int id = Integer.parseInt(m.group(1));
+        if (id != -1) {
+          if (id > maxIndex) {
+            maxIndex = id;
+          }
+        }
+      }
+    }
+    if (maxIndex > -1) {
+      // rc.setSize(maxIndex+1);
+      for (int i = 0; i <= maxIndex; i++) {
+        String value = request.getParameter(listName + "[" + i + "]");
+        if (value.length() > 0) {
+          rc.add(i, value);
+        }
+      }
+    }
+    return rc;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see pl.xdsnet.util.HttpRequestParams#getAsListOfInt(java.lang.String)
+   */
+  @Override
+  public List<Integer> getAsListOfInt(String listName)
+          throws InvalidRequestParameter {
+    Vector<Integer> rc = new Vector<Integer>();
+    List<String> sl = getIndexedList(request, listName);
+    for (String s : sl) {
+      if (s != null) {
+        rc.add(Integer.decode(s));
+      }
+    }
+    return rc;
+  }
+
+  @Override
+  public List<String> getAsListOfStrings(String listName)
+          throws InvalidRequestParameter {
+    return getIndexedList(request, listName);
+  }
+
+  @Override
+  public List<?> getAsEnums(String name, Class<?> clazz)
+          throws InvalidRequestParameter {
+    List<String> names = getAsListOfStrings(name);
+    List<Object> rc = new ArrayList<Object>();
+    try {
+      for (String value : names) {
+        if (value != null && value.length() > 0) {
+          Method m = clazz.getDeclaredMethod("valueOf", value.getClass());
+          Object e = m.invoke(null, value);
+          rc.add(e);
+        }
+      }
+    } catch (Exception e) {
+      throw new InvalidRequestParameter(name);
+    }
+    return rc;
+  }
+
+  @Override
+  public boolean getAsBoolean(String paramName, boolean mandatory)
+          throws InvalidRequestParameter {
+    String value = getAsString(paramName, 0, 20, mandatory);
+    if (value == null) {
+      value = "";
+    }
+    return value.toUpperCase().equals("TRUE");
+  }
+
+  @Override
+  public boolean getAsBooleanWithDefault(String paramName, boolean defaultVal)
+          throws InvalidRequestParameter {
+    String value = getAsString(paramName, 0, 20, false);
+    if (value == null) {
+      value = "";
+    }
+    boolean rc = defaultVal;
+    if (value.length() > 0) {
+      rc = value.toUpperCase().equals("TRUE");
+    }
+    return rc;
+  }
+
+  @Override
+  public Map<String, String> getParameters() {
+    return parameters;
+  }
+
+  private static String[] splitFileName(String fileName) {
+    String[] rc = new String[2];
+    int lastDotPos = fileName.lastIndexOf('.');
+    if (lastDotPos >= 0) {
+      rc[0] = fileName.substring(0, lastDotPos);
+      rc[1] = fileName.substring(lastDotPos + 1);
+    } else {
+      rc[0] = fileName;
+      rc[1] = "";
+    }
+    return rc;
+  }
+
+  public void dispose() {
+    for (UploadedFile f : files.values()) {
+      f.getFile().delete();
+    }
+  }
 }
