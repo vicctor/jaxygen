@@ -1,7 +1,7 @@
 package org.jaxygen.http;
 
 import org.jaxygen.converters.xml.XMLDateAdapter;
-import org.jaxygen.dto.UploadedFile;
+import org.jaxygen.network.UploadedFile;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.text.DateFormat;

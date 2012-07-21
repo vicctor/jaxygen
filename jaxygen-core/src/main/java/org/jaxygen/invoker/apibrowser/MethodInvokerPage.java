@@ -25,7 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.util.BeanUtil;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
-import org.jaxygen.dto.UploadedFile;
+import org.jaxygen.dto.Uploadable;
+import org.jaxygen.network.UploadedFile;
 import org.jaxygen.invoker.ClassRegistry;
 import org.jaxygen.url.UrlQuery;
 
@@ -294,7 +295,7 @@ public class MethodInvokerPage extends Page {
    row.addColumn(select);
   } else if (PropertiesToBeanConverter.isCovertable(paramType)) {
    row.addColumn(new HTMLInput(propertyName, defaultValue));
-  } else if (paramType.equals(UploadedFile.class)) {
+  } else if (paramType.isAssignableFrom(Uploadable.class)) {
       row.addColumn(new HTMLInput(HTMLInput.Type.file, propertyName));
   } else {
    HTMLTable beanTable = new HTMLTable();

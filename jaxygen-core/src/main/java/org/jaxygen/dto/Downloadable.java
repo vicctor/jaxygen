@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto;
+package org.jaxygen.dto;
 
-import org.jaxygen.annotations.QueryMessage;
-import org.jaxygen.dto.Uploadable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 
-/**This is a sample request contating file uploaded over HTTP
+/**Interface must be implemented by application if the given
+ * method needs to post a data directly in the POST or GET reposponse.
  *
- * @author Artur keska
+ * @author Artur Keska
  */
-@QueryMessage
-public class AddImageRequestDTO {
-    private Uploadable file;
-
-    public Uploadable getFile() {
-        return file;
-    }
-
-    public void setFile(Uploadable file) {
-        this.file = file;
-    }
+public interface Downloadable {
+  public enum ContentDisposition {
+    attachment, inline
+  }
+  String getContentType();
+  ContentDisposition getDispositon();
+  Charset getCharset();
+  InputStream getStream() throws IOException;
+  void dispose() throws IOException;
 }
