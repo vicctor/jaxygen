@@ -15,7 +15,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
-import org.jaxygen.converters.BeanUtil;
+import org.jaxygen.util.BeanUtil;
 
 /**
  *

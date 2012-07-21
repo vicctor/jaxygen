@@ -26,8 +26,14 @@
   
     <developers>
         <developer>
+            <id>vicctor</id>
             <email>artur.keska@gmail.com</email>
             <name>Artur Keska</name>
+        </developer>
+        <developer>
+            <id>domanu</id>
+            <email>domanski.dawid@gmail.com</email>
+            <name>Dawid Domanski</name>
         </developer>
     </developers>
   
@@ -77,24 +83,29 @@
 
     </dependencies>
  
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>       
+    </profiles>
+    
 
     <modules>
         <module>jaxygen-core</module>

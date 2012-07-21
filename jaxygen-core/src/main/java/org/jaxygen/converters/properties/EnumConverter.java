@@ -1,4 +1,4 @@
-package org.jaxygen.converters;
+package org.jaxygen.converters.properties;
 
 import org.apache.commons.beanutils.Converter;
 

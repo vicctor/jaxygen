@@ -23,7 +23,9 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.converters.BeanUtil;
+import org.jaxygen.util.BeanUtil;
+import org.jaxygen.converters.properties.PropertiesToBeanConverter;
+import org.jaxygen.dto.UploadedFile;
 import org.jaxygen.invoker.ClassRegistry;
 import org.jaxygen.url.UrlQuery;
 
@@ -77,7 +79,7 @@ public class MethodInvokerPage extends Page {
   HTMLForm propertiesInputForm = new HTMLForm();
   propertiesInputForm.setMethod(HTMLForm.Action.post);
   propertiesInputForm.setAction(invokerPath + "/" + simpleClassname + "/" + methodFilter);
-  propertiesInputForm.setEnctype("enctype='multipart/form-data");
+  propertiesInputForm.setEnctype("multipart/form-data");
 
   propertiesInputForm.appendInput(HTMLInput.Type.hidden, "className", classFilter);
   propertiesInputForm.appendInput(HTMLInput.Type.hidden, "methodName", methodFilter);
@@ -290,8 +292,10 @@ public class MethodInvokerPage extends Page {
     select.addOption(new HTMLOption(name.toString(), new HTMLLabel(name.toString())));
    }
    row.addColumn(select);
-  } else if (BeanUtil.isCovertable(paramType)) {
+  } else if (PropertiesToBeanConverter.isCovertable(paramType)) {
    row.addColumn(new HTMLInput(propertyName, defaultValue));
+  } else if (paramType.equals(UploadedFile.class)) {
+      row.addColumn(new HTMLInput(HTMLInput.Type.file, propertyName));
   } else {
    HTMLTable beanTable = new HTMLTable();
    row.addColumn(beanTable);

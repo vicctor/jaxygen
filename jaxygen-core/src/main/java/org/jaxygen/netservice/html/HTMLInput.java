@@ -1,45 +1,59 @@
 package org.jaxygen.netservice.html;
 
-public class HTMLInput extends BasicHTMLElement implements HTMLElement {
+public final class HTMLInput extends BasicHTMLElement implements HTMLElement {
+  public static final String TAG_NAME = "INPUT";
 
- 
- public static enum Type {
-  button,
-  checkbox,
-  file,
-  hidden,
-  image,
-  password,
-  radio,
-  reset,
-  submit,
-  text};
+  public static enum Type {
 
- public HTMLInput() {
-  super("INPUT");
- }
+    button,
+    checkbox,
+    file,
+    hidden,
+    image,
+    password,
+    radio,
+    reset,
+    submit,
+    text
+  };
 
- public HTMLInput(String id, final Object defaultValue) {
-  super("INPUT", id);
-  setAttribute("name", id);
-  setAttribute("value", defaultValue);
- }
+  public HTMLInput() {
+    super(TAG_NAME);
+  }
 
- @Override
- public String renderContent() {
-  return "";
- }
+  public HTMLInput(final String name, final Object defaultValue) {
+    super(TAG_NAME);
+    setAttribute("name", name);
+    setAttribute("value", defaultValue);
+  }
 
- public void setType(final Type type) {
-  setAttribute("type", type);
- }
+  public HTMLInput(Type type, final String name, final Object defaultValue) {
+    super(TAG_NAME);
+    setType(type);
+    setAttribute("name", name);
+    setAttribute("value", defaultValue);
+  }
+  
+  public HTMLInput(Type type, final String name) {
+    super(TAG_NAME);
+    setType(type);
+    setAttribute("name", name);
+  }
 
- public void setValue(final String value) {
-  setAttribute("value", value);
- }
- 
- void setName(String name) {
-  setAttribute("name", name);
- }
+  @Override
+  public String renderContent() {
+    return "";
+  }
 
+  public void setType(final Type type) {
+    setAttribute("type", type);
+  }
+
+  public void setValue(final String value) {
+    setAttribute("value", value);
+  }
+
+  void setName(String name) {
+    setAttribute("name", name);
+  }
 }

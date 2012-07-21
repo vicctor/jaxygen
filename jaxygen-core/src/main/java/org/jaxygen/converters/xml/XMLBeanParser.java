@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jaxygen.converters;
+package org.jaxygen.converters.xml;
 
 import java.io.InputStream;
 import javax.xml.bind.JAXBContext;

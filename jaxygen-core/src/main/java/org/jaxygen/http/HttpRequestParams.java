@@ -16,7 +16,7 @@ import org.jaxygen.exceptions.InvalidRequestParameter;
  */
 public interface HttpRequestParams extends Serializable {
 
-    public Map<String, Object> getParameters();
+    public Map<String, String> getParameters();
 
     public Map<String, UploadedFile> getFiles();
 
@@ -55,4 +55,6 @@ public interface HttpRequestParams extends Serializable {
 
     public List<?> getAsEnums(String name, Class<?> clazz)
             throws InvalidRequestParameter;
+    
+    public void dispose();
 }

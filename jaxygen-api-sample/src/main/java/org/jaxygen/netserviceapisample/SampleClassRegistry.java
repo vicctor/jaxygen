@@ -12,6 +12,7 @@ import org.jaxygen.netserviceapisample.business.SessionHandeSample;
 import java.util.ArrayList;
 import java.util.List;
 import org.jaxygen.invoker.ClassRegistry;
+import org.jaxygen.netserviceapisample.business.*;
 
 /**
  *
@@ -28,6 +29,7 @@ public class SampleClassRegistry implements ClassRegistry
         clases.add(DTOSample.class);
         clases.add(ValidatorsSample.class);
         clases.add(SecuritySample.class);
+        clases.add(FileTransferSample.class);
         return clases;
     }
 }
