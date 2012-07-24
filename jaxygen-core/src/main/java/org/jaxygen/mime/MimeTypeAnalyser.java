@@ -56,7 +56,12 @@ public class MimeTypeAnalyser {
 
   
   public static String getMimeForExtension(File file) {
-    String name = file.getName();
+    final String name = file.getName();    
+    return getMimeForExtension(name);
+  }
+
+  public static String getMimeForExtension(final String fileName) {
+    String name = fileName;
     int dotPosition = name.lastIndexOf('.');
     if (dotPosition > -1) {
       name = name.substring(dotPosition + 1);
