@@ -5,7 +5,7 @@
 package org.jaxygen.invoker.apibrowser;
 
 import org.jaxygen.netservice.html.HTMLHeading;
-import org.jaxygen.netservice.html.HTMLLink;
+import org.jaxygen.netservice.html.HTMAnchor;
 import org.jaxygen.netservice.html.HTMLForm;
 import org.jaxygen.netservice.html.HTMLInput;
 import org.jaxygen.netservice.html.HTMLElement;
@@ -274,14 +274,14 @@ public class MethodInvokerPage extends Page {
   }
 
   if (multiplicity > 0) {
-   row.addColumn(new HTMLLink("" + browserPath + "?" + queryMultiplicityUp.toString(),
+   row.addColumn(new HTMAnchor("" + browserPath + "?" + queryMultiplicityUp.toString(),
            new HTMLLabel("+")));
 
   } else {
    row.addColumn(new HTMLLabel(""));
   }
   if (multiplicity > 1) {
-   row.addColumn(new HTMLLink("" + browserPath + "?" + queryMultiplicityDown.toString(),
+   row.addColumn(new HTMAnchor("" + browserPath + "?" + queryMultiplicityDown.toString(),
            new HTMLLabel("-")));
   } else {
    row.addColumn(new HTMLLabel(""));
