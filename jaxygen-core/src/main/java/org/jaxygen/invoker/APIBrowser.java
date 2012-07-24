@@ -1,121 +1,158 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2012 Artur Keska.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jaxygen.invoker;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.ServerException;
+import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.jaxygen.invoker.apibrowser.ClassesListPage;
 import org.jaxygen.invoker.apibrowser.MethodInvokerPage;
 import org.jaxygen.invoker.apibrowser.Page;
+import org.jaxygen.mime.MimeTypeAnalyser;
 
 /**
  *
- * @author artur
+ * @author Artur Keska
  */
 public class APIBrowser extends HttpServlet {
 
- private ClassRegistry registry;
+  private ClassRegistry registry;
 
- /**
-  * Processes requests for both HTTP
-  * <code>GET</code> and
-  * <code>POST</code> methods.
-  *
-  * @param request servlet request
-  * @param response servlet response
-  * @throws ServletException if a servlet-specific error occurs
-  * @throws IOException if an I/O error occurs
-  */
- protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-         throws ServletException, IOException {
-  response.setContentType("text/html;charset=UTF-8");
-  //PrintWriter out = response.getWriter();
-  openClassRegistry();
-  try {
-   final String className = request.getParameter("className");
-   final String method = request.getParameter("methodName");
+  /**
+   * Processes requests for both HTTP
+   * <code>GET</code> and
+   * <code>POST</code> methods.
+   *
+   * @param request servlet request
+   * @param response servlet response
+   * @throws ServletException if a servlet-specific error occurs
+   * @throws IOException if an I/O error occurs
+   */
+  protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+          throws ServletException, IOException {
+    response.setContentType("text/html;charset=UTF-8");
+    //PrintWriter out = response.getWriter();
+    openClassRegistry();
+    try {
+      final String className = request.getParameter("className");
+      final String method = request.getParameter("methodName");
+      final String resource = request.getParameter("resource");
 
-   response.setContentType("text/html");
-       
-   Page page;
-   if (className == null || method == null) {
-    page = new ClassesListPage(getServletContext(), request);
-   } else {    
-    page = new MethodInvokerPage(registry, getServletContext(), request, className, method);
-   }
-   response.getWriter().append(page.render());
-  } catch (Exception ex) {
-   throw new ServerException("Service error", ex);
-  } finally {
-   //out.close();
-  }
- }
-
- // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
- /**
-  * Handles the HTTP
-  * <code>GET</code> method.
-  *
-  * @param request servlet request
-  * @param response servlet response
-  * @throws ServletException if a servlet-specific error occurs
-  * @throws IOException if an I/O error occurs
-  */
- @Override
- protected void doGet(HttpServletRequest request, HttpServletResponse response)
-         throws ServletException, IOException {
-  processRequest(request, response);
- }
-
- /**
-  * Handles the HTTP
-  * <code>POST</code> method.
-  *
-  * @param request servlet request
-  * @param response servlet response
-  * @throws ServletException if a servlet-specific error occurs
-  * @throws IOException if an I/O error occurs
-  */
- @Override
- protected void doPost(HttpServletRequest request, HttpServletResponse response)
-         throws ServletException, IOException {
-  processRequest(request, response);
- }
-
- /**
-  * Returns a short description of the servlet.
-  *
-  * @return a String containing servlet description
-  */
- @Override
- public String getServletInfo() {
-  return "Short description";
- }// </editor-fold>
-
- 
-private void openClassRegistry() throws ServletException {
-  ServletContext context = this.getServletContext();
-  final String registryClassName = context.getInitParameter("classRegistry");
-  if (registryClassName != null) {
-   try {
-    Class<ClassRegistry> registryClass = (Class<ClassRegistry>) Thread.currentThread().getContextClassLoader().loadClass(registryClassName);
-    registry = registryClass.newInstance();
-   } catch (InstantiationException ex) {
-    throw new ServletException("Cann not instantiate class registy " + registryClassName + ". Please check classRegistry property in your web.xml <context-param> section", ex);
-   } catch (IllegalAccessException ex) {
-    throw new ServletException("Class registry provider not found. Please check classRegistry property in your web.xml <context-param> section", ex);
-   } catch (ClassNotFoundException ex) {
-    throw new ServletException("Class registry provider not found. Please check classRegistry property in your web.xml <context-param> section", ex);
-   }
+      if (resource != null) {
+        postResource(resource, response);
+      } else {
+        renderApiPage(response, className, method, request);
+      }
+    } catch (Exception ex) {
+      throw new ServerException("Service error", ex);
+    } finally {
+      //out.close();
+    }
   }
 
- }
+  private void renderApiPage(HttpServletResponse response, final String className, final String method, HttpServletRequest request) throws InvocationTargetException, IllegalArgumentException, SecurityException, ServletException, NamingException, InstantiationException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, IOException {
+    response.setContentType("text/html");
+    Page page;
+    if (className == null || method == null) {
+      page = new ClassesListPage(getServletContext(), request);
+    } else {
+      page = new MethodInvokerPage(registry, getServletContext(), request, className, method);
+    }
+    response.getWriter().append(page.render());
+  }
 
+  // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+  /**
+   * Handles the HTTP
+   * <code>GET</code> method.
+   *
+   * @param request servlet request
+   * @param response servlet response
+   * @throws ServletException if a servlet-specific error occurs
+   * @throws IOException if an I/O error occurs
+   */
+  @Override
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+          throws ServletException, IOException {
+    processRequest(request, response);
+  }
+
+  /**
+   * Handles the HTTP
+   * <code>POST</code> method.
+   *
+   * @param request servlet request
+   * @param response servlet response
+   * @throws ServletException if a servlet-specific error occurs
+   * @throws IOException if an I/O error occurs
+   */
+  @Override
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+          throws ServletException, IOException {
+    processRequest(request, response);
+  }
+
+  /**
+   * Returns a short description of the servlet.
+   *
+   * @return a String containing servlet description
+   */
+  @Override
+  public String getServletInfo() {
+    return "Short description";
+  }// </editor-fold>
+
+  private void openClassRegistry() throws ServletException {
+    ServletContext context = this.getServletContext();
+    final String registryClassName = context.getInitParameter("classRegistry");
+    if (registryClassName != null) {
+      try {
+        Class<ClassRegistry> registryClass = (Class<ClassRegistry>) Thread.currentThread().getContextClassLoader().loadClass(registryClassName);
+        registry = registryClass.newInstance();
+      } catch (InstantiationException ex) {
+        throw new ServletException("Cann not instantiate class registy " + registryClassName + ". Please check classRegistry property in your web.xml <context-param> section", ex);
+      } catch (IllegalAccessException ex) {
+        throw new ServletException("Class registry provider not found. Please check classRegistry property in your web.xml <context-param> section", ex);
+      } catch (ClassNotFoundException ex) {
+        throw new ServletException("Class registry provider not found. Please check classRegistry property in your web.xml <context-param> section", ex);
+      }
+    }
+
+  }
+
+  private void postResource(String resource, HttpServletResponse response) throws IOException {
+    InputStream is = null;
+    try {
+      is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+      if (is != null) {
+        response.setContentType(MimeTypeAnalyser.getMimeForExtension(resource));
+        IOUtils.copy(is, response.getOutputStream());
+      }
+    } finally {
+      if (is != null) {
+        is.close();
+      }
+    }
+  }
 }
