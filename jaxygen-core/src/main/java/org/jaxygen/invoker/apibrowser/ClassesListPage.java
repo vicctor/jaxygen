@@ -4,7 +4,7 @@
  */
 package org.jaxygen.invoker.apibrowser;
 
-import org.jaxygen.netservice.html.HTMLLink;
+import org.jaxygen.netservice.html.HTMAnchor;
 import org.jaxygen.netservice.html.HTMLElement;
 import org.jaxygen.netservice.html.HTMLLabel;
 import org.jaxygen.netservice.html.HTMLTable;
@@ -80,7 +80,7 @@ public class ClassesListPage extends Page{
     if (show) {
      HTMLTable.Row row = new HTMLTable.Row();
      row.addColumn(new HTMLLabel(className));
-     row.addColumn(new HTMLLink(browserPath + "?" + query, new HTMLLabel(methodName)));
+     row.addColumn(new HTMAnchor(browserPath + "?" + query, new HTMLLabel(methodName)));
      row.addColumn(new HTMLLabel(netApi.description()));
      HTMLDiv allowed = new HTMLDiv();
      row.addColumn(allowed);
