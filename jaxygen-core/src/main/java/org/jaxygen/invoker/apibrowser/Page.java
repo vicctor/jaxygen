@@ -4,12 +4,7 @@
  */
 package org.jaxygen.invoker.apibrowser;
 
-
-import org.jaxygen.netservice.html.HTML;
-import org.jaxygen.netservice.html.HTMLHeading;
-import org.jaxygen.netservice.html.HTMLBody;
-import org.jaxygen.netservice.html.HTMLElement;
-import org.jaxygen.netservice.html.HTMLLabel;
+import org.jaxygen.netservice.html.*;
 
 /**
  *
@@ -17,21 +12,22 @@ import org.jaxygen.netservice.html.HTMLLabel;
  */
 public class Page implements HTMLElement {
 
- private HTML html = new HTML();
- private HTMLBody body = new HTMLBody();
- 
- public Page() {
-  html.append(body);  
-  
-  body.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Application interface")));
- }
+  private HTML html = new HTML();
+  private HTMLBody body = new HTMLBody();
 
- public void append(HTMLElement... elements) {
-  body.append(elements);
- }
- 
- public String render() {
-  return html.render();
- }
- 
+  public Page() {
+    html.append(new HTMLLink(HTMLLink.Type.CSS, "?resource=/org/jaxygen/invoker/css/page.css"));
+    
+    body.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Application interface")));
+    
+    html.append(body);
+  }
+
+  public void append(HTMLElement... elements) {
+    body.append(elements);
+  }
+
+  public String render() {
+    return html.render();
+  }
 }
