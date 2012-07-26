@@ -75,11 +75,19 @@ public abstract class BasicHTMLElement implements HTMLElement {
     return rc;
   }
 
+  /** Override this method in order to instruct the renderer if the given tag could be writen in the
+   * short for (e.g. <br /> or nor (e.g. <link></link>) even if does not contain any content
+   * @return 
+   */
+  protected boolean isShortTagAlowed() {
+    return true;
+  }
+  
   @Override
   public String render() {
-    final String content = renderContent();
+    final String contentString = renderContent();
     String rc="";
-    if (content.length() > 0)
+    if (contentString.length() > 0 || isShortTagAlowed() == false)
       rc = "<" + tag + " " + renderAttributes() + ">" + renderContent() + "</"
       + tag + ">";
     else 

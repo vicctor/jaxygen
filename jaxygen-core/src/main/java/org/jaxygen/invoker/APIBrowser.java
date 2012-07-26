@@ -26,9 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
-import org.jaxygen.invoker.apibrowser.ClassesListPage;
-import org.jaxygen.invoker.apibrowser.MethodInvokerPage;
-import org.jaxygen.invoker.apibrowser.Page;
+import org.jaxygen.invoker.apibrowser.*;
 import org.jaxygen.mime.MimeTypeAnalyser;
 
 /**
@@ -36,8 +34,6 @@ import org.jaxygen.mime.MimeTypeAnalyser;
  * @author Artur Keska
  */
 public class APIBrowser extends HttpServlet {
-
-  private ClassRegistry registry;
 
   /**
    * Processes requests for both HTTP
@@ -52,17 +48,15 @@ public class APIBrowser extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     response.setContentType("text/html;charset=UTF-8");
-    //PrintWriter out = response.getWriter();
-    openClassRegistry();
+
     try {
-      final String className = request.getParameter("className");
-      final String method = request.getParameter("methodName");
+      
       final String resource = request.getParameter("resource");
 
       if (resource != null) {
         postResource(resource, response);
       } else {
-        renderApiPage(response, className, method, request);
+        renderApiPage(response, request);
       }
     } catch (Exception ex) {
       throw new ServerException("Service error", ex);
@@ -71,13 +65,18 @@ public class APIBrowser extends HttpServlet {
     }
   }
 
-  private void renderApiPage(HttpServletResponse response, final String className, final String method, HttpServletRequest request) throws InvocationTargetException, IllegalArgumentException, SecurityException, ServletException, NamingException, InstantiationException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, IOException {
+  private void renderApiPage(HttpServletResponse response, HttpServletRequest request) throws InvocationTargetException, IllegalArgumentException, SecurityException, ServletException, NamingException, InstantiationException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, IOException {
     response.setContentType("text/html");
-    Page page;
-    if (className == null || method == null) {
+    Page page;    
+    final String pageName = request.getParameter("page");
+    if (ClassMethodsPage.NAME.equals(pageName)) {
+      page = new ClassMethodsPage(getServletContext(), request);
+    } else if (MethodInvokerPage.NAME.equals(pageName)) {
+      page = new MethodInvokerPage(getServletContext(), request);
+    } else if (ClassesListPage.NAME.equals(pageName)) {
       page = new ClassesListPage(getServletContext(), request);
     } else {
-      page = new MethodInvokerPage(registry, getServletContext(), request, className, method);
+      page = new ClassesSnippestPage(getServletContext(), request);
     }
     response.getWriter().append(page.render());
   }
@@ -122,24 +121,6 @@ public class APIBrowser extends HttpServlet {
   public String getServletInfo() {
     return "Short description";
   }// </editor-fold>
-
-  private void openClassRegistry() throws ServletException {
-    ServletContext context = this.getServletContext();
-    final String registryClassName = context.getInitParameter("classRegistry");
-    if (registryClassName != null) {
-      try {
-        Class<ClassRegistry> registryClass = (Class<ClassRegistry>) Thread.currentThread().getContextClassLoader().loadClass(registryClassName);
-        registry = registryClass.newInstance();
-      } catch (InstantiationException ex) {
-        throw new ServletException("Cann not instantiate class registy " + registryClassName + ". Please check classRegistry property in your web.xml <context-param> section", ex);
-      } catch (IllegalAccessException ex) {
-        throw new ServletException("Class registry provider not found. Please check classRegistry property in your web.xml <context-param> section", ex);
-      } catch (ClassNotFoundException ex) {
-        throw new ServletException("Class registry provider not found. Please check classRegistry property in your web.xml <context-param> section", ex);
-      }
-    }
-
-  }
 
   private void postResource(String resource, HttpServletResponse response) throws IOException {
     InputStream is = null;

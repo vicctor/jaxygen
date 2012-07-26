@@ -24,12 +24,12 @@ import org.jaxygen.url.UrlQuery;
  *
  * @author artur
  */
-public class ClassesListPage extends Page {  
-  public static final String NAME = "ClassesListPage";
-  
+public class ClassesSnippestPage extends Page {
+
+  public static final String NAME = "ClassesSnippestPage";
   private final String browserPath;
 
-  public ClassesListPage(ServletContext context, HttpServletRequest request) throws ServletException {
+  public ClassesSnippestPage(ServletContext context, HttpServletRequest request) throws ServletException {
     super(context);
     browserPath = request.getContextPath() + "/APIBrowser";
     append(renderClassesList());
@@ -48,9 +48,21 @@ public class ClassesListPage extends Page {
     HTMLElement rc;
     if (registry != null) {
       HTMLTable table = new HTMLTable();
-      table.getHeader().createColumns("className", "methodName", "Description", "Allowed to");
+      table.getHeader().createColumns("className", "Description");
       for (Class c : registry.getRegisteredClasses()) {
-        table.addRows(renderMethodReferences(c));
+        HTMLTable.Row row = new HTMLTable.Row();
+        UrlQuery showClassMethodsQuery = new UrlQuery();
+        showClassMethodsQuery.add("page", ClassMethodsPage.NAME);
+        showClassMethodsQuery.add("className", c.getCanonicalName());
+
+        row.addColumn(new HTMAnchor("?" + showClassMethodsQuery, new HTMLLabel(c.getSimpleName())));
+        if (c.isAnnotationPresent(NetAPI.class)) {
+          NetAPI netApi = (NetAPI) c.getAnnotation(NetAPI.class);
+          if (netApi != null && netApi.description() != null) {
+            row.addColumn(new HTMLLabel(netApi.description()));
+          }
+        }
+        table.addRow(row);
       }
       rc = table;
     } else {
@@ -70,14 +82,15 @@ public class ClassesListPage extends Page {
         final String methodName = method.getName();
         boolean show = true;
 
-        UrlQuery query = new UrlQuery();
-        query.add("className", className);
-        query.add("methodName", methodName);
-        query.add("getForm", className + "." + methodName);
+        UrlQuery showMethodQuery = new UrlQuery();
+        showMethodQuery.add("page", MethodInvokerPage.NAME);
+        showMethodQuery.add("className", className);
+        showMethodQuery.add("methodName", methodName);
+        showMethodQuery.add("getForm", className + "." + methodName);
         if (show) {
           HTMLTable.Row row = new HTMLTable.Row();
           row.addColumn(new HTMAnchor("?page=" + ClassMethodsPage.NAME + "&className=" + className, new HTMLLabel(className)));
-          row.addColumn(new HTMAnchor(browserPath + "?" + query, new HTMLLabel(methodName)));
+          row.addColumn(new HTMAnchor(browserPath + "?" + showMethodQuery, new HTMLLabel(methodName)));
           row.addColumn(new HTMLLabel(netApi.description()));
           HTMLDiv allowed = new HTMLDiv();
           row.addColumn(allowed);
@@ -92,6 +105,4 @@ public class ClassesListPage extends Page {
     }
     return rows.toArray(new HTMLTable.Row[rows.size()]);
   }
-
-
 }
