@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.ServerException;
 import javax.naming.NamingException;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +62,12 @@ public class APIBrowser extends HttpServlet {
     } finally {
       //out.close();
     }
+  }
+
+  private InputStream openResourceStream(String resource) {
+    InputStream is;
+    is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+    return is;
   }
 
   private void renderApiPage(HttpServletResponse response, HttpServletRequest request) throws InvocationTargetException, IllegalArgumentException, SecurityException, ServletException, NamingException, InstantiationException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, IOException {
@@ -125,8 +130,9 @@ public class APIBrowser extends HttpServlet {
   private void postResource(String resource, HttpServletResponse response) throws IOException {
     InputStream is = null;
     try {
-      is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+      is = openResourceStream(resource);      
       if (is != null) {
+        log("Sending resource as stream");
         response.setContentType(MimeTypeAnalyser.getMimeForExtension(resource));
         IOUtils.copy(is, response.getOutputStream());
       }
