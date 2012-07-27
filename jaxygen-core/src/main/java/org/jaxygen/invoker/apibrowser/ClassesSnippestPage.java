@@ -48,7 +48,7 @@ public class ClassesSnippestPage extends Page {
     HTMLElement rc;
     if (registry != null) {
       HTMLTable table = new HTMLTable();
-      table.getHeader().createColumns("className", "Description");
+      table.getHeader().createColumns("className", "Description", "Methods");
       for (Class c : registry.getRegisteredClasses()) {
         HTMLTable.Row row = new HTMLTable.Row();
         UrlQuery showClassMethodsQuery = new UrlQuery();
@@ -61,7 +61,14 @@ public class ClassesSnippestPage extends Page {
           if (netApi != null && netApi.description() != null) {
             row.addColumn(new HTMLLabel(netApi.description()));
           }
+        } else {
+          row.addColumn(new HTMLLabel("DESCRIPTION MISSING"));
         }
+
+        HTMLTable methodsTable = new HTMLTable();
+        methodsTable.addRow().addColumns(renderMethodReferences(c));
+        row.addColumn(methodsTable);
+
         table.addRow(row);
       }
       rc = table;
@@ -72,11 +79,10 @@ public class ClassesSnippestPage extends Page {
     return rc;
   }
 
-  private HTMLTable.Row[] renderMethodReferences(Class clazz) {
-    List<HTMLTable.Row> rows = new ArrayList<HTMLTable.Row>();
+  private HTMLElement[] renderMethodReferences(Class clazz) {
+    List<HTMLElement> rows = new ArrayList<HTMLElement>();
     for (Method method : clazz.getMethods()) {
       NetAPI netApi = method.getAnnotation(NetAPI.class);
-      UserProfile userProfile = method.getAnnotation(UserProfile.class);
       if (netApi != null) {
         final String className = clazz.getCanonicalName();
         final String methodName = method.getName();
@@ -88,21 +94,10 @@ public class ClassesSnippestPage extends Page {
         showMethodQuery.add("methodName", methodName);
         showMethodQuery.add("getForm", className + "." + methodName);
         if (show) {
-          HTMLTable.Row row = new HTMLTable.Row();
-          row.addColumn(new HTMAnchor("?page=" + ClassMethodsPage.NAME + "&className=" + className, new HTMLLabel(className)));
-          row.addColumn(new HTMAnchor(browserPath + "?" + showMethodQuery, new HTMLLabel(methodName)));
-          row.addColumn(new HTMLLabel(netApi.description()));
-          HTMLDiv allowed = new HTMLDiv();
-          row.addColumn(allowed);
-          if (userProfile != null) {
-            for (String dm : userProfile.name()) {
-              allowed.append(new HTMLLabel(dm));
-            }
-          }
-          rows.add(row);
+          rows.add(new HTMAnchor(browserPath + "?" + showMethodQuery, new HTMLLabel(methodName)));
         }
       }
     }
-    return rows.toArray(new HTMLTable.Row[rows.size()]);
+    return rows.toArray(new HTMAnchor[rows.size()]);
   }
 }
