@@ -14,5 +14,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface NetAPI {
+  public enum Status  {
+    Placeholder,       /** The method is just a placeholder to keep in mind that probably one needed sych method */
+    Mockup,            /** Method is implemened just as a mockup. It gives a result which fullfills the application design rules */
+    Nonfunctional,     /** Method is implemented but not functional */
+    ReleaseCandidate,  /** Method is implemented and realy for testing */
+    GenerallyAvailable /** Method is implemented and accepted by testers team */
+  }
+  // Description shown in the APIBrowser
  String description() default "";
+ // Method implementation status
+ Status status = null;
 }

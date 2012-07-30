@@ -77,6 +77,7 @@ public class ClassMethodsPage extends Page {
           row.addColumn(new HTMAnchor("?page=" + MethodInvokerPage.NAME + 
                   "&className=" + className + "&methodName=" + methodName, 
                   new HTMLLabel(methodName)));
+          row.addColumn(new HTMLLabel(netApi.status != null ? netApi.status.toString() : "?"));
           row.addColumn(new HTMLLabel(netApi.description()));
           HTMLDiv allowed = new HTMLDiv();
           row.addColumn(allowed);
