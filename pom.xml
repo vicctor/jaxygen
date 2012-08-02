@@ -1,114 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+ <modelVersion>4.0.0</modelVersion>
+ <parent>
+  <groupId>org.sonatype.oss</groupId>
+  <artifactId>oss-parent</artifactId>
+  <version>7</version>
+ </parent>
 
   <!-- The Basics -->
-    <groupId>org.jaxygen</groupId>
-    <artifactId>jaxygen-project</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+ <groupId>org.jaxygen</groupId>
+ <artifactId>jaxygen-project</artifactId>
+ <version>1.0.1-SNAPSHOT</version>
+ <packaging>pom</packaging>
 
-    <name>jaxygen-project</name>
+ <name>jaxygen-project</name>
 
-    <scm>
-        <url>https://github.com/vicctor/jaxygen</url>
-        <developerConnection>scm:git:git://github.com/vicctor/jaxygen.git</developerConnection>
-        <connection>scm:git:https://github.com/vicctor/jaxygen.git</connection>
-    </scm>
+ <scm>
+  <url>https://github.com/vicctor/jaxygen</url>
+  <developerConnection>scm:git:git://github.com/vicctor/jaxygen.git</developerConnection>
+  <connection>scm:git:https://github.com/vicctor/jaxygen.git</connection>
+ </scm>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+ <licenses>
+  <license>
+   <name>The Apache Software License, Version 2.0</name>
+   <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+   <distribution>repo</distribution>
+  </license>
+ </licenses>
   
-    <developers>
-        <developer>
-            <id>vicctor</id>
-            <email>artur.keska@gmail.com</email>
-            <name>Artur Keska</name>
-        </developer>
-        <developer>
-            <id>domanu</id>
-            <email>domanski.dawid@gmail.com</email>
-            <name>Dawid Domanski</name>
-        </developer>
-    </developers>
+ <developers>
+  <developer>
+   <id>vicctor</id>
+   <email>artur.keska@gmail.com</email>
+   <name>Artur Keska</name>
+  </developer>
+  <developer>
+   <id>domanu</id>
+   <email>domanski.dawid@gmail.com</email>
+   <name>Dawid Domanski</name>
+  </developer>
+ </developers>
   
-    <dependencies>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.2</version>
-        </dependency>
+ <dependencies>
+  <dependency>
+   <groupId>commons-fileupload</groupId>
+   <artifactId>commons-fileupload</artifactId>
+   <version>1.2</version>
+  </dependency>
         
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
-        </dependency>
+  <dependency>
+   <groupId>org.apache.commons</groupId>
+   <artifactId>commons-io</artifactId>
+   <version>1.3.2</version>
+  </dependency>
         
-        <dependency>
-            <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>core-renderer</artifactId>
-            <version>R8pre2</version>
-        </dependency>
+  <dependency>
+   <groupId>org.xhtmlrenderer</groupId>
+   <artifactId>core-renderer</artifactId>
+   <version>R8pre2</version>
+  </dependency>
 
 
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>20040616</version>
-        </dependency>
+  <dependency>
+   <groupId>commons-collections</groupId>
+   <artifactId>commons-collections</artifactId>
+   <version>20040616</version>
+  </dependency>
         
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
-        </dependency>
+  <dependency>
+   <groupId>commons-logging</groupId>
+   <artifactId>commons-logging</artifactId>
+   <version>1.1.1</version>
+  </dependency>
         
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2.2</version>
-        </dependency>
+  <dependency>
+   <groupId>com.google.code.gson</groupId>
+   <artifactId>gson</artifactId>
+   <version>2.2.2</version>
+  </dependency>
         
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>20030211.134440</version>
-        </dependency>
+  <dependency>
+   <groupId>commons-beanutils</groupId>
+   <artifactId>commons-beanutils</artifactId>
+   <version>20030211.134440</version>
+  </dependency>
 
-    </dependencies>
+ </dependencies>
  
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>       
-    </profiles>
+ <profiles>
+  <profile>
+   <id>release</id>
+   <build>
+    <plugins>
+     <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-gpg-plugin</artifactId>
+      <executions>
+       <execution>
+        <id>sign-artifacts</id>
+        <phase>verify</phase>
+        <goals>
+         <goal>sign</goal>
+        </goals>
+       </execution>
+      </executions>
+     </plugin>
+    </plugins>
+   </build>
+  </profile>       
+ </profiles>
     
 
-    <modules>
-        <module>jaxygen-core</module>
-        <module>jaxygen-api-sample</module>
-    </modules>
+ <modules>
+  <module>jaxygen-core</module>
+  <module>jaxygen-api-sample</module>
+ </modules>
 </project>
