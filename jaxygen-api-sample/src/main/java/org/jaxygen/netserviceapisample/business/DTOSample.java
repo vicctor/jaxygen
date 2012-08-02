@@ -4,17 +4,14 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
-import org.jaxygen.netserviceapisample.business.dto.UsersListDTO;
-import org.jaxygen.netserviceapisample.business.dto.UsersFilterDTO;
-import org.jaxygen.netserviceapisample.business.dto.UserDTO;
-import org.jaxygen.netserviceapisample.business.dto.UserRegistrationRequestDTO;
-import org.jaxygen.netserviceapisample.business.dto.UserResponseDTO;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
+import org.jaxygen.annotations.Status;
+import org.jaxygen.netserviceapisample.business.dto.*;
 import org.jaxygen.util.BeanUtil;
 
 /**
@@ -35,13 +32,17 @@ public class DTOSample {
   return list;
  }
 
- @NetAPI(description="Creates an user entity in the current session")
+ @NetAPI(description="Creates an user entity in the current session",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  public UserDTO createUser(UserRegistrationRequestDTO request) {
   getUsersFromSession().add(request);
   return request;
  }
 
- @NetAPI(description="Get the list of users from current session. The fiter parameter could selsct users by name substring.")
+ @NetAPI(description="Get the list of users from current session. The fiter parameter could selsct users by name substring.",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  public UsersListDTO getUsers(final UsersFilterDTO filter) {
   UsersListDTO response = new UsersListDTO();
   List<UserResponseDTO> users = new ArrayList<UserResponseDTO>();

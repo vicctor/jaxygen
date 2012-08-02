@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
+import org.jaxygen.annotations.Status;
 import org.jaxygen.netserviceapisample.SampleClassRegistry;
 import org.jaxygen.netserviceapisample.business.dto.LoginRequestDTO;
 import org.jaxygen.security.SecurityProfile;
@@ -40,7 +41,9 @@ public class SecuritySample {
  }
  
  @LoginMethod
- @NetAPI(description="Login to the session. Login as admin, user to attend to admin or user security group. Use any other name in order to attend to guests group")
+ @NetAPI(description="Login to the session. Login as admin, user to attend to admin or user security group. Use any other name in order to attend to guests group",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  public SecurityProfile login(LoginRequestDTO request) {
   SecurityProfile profile;
   session.setAttribute("loggedInUser", request.getUserName());
@@ -58,27 +61,35 @@ public class SecuritySample {
  }
  
  @LogoutMethod
- @NetAPI
+ @NetAPI(description="Release user context from session",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  public boolean logout() {
   session.setAttribute("loggedInUser", null);
   return true;
  }
  
- @NetAPI
+ @NetAPI(description="Shows who was logged in. Method is available for admin user only. Please login using admin as user before accessing this method",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  @Secured()
  @UserProfile(name="admin")
  public List<LoginRequestDTO> whoWasLoggedIn() {
   return list;
  }
  
- @NetAPI
+ @NetAPI(description="Methods return the currently logged in user name",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  @Secured()
  @UserProfile(name="user")
  public String whoAmI() {
   return (String) session.getAttribute("loggedInUser");
  }
  
- @NetAPI
+ @NetAPI(description="Method returns user security profiles",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  @Secured()
  public String[] getMyProfile() {
   return sp.getUserGroups();

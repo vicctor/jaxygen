@@ -4,12 +4,13 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
-import org.jaxygen.netserviceapisample.business.exceptions.CouldNotLeanWithoutEntering;
 import javax.servlet.http.HttpSession;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
+import org.jaxygen.annotations.Status;
+import org.jaxygen.netserviceapisample.business.exceptions.CouldNotLeanWithoutEntering;
 
-/**
+/**Class demonstrates the session handing using @SessionContext annotation
  *
  * @author artur
  */
@@ -17,7 +18,9 @@ public class SessionHandeSample {
  @SessionContext
  private HttpSession session;
  
- @NetAPI(description="Increment counter. Method retuns nothing, just always successes")
+ @NetAPI(description="Increment counter. Method retuns nothing, just always successes",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  public void enter() {
   Integer counter = (Integer) session.getAttribute("counter");
   if (counter == null) {
@@ -32,7 +35,9 @@ public class SessionHandeSample {
   * If enter has not been yet called, 
   * @throws CouldNotLeanWithoutEntering 
   */
- @NetAPI(description="Decrement counter. Counter must be at least once <br/>incremented before calling this method")
+ @NetAPI(description="Decrement counter. Counter must be at least once <br/>incremented before calling this method",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  public void leave() throws CouldNotLeanWithoutEntering {
   Integer counter = (Integer) session.getAttribute("counter");
   if (counter == null) {
@@ -43,7 +48,9 @@ public class SessionHandeSample {
   session.setAttribute("counter", counter);
  }
  
- @NetAPI(description="Get current counter value")
+ @NetAPI(description="Get current counter value",
+         status= Status.ReleaseCandidate,
+         version="1.0")
  public int count() {
   Integer counter = (Integer) session.getAttribute("counter");
   if (counter == null) {

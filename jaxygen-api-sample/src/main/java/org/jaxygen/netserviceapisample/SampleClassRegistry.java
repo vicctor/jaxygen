@@ -47,6 +47,7 @@ public class SampleClassRegistry implements ClassRegistry
         clases.add(ValidatorsSample.class);
         clases.add(SecuritySample.class);
         clases.add(FileTransferSample.class);
+        clases.add(MethodsStatusesSample.class);
         return clases;
     }
 }

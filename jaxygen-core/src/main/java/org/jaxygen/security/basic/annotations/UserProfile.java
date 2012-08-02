@@ -5,12 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * This class tells to the HttpInterceptorBeanImplementation that the method
- * parameter class is an query arguments list.
+/**The BasicSecurityProviderFactory uses this annotation in order to
+ * determinate the method security gourp.
  * 
  * @author Artur Keska
- * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

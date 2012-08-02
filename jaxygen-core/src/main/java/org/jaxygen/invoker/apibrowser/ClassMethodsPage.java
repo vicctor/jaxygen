@@ -51,7 +51,7 @@ public class ClassMethodsPage extends Page {
     Class clazz = getRegisteredClassByName(className);
     HTMLDiv div = new HTMLDiv();
     HTMLTable methodsTable = new HTMLTable();
-    methodsTable.createHeader().createColumns("methodName","Description");
+    methodsTable.createHeader().createColumns("methodName","Status","Since version","Description");
     methodsTable.addRows(renderMethodReferences(clazz));
 
     div.append(new HTMLLabel("Class: " + className));
@@ -76,8 +76,9 @@ public class ClassMethodsPage extends Page {
           HTMLTable.Row row = new HTMLTable.Row();
           row.addColumn(new HTMAnchor("?page=" + MethodInvokerPage.NAME + 
                   "&className=" + className + "&methodName=" + methodName, 
-                  new HTMLLabel(methodName)));
-          row.addColumn(new HTMLLabel(netApi.status != null ? netApi.status.toString() : "?"));
+                  new HTMLLabel(methodName)));          
+          row.addColumn(new HTMLLabel(netApi.status().toString()));
+          row.addColumn(new HTMLLabel(netApi.version()));
           row.addColumn(new HTMLLabel(netApi.description()));
           HTMLDiv allowed = new HTMLDiv();
           row.addColumn(allowed);
