@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.jaxygen.annotations.NetAPI;
+import org.jaxygen.annotations.Status;
 import org.jaxygen.dto.Downloadable;
 import org.jaxygen.dto.Uploadable;
 import org.jaxygen.mime.MimeTypeAnalyser;
@@ -37,7 +38,9 @@ public class FileTransferSample {
   private final static File SHARED_FILE = new File(TMP, SHARED_FILE_NAME);
   private static String sharedFileMimeType = "";
 
-  @NetAPI(description = "Function demonstrates usage of the UploadedFile class usage")
+  @NetAPI(description = "Function demonstrates usage of the UploadedFile class usage",
+         status= Status.ReleaseCandidate,
+         version="1.0")
   public Uploadable uploadFile(AddImageRequestDTO request) throws IOException {
     // Get reference to the uploaded file descriptor
     Uploadable uf = request.getFile();
@@ -62,14 +65,18 @@ public class FileTransferSample {
 
   @NetAPI(description = "Function demonstrates how to make the file downloadable. "
           + "The file is transfered using inline dispostion. "
-          + "That mean it is shown directly in the browser window.")
+          + "That mean it is shown directly in the browser window.",
+         status= Status.ReleaseCandidate,
+         version="1.0")
   public Downloadable showFile() {
     return new DownloadableFile(SHARED_FILE, Downloadable.ContentDisposition.inline, sharedFileMimeType);
   }
 
   @NetAPI(description = "Function demonstrates how to make the file downloadable. "
           + "File is transfered using attachment content disposition. "
-          + "That mean browser shall save it to the local storage.")
+          + "That mean browser shall save it to the local storage.",
+         status= Status.ReleaseCandidate,
+         version="1.0")
   public Downloadable downloadFile() {
     return new DownloadableFile(SHARED_FILE, Downloadable.ContentDisposition.attachment, sharedFileMimeType);
   }
