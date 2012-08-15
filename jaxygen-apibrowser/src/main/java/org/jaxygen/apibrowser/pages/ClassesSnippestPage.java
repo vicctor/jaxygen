@@ -13,13 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.invoker.apibrowser;
+package org.jaxygen.apibrowser.pages;
 
-import org.jaxygen.netservice.html.HTMAnchor;
-import org.jaxygen.netservice.html.HTMLElement;
-import org.jaxygen.netservice.html.HTMLLabel;
-import org.jaxygen.netservice.html.HTMLTable;
-import org.jaxygen.netservice.html.HTMLDiv;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +23,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.invoker.ClassRegistry;
-import org.jaxygen.security.basic.annotations.UserProfile;
+import org.jaxygen.netservice.html.HTMAnchor;
+import org.jaxygen.netservice.html.HTMLElement;
+import org.jaxygen.netservice.html.HTMLLabel;
+import org.jaxygen.netservice.html.HTMLTable;
 import org.jaxygen.url.UrlQuery;
 
 /**
@@ -59,9 +57,14 @@ public class ClassesSnippestPage extends Page {
     HTMLElement rc;
     if (registry != null) {
       HTMLTable table = new HTMLTable();
+      table.setCSSClassName("jaxygen-classes-snipest");
+      
       table.getHeader().createColumns("className", "Description", "Methods");
+      boolean even = false;
       for (Class c : registry.getRegisteredClasses()) {
         HTMLTable.Row row = new HTMLTable.Row();
+        row.setCSSClassName("jaxygen-row-" + (even ? "even" : "odd"));
+        even = ! even;
         UrlQuery showClassMethodsQuery = new UrlQuery();
         showClassMethodsQuery.add("page", ClassMethodsPage.NAME);
         showClassMethodsQuery.add("className", c.getCanonicalName());

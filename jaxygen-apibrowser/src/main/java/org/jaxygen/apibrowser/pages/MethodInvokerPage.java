@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jaxygen.invoker.apibrowser;
+package org.jaxygen.apibrowser.pages;
 
 import org.jaxygen.netservice.html.HTMLHeading;
 import org.jaxygen.netservice.html.HTMAnchor;

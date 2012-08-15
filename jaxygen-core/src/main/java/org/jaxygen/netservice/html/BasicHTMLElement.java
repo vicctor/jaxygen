@@ -31,11 +31,11 @@ public abstract class BasicHTMLElement implements HTMLElement {
   }
 
   public String getCSSClassName() {
-    return attributes.get("className").toString();
+    return attributes.get("class").toString();
   }
 
   public void setCSSClassName(String className) {
-    attributes.put("className", className);
+    attributes.put("class", className);
   }
 
   public String getStyleInfo() {

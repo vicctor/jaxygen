@@ -115,5 +115,7 @@
  <modules>
   <module>jaxygen-core</module>
   <module>jaxygen-api-sample</module>
- </modules>
+    <module>jaxygen-apibrowser</module>
+    <module>jaxygen-apibrowser-style-simple</module>
+  </modules>
 </project>

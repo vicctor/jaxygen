@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jaxygen.invoker.apibrowser;
+package org.jaxygen.apibrowser.pages;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -24,13 +24,28 @@ public class Page implements HTMLElement {
     openClassRegistry(context);
     
     HTMLLinkCSS css = new HTMLLinkCSS();
-    css.setHref("?resource=/org/jaxygen/invoker/css/page.css");
-
+    css.setHref("css/org/jaxygen/apibrowser/page.css");
+    
     head.append(css);
-    body.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Application interface")));
+    
+    css = new HTMLLinkCSS();
+    css.setHref("css/org/jaxygen/apibrowser/classes-snippest.css");    
+    
+    head.append(css);
+    
+    final HTMLDiv pagetHeader = new HTMLDiv();
+    final HTMLDiv pagetFooter = new HTMLDiv();
+    final HTMLHeading pageTitle = new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Application interface"));
+    
+    pagetHeader.setCSSClassName("jaxygen-page-header");    
+    pagetFooter.setCSSClassName("jaxygen-page-footer");
+    
+    pagetHeader.append(pageTitle);
+    body.append(pagetHeader);
 
     html.append(head);
     html.append(body);
+    html.append(pagetFooter);
   }
 
   public void append(HTMLElement... elements) {
