@@ -35,7 +35,7 @@ public class Page implements HTMLElement {
     
     final HTMLDiv pagetHeader = new HTMLDiv();
     final HTMLDiv pagetFooter = new HTMLDiv();
-    final HTMLHeading pageTitle = new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Application interface"));
+    final HTMLHeading pageTitle = new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Jaxygen API Browser"));
     
     pagetHeader.setCSSClassName("jaxygen-page-header");    
     pagetFooter.setCSSClassName("jaxygen-page-footer");

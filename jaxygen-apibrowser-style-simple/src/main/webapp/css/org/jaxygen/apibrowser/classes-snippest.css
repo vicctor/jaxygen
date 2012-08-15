@@ -28,3 +28,11 @@ table.jaxygen-classes-snipest{
     background-color: #4a3a7a;
     color:#f0f0ff
 }
+
+.jaxygen-classes-snipest td>div{
+  word-break:break-all;
+}
+
+.jaxygen-classes-snipest td>div>a{
+  margin:5px;
+}
