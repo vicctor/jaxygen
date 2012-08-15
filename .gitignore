@@ -7,3 +7,5 @@
 /jaxygen-api-sample/target/
 /target/
 /.git-rewrite/
+/jaxygen-apibrowser/target/
+/jaxygen-apibrowser-style-simple/target/

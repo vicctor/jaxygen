@@ -16,7 +16,7 @@
     </servlet>
     <servlet>
         <servlet-name>APIBrowser</servlet-name>
-        <servlet-class>org.jaxygen.invoker.APIBrowser</servlet-class>
+        <servlet-class>org.jaxygen.apibrowser.APIBrowser</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ServiceInvoker</servlet-name>
