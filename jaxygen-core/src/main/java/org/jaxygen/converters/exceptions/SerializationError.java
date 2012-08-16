@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Artur Keska.
+ * Copyright 2012 artur.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.converters;
+package org.jaxygen.converters.exceptions;
 
-import org.jaxygen.converters.exceptions.DeserialisationError;
-import org.jaxygen.http.HttpRequestParams;
-
-/**Generic class for request processing.
- * Resposibility of this clsass is to converte request data (whatever it is)
- * into java POJO.
- *
- * It needs to be guaranteed by the implementation of this class that the deserialize oprtation
+/**This exceptio is thrown if the ResponseConverter was unable to 
+ * translate object inot it's serialized form.
+ * 
+ * * It needs to be guaranteed by the implementation of this class that the serialize oprtation
  * is thread save.
- * @author Artur Keska
+ *
+ * @author artur
  */
-public interface RequestConverter {
-  String getName();
-  Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError;
+public class SerializationError extends Exception {
+
+ public SerializationError() {
+ }
+
+ public SerializationError(String message, Throwable cause) {
+  super(message, cause);
+ }
+
+ public SerializationError(Throwable cause) {
+  super(cause);
+ }
+ 
 }

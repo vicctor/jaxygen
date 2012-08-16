@@ -31,6 +31,10 @@ import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Validable;
 import org.jaxygen.converters.ConvertersFactory;
 import org.jaxygen.converters.RequestConverter;
+import org.jaxygen.converters.ResponseConverter;
+import org.jaxygen.converters.exceptions.SerializationError;
+import org.jaxygen.converters.json.JsonResponseConverter;
+import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.dto.Downloadable;
 import org.jaxygen.exceptions.InvalidPropertyFormat;
 import org.jaxygen.security.SecurityProfile;
@@ -40,6 +44,13 @@ public class ServiceInvoker extends HttpServlet {
   private static final long serialVersionUID = 566338505269576162L;
   private static final Logger log = Logger.getLogger(ServiceInvoker.class.getCanonicalName());
   private Gson gson;
+  
+  static {
+   // Register default converters
+    ConvertersFactory.registerRequestConverter(new PropertiesToBeanConverter());
+    ConvertersFactory.registerResponseConverter(new JsonResponseConverter());
+  }
+  
 
   @Override
   protected void doGet(HttpServletRequest request,
@@ -57,7 +68,8 @@ public class ServiceInvoker extends HttpServlet {
     final String queryString = request.getQueryString();
 
 
-    final String inputFormat = params.getAsString("inputType", 0, 32, "");
+    final String inputFormat = params.getAsString("inputType", 0, 32, PropertiesToBeanConverter.NAME);
+    final String outputFormat = params.getAsString("outputType", 0, 32, JsonResponseConverter.NAME);
 
     String query = "";
 
@@ -66,8 +78,7 @@ public class ServiceInvoker extends HttpServlet {
     }
 
     log("Requesting resource" + resourcePath);
-//  System.out.println("Requesting resource" + resourcePath);
-//  System.out.println("Query" + request.getQueryString());
+
     String[] chunks = resourcePath.split("/");
     if (chunks.length < 2) {
       Logger.getLogger(ServiceInvoker.class.getName()).log(Level.SEVERE, "Invalid request, must be in format class/method");
@@ -100,8 +111,7 @@ public class ServiceInvoker extends HttpServlet {
                 if (o instanceof Downloadable) {
                   postFile(response, (Downloadable)o);
                 } else {
-                  Response responseWraper = new Response(o);
-                  response.getWriter().append(gson.toJson(responseWraper));
+                  sendSerializedResponse(o, outputFormat, response);
                 }
                 if (m.isAnnotationPresent(LoginMethod.class)) {
                   if (!(o instanceof SecurityProfile)) {
@@ -239,6 +249,16 @@ public class ServiceInvoker extends HttpServlet {
       }
     }
   }
+
+ private void sendSerializedResponse(Object o, final String outputFormat, HttpServletResponse response) throws SerializationError, IOException, ServletException {
+  Response responseWraper = new Response(o);
+  ResponseConverter converter = ConvertersFactory.getResponseConverter(outputFormat);
+  if (converter != null) {
+   converter.serialize(responseWraper, response.getWriter());
+  } else {
+   throwError(response, "Missing response converter", "Converter identified by name '"+outputFormat+"' not found");
+  }
+ }
 
   
 }

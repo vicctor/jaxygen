@@ -26,9 +26,15 @@ import org.jaxygen.converters.properties.PropertiesToBeanConverter;
  */
 public class ConvertersFactory {
   private static final Map<String, RequestConverter> requestConverters = Collections.synchronizedMap(new HashMap<String, RequestConverter>());
+  private static final Map<String, ResponseConverter> responseConverters = Collections.synchronizedMap(new HashMap<String, ResponseConverter>());
   
-  static {
-    requestConverters.put("PROPERTIES", new PropertiesToBeanConverter());
+
+  public static void registerRequestConverter(RequestConverter coverter) {
+   requestConverters.put(coverter.getName(),coverter);
+  }
+  
+  public static void registerResponseConverter(ResponseConverter converter) {
+   responseConverters.put(converter.getName(), converter);
   }
   
   /** Obtain request converted for given name
@@ -38,5 +44,14 @@ public class ConvertersFactory {
    */
   public static synchronized RequestConverter getRequestConverter(final String name) {
     return requestConverters.get(name);
+  }
+  
+    /** Obtain response converted for given name
+   * 
+   * @param name converter name
+   * @return 
+   */
+  public static synchronized ResponseConverter getResponseConverter(final String name) {
+    return responseConverters.get(name);
   }
 }
