@@ -1,0 +1,81 @@
+<!--
+Copyright 2012 artur.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+ <head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <LINK href="css/enhanced.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  
+  
+  
+  <div>This sample demonstrates how to upload file from the web page using Jaxygen</div>
+
+  
+   
+   <input id="fileupload" 
+         type="file" 
+         name="file" 
+         data-url="invoker/business.FileTransferSample/uploadFile">
+   
+  
+  
+  
+  
+  <div id="progress" style="width: 50%;border-color: black; border-style: solid; border-width: thin">
+   <div class="bar" style="width: 0%;border-color: blue; border-style: solid; border-width: thin"></div>
+  </div>
+
+
+  <script src="js/jquery-1.8.1.min.js"></script>
+  <script src="js/jquery.ui.widget.js"></script>
+  <script src="js/jquery.iframe-transport.js"></script>
+  <script src="js/jquery.fileupload.js"></script>
+  <script src="js/jQuery.fileinput.js"></script>
+  <script>
+   $(function () {
+    $('#fileupload').fileupload({
+     dataType: 'json',
+     done: function (e, data) {
+      $.each(data.result, function (index, file) {
+       $('<p/>').text(file.name).appendTo(document.body);
+      });
+     },
+     progressall: function (e, data) {
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      $('#progress .bar').show();
+      $('#progress .bar').css(
+      'width',
+      progress + '%'
+     );
+      if (data.loaded == data.total) {
+       $('#progress .bar').fadeOut();
+      }
+     },
+     done: function (e, data) {
+      data.context.text('Upload finished.')
+     }
+    });
+    
+    $('#fileupload').customFileInput();    
+   }   
+   );
+  </script>
+
+ </body>
+</html>
