@@ -19,25 +19,23 @@ limitations under the License.
   <title></title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <LINK href="css/enhanced.css" rel="stylesheet" type="text/css">
+  <LINK href="css/org/jaxygen/apibrowser/page.css" rel="stylesheet" type="text/css">
  </head>
  <body>
-  
-  
-  
-  <div>This sample demonstrates how to upload file from the web page using Jaxygen</div>
 
-  
-   
-   <input id="fileupload" 
+
+
+  <div class="jaxygen-page-header">This sample demonstrates how to upload file from the web page using Jaxygen</div>
+
+
+  <input id="fileupload" 
          type="file" 
          name="file" 
          data-url="invoker/business.FileTransferSample/uploadFile">
-   
-  
-  
-  
-  
-  <div id="progress" style="width: 50%;border-color: black; border-style: solid; border-width: thin">
+
+
+  <div id="progress" 
+       style="width: 50%;border-color: black; border-style: solid; border-width: thin">
    <div class="bar" style="width: 0%;border-color: blue; border-style: solid; border-width: thin"></div>
   </div>
 
@@ -51,30 +49,24 @@ limitations under the License.
    $(function () {
     $('#fileupload').fileupload({
      dataType: 'json',
-     done: function (e, data) {
-      $.each(data.result, function (index, file) {
-       $('<p/>').text(file.name).appendTo(document.body);
-      });
-     },
      progressall: function (e, data) {
       var progress = parseInt(data.loaded / data.total * 100, 10);
-      $('#progress .bar').show();
+      $('#progress').show();
       $('#progress .bar').css(
       'width',
       progress + '%'
      );
-      if (data.loaded == data.total) {
-       $('#progress .bar').fadeOut();
-      }
      },
      done: function (e, data) {
+      $('#progress').fadeOut();
       data.context.text('Upload finished.')
      }
     });
     
+    // Customize input element view
     $('#fileupload').customFileInput();    
    }   
-   );
+  );
   </script>
 
  </body>
