@@ -15,7 +15,7 @@
  */
 package org.jaxygen.converters;
 
-import java.io.Writer;
+import java.io.OutputStream;
 import org.jaxygen.converters.exceptions.SerializationError;
 
 /**
@@ -24,5 +24,5 @@ import org.jaxygen.converters.exceptions.SerializationError;
  */
 public interface ResponseConverter {
   String getName();
-  void serialize(Object object, Writer writter) throws SerializationError;
+  void serialize(Object object, OutputStream writter) throws SerializationError;
 }

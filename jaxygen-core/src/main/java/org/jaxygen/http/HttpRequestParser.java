@@ -3,7 +3,10 @@ package org.jaxygen.http;
 import org.jaxygen.converters.xml.XMLDateAdapter;
 import org.jaxygen.network.UploadedFile;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,10 +68,10 @@ public class HttpRequestParser implements HttpRequestParams {
   /**
    * @param item
    */
-  private void processRegularField(FileItem item) {
+  private void processRegularField(FileItem item) throws UnsupportedEncodingException {
     String name = item.getFieldName();
-    String value = item.getString();
-    parameters.put(name, value);
+    String value = item.getString("UTF-8");
+    addParameter(name, value);
   }
 
   /**
@@ -123,8 +126,8 @@ public class HttpRequestParser implements HttpRequestParams {
       }
 
       // Create a new file upload handler
-      ServletFileUpload upload = new ServletFileUpload(factory);
-      // Parse the request
+      ServletFileUpload upload = new ServletFileUpload(factory);      
+      // Parse the request      
       List<FileItem> items = upload.parseRequest(request);
       for (FileItem item : items) {
         if (item.isFormField()) {
@@ -140,12 +143,12 @@ public class HttpRequestParser implements HttpRequestParams {
   /**
    *
    */
-  private void processParameters() {
+  private void processParameters() throws UnsupportedEncodingException {
     Enumeration<?> parameterNames = request.getParameterNames();
     while (parameterNames.hasMoreElements()) {
       String name = (String) parameterNames.nextElement();
       Object value = request.getParameter(name);
-      parameters.put(name, value.toString());
+      addParameter(name, value.toString());
     }
 
   }
@@ -448,4 +451,11 @@ public class HttpRequestParser implements HttpRequestParams {
       f.getFile().delete();
     }
   }
+
+ private void addParameter(final String name, final String value) throws UnsupportedEncodingException {
+//  final String nameDecoded = URLDecoder.decode(name, "UTF-8");
+//  final String valueDecoded = URLDecoder.decode(value, "UTF-8");
+//  parameters.put(nameDecoded, valueDecoded);
+  parameters.put(name, value);
+ }
 }

@@ -16,8 +16,8 @@
 package org.jaxygen.converters.json;
 
 import com.google.gson.Gson;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import org.jaxygen.converters.ResponseConverter;
 import org.jaxygen.converters.exceptions.SerializationError;
 
@@ -25,14 +25,16 @@ import org.jaxygen.converters.exceptions.SerializationError;
  *
  * @author artur
  */
-public class JsonResponseConverter implements ResponseConverter{
+public class JsonResponseConverter implements ResponseConverter {
+
  public final static String NAME = "JSON";
- 
- public void serialize(Object object, Writer writter) throws SerializationError {
+
+ public void serialize(Object object, OutputStream writter) throws SerializationError {
   try {
    Gson gson = new Gson();
-   writter.append(gson.toJson(object));
-  } catch (IOException ex) {
+   final String json = gson.toJson(object);
+   writter.write(json.getBytes(Charset.forName("UTF-8")));
+  } catch (Exception ex) {
    throw new SerializationError("Could not serialize output data.", ex);
   }
  }
@@ -40,5 +42,4 @@ public class JsonResponseConverter implements ResponseConverter{
  public String getName() {
   return NAME;
  }
- 
 }

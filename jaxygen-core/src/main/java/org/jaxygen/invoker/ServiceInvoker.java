@@ -52,6 +52,8 @@ public class ServiceInvoker extends HttpServlet {
  protected void doGet(HttpServletRequest request,
          HttpServletResponse response) throws ServletException, IOException {
 
+  request.setCharacterEncoding("UTF-8");
+  
   HttpRequestParams params = null;
   HttpSession session = request.getSession(true);
   try {
@@ -112,6 +114,7 @@ public class ServiceInvoker extends HttpServlet {
         if (o instanceof Downloadable) {
          postFile(response, (Downloadable) o);
         } else {
+         response.setCharacterEncoding("UTF-8");         
          sendSerializedResponse(o, responseConverter, response);
         }
         if (m.isAnnotationPresent(LoginMethod.class)) {
@@ -184,7 +187,7 @@ public class ServiceInvoker extends HttpServlet {
   log.log(Level.SEVERE, string, ex);
   ExceptionResponse resp = new ExceptionResponse(ex, string);
   try {
-   converter.serialize(resp, response.getWriter());
+   converter.serialize(resp, response.getOutputStream());
   } catch (SerializationError ex1) {
    log.log(Level.SEVERE, "Server was unable to inform peer about exception", ex);
   }
@@ -194,7 +197,7 @@ public class ServiceInvoker extends HttpServlet {
   log.log(Level.SEVERE, message);
   ExceptionResponse resp = new ExceptionResponse(codeName, message);
   try {
-   converter.serialize(resp, response.getWriter());
+   converter.serialize(resp, response.getOutputStream());
   } catch (SerializationError ex1) {
    log.log(Level.SEVERE, "Server was unable to inform peer about exception", ex1);
   }
@@ -260,6 +263,6 @@ public class ServiceInvoker extends HttpServlet {
 
  private void sendSerializedResponse(Object o, ResponseConverter converter, HttpServletResponse response) throws SerializationError, IOException, ServletException {
   Response responseWraper = new Response(o);
-  converter.serialize(responseWraper, response.getWriter());
+  converter.serialize(responseWraper, response.getOutputStream());
  }
 }
