@@ -24,12 +24,12 @@ import org.jaxygen.url.UrlQuery;
  * @author artur
  */
 public class MethodInvokerPage extends Page {
-    
+
     public static final String NAME = "MethodInvokerPage";
     private final String beensPath;
     private final String browserPath;
     private final String invokerPath;
-    
+
     public MethodInvokerPage(ServletContext context,
             HttpServletRequest request) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException {
         super(context);
@@ -38,47 +38,47 @@ public class MethodInvokerPage extends Page {
         this.beensPath = context.getInitParameter("servicePath");
         this.browserPath = request.getContextPath() + "/APIBrowser";
         this.invokerPath = request.getContextPath() + "/invoker";
-        
+
         renderClassForm(request, className, method);
     }
-    
+
     private void debug(final String message) {
         System.out.println(message);
     }
-    
+
     private boolean isSimpleResultType(final Class<?> returnType) {
         return returnType.isPrimitive() || returnType.equals(Integer.class) || returnType.equals(String.class);
     }
-    
+
     private void renderClassForm(HttpServletRequest request, final String classFilter, final String methodFilter)
             throws NamingException, IllegalArgumentException, SecurityException,
             InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException {
-        
+
         String simpleClassname = classFilter.substring(beensPath.length() + 1);
         HTMLTable exceptionsTable = new HTMLTable();
         exceptionsTable.getHeader().addColumn(new HTMLTable.HeadColumn(new HTMLLabel("Exception name")));
         exceptionsTable.getHeader().addColumn(new HTMLTable.HeadColumn(new HTMLLabel("Description")));
         exceptionsTable.setAttribute("border", "1");
-        
+
         HTMLDiv pointer = new HTMLDiv();
         pointer.append(new HTMLLabel("className=" + classFilter),
                 new HTMLLabel("&"),
                 new HTMLLabel("methodName=" + methodFilter));
-        
+
         HTMLForm propertiesInputForm = new HTMLForm();
         propertiesInputForm.setMethod(HTMLForm.Action.post);
         propertiesInputForm.setAction(invokerPath + "/" + simpleClassname + "/" + methodFilter);
         propertiesInputForm.setEnctype("multipart/form-data");
-        
+
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "className", classFilter);
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "methodName", methodFilter);
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "inputType", "PROPERTIES");
-        
-        
+
+
         Class handerClass = Thread.currentThread().getContextClassLoader().loadClass(classFilter);
         Class resultType = null;
-        
+
         for (Method method : handerClass.getMethods()) {
             if (method.getName().equals(methodFilter)) {
                 resultType = method.getReturnType();
@@ -92,7 +92,7 @@ public class MethodInvokerPage extends Page {
                 }
                 propertiesInputForm.append(table);
                 Type[] exceptions = method.getExceptionTypes();
-                
+
                 for (Type exceptionType : exceptions) {
                     addExceptionHelp(exceptionType, exceptionsTable);
                 }
@@ -103,52 +103,64 @@ public class MethodInvokerPage extends Page {
         page.append(pointer);
         page.append(propertiesInputForm);
         page.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Return type")));
-        page.append(renderOutputObject(resultType));        
+        page.append(renderOutputObject(resultType));
         page.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Exceptions thrown by the method")));
-        page.append(exceptionsTable);    
+        page.append(exceptionsTable);
         this.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("JS API code")));
-        String[] codes = getJSCode(methodFilter, handerClass, methodFilter);      
-        this.append(new HTMLPre("js1",codes[0])); 
-        this.append(new HTMLPre("js2",codes[1])); 
-        this.append(new HTMLPre("js3",codes[2])); 
+        String[] codes = getJSCode(methodFilter, handerClass, methodFilter);
+        if (codes[3].equals("ok")) {
+            this.append(new HTMLPre("js1", codes[0]));
+            this.append(new HTMLPre("js2", codes[1]));
+            this.append(new HTMLPre("js3", codes[2]));
+        }
     }
-    
+
     private String[] getJSCode(String methodName, Class handerClass, String methodFilter) {
-        
-        String[] result = new String[3];
+        String[] result = new String[4];
+        result[3] = "";
         String fields = "";
         String fieldsInput = "";
         for (Method method : handerClass.getMethods()) {
             if (method.getName().equals(methodFilter)) {
                 Type[] parameters = method.getParameterTypes();
+
+
                 for (Type type : parameters) {
                     if (type instanceof Class<?>) {
                         Class<?> paramClass = (Class<?>) type;
                         for (Method setter : paramClass.getMethods()) {
                             if (setter.getName().startsWith("set")) {
                                 final String fieldName = setter.getName().substring(3);
+                                if (fieldName != null) {
+                                    result[3] = "ok";
+                                }
                                 String propertyName = fieldName.substring(0, 1).toLowerCase()
                                         + fieldName.substring(1);
                                 fields += propertyName + ", ";
                                 fieldsInput += propertyName + ": " + propertyName + ", ";
-                                
+
                             }
                         }
                     }
                 }
+
             }
         }
-        fieldsInput = fieldsInput.substring(0, fieldsInput.length() - 2);
-        String function = "this." + methodName + " = function(" + fields + "onSuccess, onException)";
-        String call = "{ this.call(\"" + handerClass.getSimpleName() + "\", \""
-                + methodName + "\",{";
-        String input = "inputType: \"PROPERTIES\", " + fieldsInput + " } , onSuccess, onException)}";        
-        result[0] = function;
-        result[1] = call;
-        result[2] = input;
+
+
+        if (result[3].equals("ok")) {
+            fieldsInput = fieldsInput.substring(0, fieldsInput.length() - 2);
+            String function = "this." + methodName + " = function(" + fields + "onSuccess, onException)";
+            String call = "{ this.call(\"" + handerClass.getSimpleName() + "\", \""
+                    + methodName + "\",{";
+            String input = "inputType: \"PROPERTIES\", " + fieldsInput + " } , onSuccess, onException)}";
+            result[0] = function;
+            result[1] = call;
+            result[2] = input;
+        }
         return result;
     }
-    
+
     private HTMLElement renderOutputObject(Class<?> paramClass) {
         HTMLElement rc;
         if (paramClass != null) {
@@ -176,7 +188,7 @@ public class MethodInvokerPage extends Page {
         }
         return rc;
     }
-    
+
     private static HTMLElement enumValues(Class enumeration) {
         HTMLTable table = new HTMLTable();
         HTMLTable.Row row = table.addRow();
@@ -186,11 +198,11 @@ public class MethodInvokerPage extends Page {
         }
         return table;
     }
-    
+
     private static boolean isEnumType(Class clazz) {
         return clazz.isEnum();
     }
-    
+
     private static boolean isArrayType(Class clazz) {
         return clazz.isArray();
     }
@@ -296,11 +308,11 @@ public class MethodInvokerPage extends Page {
         if (queryMultiplicityUp.getParameters().containsKey(counterName) == false) {
             queryMultiplicityUp.add(counterName, "" + (multiplicity + 1));
         }
-        
+
         if (multiplicity > 0) {
             row.addColumn(new HTMAnchor("" + browserPath + "?" + queryMultiplicityUp.toString(),
                     new HTMLLabel("+")));
-            
+
         } else {
             row.addColumn(new HTMLLabel(""));
         }
@@ -326,9 +338,9 @@ public class MethodInvokerPage extends Page {
             row.addColumn(beanTable);
             addInputClassParameters(request, beanTable, paramType, fieldName + ".");
         }
-        
+
     }
-    
+
     private void addExceptionHelp(Type exceptionType, HTMLTable table) {
         HTMLTable.Row row = table.addRow();
         table.addRow(row);
