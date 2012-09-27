@@ -107,12 +107,10 @@ public class MethodInvokerPage extends Page {
         page.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Exceptions thrown by the method")));
         page.append(exceptionsTable);
         String[] codes = getJSCode(methodFilter, handerClass, methodFilter);
-        if (codes[3].equals("ok")) {
-            this.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("JS API code")));
-            this.append(new HTMLPre("js1", codes[0]));
-            this.append(new HTMLPre("js2", codes[1]));
-            this.append(new HTMLPre("js3", codes[2]));
-        }
+        this.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("JS API code")));
+        this.append(new HTMLPre("js1", codes[0]));
+        this.append(new HTMLPre("js2", codes[1]));
+        this.append(new HTMLPre("js3", codes[2]));
     }
 
     private String[] getJSCode(String methodName, Class handerClass, String methodFilter) {
@@ -147,7 +145,6 @@ public class MethodInvokerPage extends Page {
             }
         }
 
-
         if (result[3].equals("ok")) {
             fieldsInput = fieldsInput.substring(0, fieldsInput.length() - 2);
             String function = "this." + methodName + " = function(" + fields + "onSuccess, onException){";
@@ -157,6 +154,13 @@ public class MethodInvokerPage extends Page {
             result[0] = function;
             result[1] = call;
             result[2] = input;
+        } else {
+            String function = "this." + methodName + " = function(onSuccess, onException){";
+            String call = " this.call(\"" + handerClass.getSimpleName() + "\", \""
+                    + methodName + "\",{} , onSuccess, onException)}";
+            result[0] = function;
+            result[1] = call;
+            result[2] = "";
         }
         return result;
     }
