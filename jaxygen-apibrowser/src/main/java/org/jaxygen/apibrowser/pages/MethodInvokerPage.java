@@ -106,9 +106,9 @@ public class MethodInvokerPage extends Page {
         page.append(renderOutputObject(resultType));
         page.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Exceptions thrown by the method")));
         page.append(exceptionsTable);
-        this.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("JS API code")));
         String[] codes = getJSCode(methodFilter, handerClass, methodFilter);
         if (codes[3].equals("ok")) {
+            this.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("JS API code")));
             this.append(new HTMLPre("js1", codes[0]));
             this.append(new HTMLPre("js2", codes[1]));
             this.append(new HTMLPre("js3", codes[2]));
@@ -150,8 +150,8 @@ public class MethodInvokerPage extends Page {
 
         if (result[3].equals("ok")) {
             fieldsInput = fieldsInput.substring(0, fieldsInput.length() - 2);
-            String function = "this." + methodName + " = function(" + fields + "onSuccess, onException)";
-            String call = "{ this.call(\"" + handerClass.getSimpleName() + "\", \""
+            String function = "this." + methodName + " = function(" + fields + "onSuccess, onException){";
+            String call = " this.call(\"" + handerClass.getSimpleName() + "\", \""
                     + methodName + "\",{";
             String input = "inputType: \"PROPERTIES\", " + fieldsInput + " } , onSuccess, onException)}";
             result[0] = function;
