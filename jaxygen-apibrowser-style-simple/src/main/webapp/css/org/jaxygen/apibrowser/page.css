@@ -7,15 +7,15 @@
 */
 
 root { 
-  display: block;
+    display: block;
 }
 
 body {
-background-color: white;
-alignment-baseline: central;
-margin-left: auto;
-margin-right: auto;
-width: 90%;
+    background-color: white;
+    alignment-baseline: central;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
 }
 
 div.jaxygen-page-header{
@@ -31,9 +31,14 @@ div.jaxygen-page-header h2 {
     margin-right:auto;
     width:200px;    
 }
-    
+
 div.jaxygen-page-footer{
     background-color: #aeaeff;
     height:1px;
     margin: 0 auto;    
+}
+
+pre {
+    width:200px;
+    color:#218B21;
 }
