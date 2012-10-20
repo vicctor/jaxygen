@@ -20,8 +20,11 @@ import org.jaxygen.converters.ConvertersFactory;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.ResponseConverter;
 import org.jaxygen.converters.exceptions.SerializationError;
+import org.jaxygen.converters.json.JsonMultipartRequestConverter;
 import org.jaxygen.converters.json.JsonResponseConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
+import org.jaxygen.converters.sjo.SJORRequestConverter;
+import org.jaxygen.converters.sjo.SJOResponseConverter;
 import org.jaxygen.dto.Downloadable;
 import org.jaxygen.dto.ExceptionResponse;
 import org.jaxygen.dto.Response;
@@ -46,6 +49,9 @@ public class ServiceInvoker extends HttpServlet {
   // Register default converters
   ConvertersFactory.registerRequestConverter(new PropertiesToBeanConverter());
   ConvertersFactory.registerResponseConverter(new JsonResponseConverter());
+  ConvertersFactory.registerRequestConverter(new JsonMultipartRequestConverter());
+  ConvertersFactory.registerRequestConverter(new SJORRequestConverter());
+  ConvertersFactory.registerResponseConverter(new SJOResponseConverter());
  }
 
  @Override

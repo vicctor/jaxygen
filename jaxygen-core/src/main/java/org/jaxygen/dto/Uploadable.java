@@ -16,6 +16,8 @@
 package org.jaxygen.dto;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 
 /**Interface to file uploaded to over the HTTP protocol.
@@ -31,7 +33,14 @@ public interface Uploadable extends Serializable{
    * 
    * @return 
    */
-  File getFile();
+  File getFile() throws IOException;
+  
+  /** Get input stream that reads the content of the file.
+   * This method is usefull in case if the file is being small
+   * (in memory) and do not need to be stored in the filesystem during 
+   * upload.
+   */
+  InputStream getInputStream() throws IOException;
   /** Get original name of the file
    * 
    * @return 

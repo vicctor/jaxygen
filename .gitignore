@@ -9,3 +9,6 @@
 /.git-rewrite/
 /jaxygen-apibrowser/target/
 /jaxygen-apibrowser-style-simple/target/
+/jaxygen-client/target/
+/jaxygen-client-it/target/
+/jaxygen-common/target/

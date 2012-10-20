@@ -15,6 +15,10 @@
  */
 package org.jaxygen.converters.json;
 
+import com.google.gson.Gson;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Map;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.exceptions.DeserialisationError;
@@ -25,20 +29,39 @@ import org.jaxygen.network.UploadedFile;
  *
  * @author imfact02
  */
-public class JsonMultipartRequestConverter implements RequestConverter{
-    public final static String NAME="JSON/MULTIPART";
-    
+public class JsonMultipartRequestConverter implements RequestConverter {
+
+    public final static String NAME = "JSON/MULTIPART";
+    private static Gson gson = new Gson();
+
     public String getName() {
         return NAME;
     }
 
     public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
         Map<String, UploadedFile> files = params.getFiles();
+        Object rc = null;
         if (files != null) {
             UploadedFile f = files.get(beanClass.getName());
-            
+            if (f != null) {
+                Reader reader = null;
+                try {
+                    reader = new InputStreamReader(f.getInputStream(), "UTF-8");
+                    rc = gson.fromJson(reader, beanClass);
+                } catch (IOException ex) {
+                    throw new DeserialisationError("Could not obtain field data for class " + beanClass.getName(), ex);
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (IOException ex) {
+                            throw new DeserialisationError("Cluld not close input stream while deserializing class " + beanClass.getName(), ex);
+                                    
+                        }
+                    }
+                }
+            }
         }
-        return null;
+        return rc;
     }
-    
 }
