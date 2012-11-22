@@ -4,13 +4,17 @@
  */
 package org.jaxygen.dto;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Artur Keska
  */
-public class Response {
+public class Response implements Serializable{
+    public final static long serialVersionUID = 53489753810234L;
 
- public static class ResponseDTO {
+ public static class ResponseDTO  implements Serializable {
+     public final static long serialVersionUID = 53489753810231L;
 
   private String responseClass;
   private Object responseObject;

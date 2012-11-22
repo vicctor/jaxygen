@@ -78,7 +78,7 @@ public class HttpRequestParser implements HttpRequestParams {
    * @param item
    * @throws Exception
    */
-  private void processUploadedFile(FileItem item) throws Exception {
+  private void processUploadedFile(final FileItem item) throws Exception {
     String fieldName = item.getFieldName();
     String fileName = item.getName();
     String contentType = item.getContentType();
@@ -88,18 +88,9 @@ public class HttpRequestParser implements HttpRequestParams {
     if (fileName.length() > 0) {
       //System.out.println("File upload: " + fieldName + " " + fileName + " "
       //    + contentType + " " + sizeInBytes);
-      File uploadedFile = null;
-      if (this.uploadHandler != null) {
-        uploadedFile = this.uploadHandler.beginUpload(fieldName, fileName,
-                contentType, sizeInBytes);
-      } else {
-        String[] fileNameParts = splitFileName(fileName);
-        uploadedFile = File.createTempFile("tmp" + fileNameParts[0], "resource." + fileNameParts[1]);
-      }
-      //uploadedFile.deleteOnExit();
-      item.write(uploadedFile);
-      UploadedFile upf = new UploadedFile();
-      upf.setFile(uploadedFile);
+      
+      UploadedFile upf = new UploadedFile(item);
+      //upf.setFile(uploadedFile);
       upf.setMimeType(contentType);
       upf.setOriginalName(fileName);
       files.put(fieldName, upf);
@@ -433,29 +424,15 @@ public class HttpRequestParser implements HttpRequestParams {
     return parameters;
   }
 
-  private static String[] splitFileName(String fileName) {
-    String[] rc = new String[2];
-    int lastDotPos = fileName.lastIndexOf('.');
-    if (lastDotPos >= 0) {
-      rc[0] = fileName.substring(0, lastDotPos);
-      rc[1] = fileName.substring(lastDotPos + 1);
-    } else {
-      rc[0] = fileName;
-      rc[1] = "";
-    }
-    return rc;
-  }
+  
 
   public void dispose() {
     for (UploadedFile f : files.values()) {
-      f.getFile().delete();
+      f.dispose();
     }
   }
 
  private void addParameter(final String name, final String value) throws UnsupportedEncodingException {
-//  final String nameDecoded = URLDecoder.decode(name, "UTF-8");
-//  final String valueDecoded = URLDecoder.decode(value, "UTF-8");
-//  parameters.put(nameDecoded, valueDecoded);
   parameters.put(name, value);
  }
 }
