@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-run on jetty</actionName>
+            <displayName>run on jetty</displayName>
+            <goals>
+                <goal>jetty:run</goal>
+            </goals>
+        </action>
+    </actions>
