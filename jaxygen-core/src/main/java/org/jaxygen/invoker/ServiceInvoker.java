@@ -134,7 +134,7 @@ public class ServiceInvoker extends HttpServlet {
         }
        } catch (InvocationTargetException ex) {
         ex.printStackTrace();
-        throwError(response, responseConverter, "Call to bean failed : " + ex.getTargetException().getMessage(), ex.getTargetException());
+        throwError(response, responseConverter, "Call to bean failed : " + ex.getTargetException().getMessage(), ex);
        } catch (Exception ex) {
         throwError(response, responseConverter,  "Call to bean failed : " + ex.getMessage(), ex);
        }
