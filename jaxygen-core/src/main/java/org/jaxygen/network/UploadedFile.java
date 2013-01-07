@@ -57,6 +57,7 @@ public class UploadedFile implements Uploadable {
             uploadedFile = File.createTempFile("tmp" + fileNameParts[0], "resource." + fileNameParts[1]);
             try {
                 item.write(uploadedFile);
+                file = uploadedFile;
             } catch (Exception ex) {
                 throw new IOException("Could not sore uploaded file", ex);
             }

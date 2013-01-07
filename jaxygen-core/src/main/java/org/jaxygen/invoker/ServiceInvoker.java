@@ -133,7 +133,8 @@ public class ServiceInvoker extends HttpServlet {
          detachSecurityContext(session);
         }
        } catch (InvocationTargetException ex) {
-        throwError(response, responseConverter, "Call to bean failed : " + ex.getTargetException().getMessage(), ex.getTargetException());
+        ex.printStackTrace();
+        throwError(response, responseConverter, "Call to bean failed : " + ex.getTargetException().getMessage(), ex);
        } catch (Exception ex) {
         throwError(response, responseConverter,  "Call to bean failed : " + ex.getMessage(), ex);
        }
@@ -210,7 +211,9 @@ public class ServiceInvoker extends HttpServlet {
  }
 
  private void postFile(HttpServletResponse response, Downloadable downloadable) throws IOException {
-  response.setHeader("Content-Disposition", downloadable.getDispositon().toString());
+        final String fileName = downloadable.getFileName();
+        System.out.println("!!!!!! filename="+fileName);
+  response.setHeader("Content-Disposition", downloadable.getDispositon().name() + "; filename=\"" + fileName +"\"");
   response.setCharacterEncoding(downloadable.getCharset().name());
   response.setContentType(downloadable.getContentType());
   IOUtils.copy(downloadable.getStream(), response.getOutputStream());

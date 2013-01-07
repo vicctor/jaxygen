@@ -87,4 +87,10 @@ public class DownloadableFile implements Downloadable {
       stream.close();
     }
   }
+
+    public String getFileName() {
+        return file.getName();
+    }
+  
+  
 }

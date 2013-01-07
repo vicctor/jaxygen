@@ -33,4 +33,5 @@ public interface Downloadable {
   Charset getCharset();
   InputStream getStream() throws IOException;
   void dispose() throws IOException;
+  String getFileName();
 }
