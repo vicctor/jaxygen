@@ -21,6 +21,7 @@ import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.ResponseConverter;
 import org.jaxygen.converters.exceptions.SerializationError;
 import org.jaxygen.converters.json.JsonMultipartRequestConverter;
+import org.jaxygen.converters.json.JsonRequestConverter;
 import org.jaxygen.converters.json.JsonResponseConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.converters.sjo.SJORRequestConverter;
@@ -50,6 +51,7 @@ public class ServiceInvoker extends HttpServlet {
   ConvertersFactory.registerRequestConverter(new PropertiesToBeanConverter());
   ConvertersFactory.registerResponseConverter(new JsonResponseConverter());
   ConvertersFactory.registerRequestConverter(new JsonMultipartRequestConverter());
+  ConvertersFactory.registerRequestConverter(new JsonRequestConverter());
   ConvertersFactory.registerRequestConverter(new SJORRequestConverter());
   ConvertersFactory.registerResponseConverter(new SJOResponseConverter());
  }
@@ -132,14 +134,13 @@ public class ServiceInvoker extends HttpServlet {
         if (m.isAnnotationPresent(LogoutMethod.class)) {
          detachSecurityContext(session);
         }
-       } catch (InvocationTargetException ex) {
-        ex.printStackTrace();
+       } catch (InvocationTargetException ex) {        
         throwError(response, responseConverter, "Call to bean failed : " + ex.getTargetException().getMessage(), ex);
        } catch (Exception ex) {
         throwError(response, responseConverter,  "Call to bean failed : " + ex.getMessage(), ex);
        }
       } catch (Exception ex) {
-       throwError(response, responseConverter, "Cann not insitnitate  class " + clazz.getCanonicalName(), ex);
+       throwError(response, responseConverter, "Cann not intanitiate class " + clazz.getCanonicalName(), ex);
       }
 
      }
@@ -263,7 +264,6 @@ public class ServiceInvoker extends HttpServlet {
 
  private void validate(Object[] parameters) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, InvalidPropertyFormat {
   for (Object o : parameters) {
-   System.out.println("check for validation " + parameters.getClass().getName());
    if (o.getClass().isAnnotationPresent(Validable.class)) {
     BeanUtil.validateBean(o);
    }
