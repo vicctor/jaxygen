@@ -70,4 +70,11 @@ public class DTOSample {
   response.setUsers(users);  
   return response;
  }
+ 
+  @NetAPI(description="Get the list of users from current session. The fiter parameter could selsct users by name substring.",
+         status= Status.ReleaseCandidate,
+         version="1.0")
+  public String arraysSample(ItemsListRequestDTO request) {
+   return request.toString();
+  }
 }
