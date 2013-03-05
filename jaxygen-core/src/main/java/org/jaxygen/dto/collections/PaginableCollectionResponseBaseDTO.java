@@ -15,6 +15,7 @@
  */
 package org.jaxygen.dto.collections;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**This is a base class for paginable collection responses
@@ -23,7 +24,7 @@ import java.util.Collection;
  *
  * @author ak
  */
-public class PaginableCollectionResponseBaseDTO<T extends Collection> {
+public class PaginableCollectionResponseBaseDTO<T extends Collection> implements Serializable{
     private T elements;
     private long size;
 
