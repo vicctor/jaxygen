@@ -157,7 +157,7 @@ public class MethodInvokerPage extends Page {
         } else {
             String function = "this." + methodName + " = function(onSuccess, onException){";
             String call = " this.call(\"" + handerClass.getSimpleName() + "\", \""
-                    + methodName + "\",{} , onSuccess, onException)}";
+                    + methodName + "\",{} , onSuccess, onException);};";
             result[0] = function;
             result[1] = call;
             result[2] = "";
@@ -177,6 +177,8 @@ public class MethodInvokerPage extends Page {
                     final Class<?> returnType = getter.getReturnType();
                     if (isSimpleResultType(returnType)) {
                         gettersTale.addRow().addColumns(new HTMLLabel(getter.getName()), new HTMLLabel(returnType.getSimpleName()));
+                    } else if (isBoolType(returnType)) {
+                        gettersTale.addRow().addColumns(new HTMLLabel(getter.getName()), new HTMLLabel(returnType.getSimpleName()), enumBoolValues());
                     } else if (isEnumType(returnType)) {
                         gettersTale.addRow().addColumns(new HTMLLabel(getter.getName()), new HTMLLabel(returnType.getSimpleName()), enumValues(returnType));
                     } else if (isArrayType(paramClass)) {
@@ -202,9 +204,24 @@ public class MethodInvokerPage extends Page {
         }
         return table;
     }
+    
+    private static HTMLElement enumBoolValues() {
+        HTMLTable table = new HTMLTable();
+        HTMLTable.Row row = table.addRow();
+        row.addColumn(new HTMLLabel("Boolean:"));
+        
+        row.addColumn(new HTMLLabel("TRUE"));
+        row.addColumn(new HTMLLabel("FALSE"));
+        
+        return table;
+    }
 
     private static boolean isEnumType(Class clazz) {
         return clazz.isEnum();
+    }
+    
+    private static boolean isBoolType(Class clazz) {
+        return Boolean.class.equals(clazz) || (clazz != null && clazz.isPrimitive() && "boolean".equals(clazz.getName()));
     }
 
     private static boolean isArrayType(Class clazz) {
@@ -327,7 +344,14 @@ public class MethodInvokerPage extends Page {
             row.addColumn(new HTMLLabel(""));
         }
         table.addRow(row);
-        if (paramType.isEnum()) {
+        if (isBoolType(paramType)) {
+            HTMLSelect select = new HTMLSelect(propertyName);
+            
+            select.addOption(new HTMLOption("TRUE", new HTMLLabel("TRUE")));
+            select.addOption(new HTMLOption("FALSE", new HTMLLabel("FALSE")));
+            
+            row.addColumn(select);
+        } else if (paramType.isEnum()) {
             HTMLSelect select = new HTMLSelect(propertyName);
             for (Object name : paramType.getEnumConstants()) {
                 select.addOption(new HTMLOption(name.toString(), new HTMLLabel(name.toString())));
