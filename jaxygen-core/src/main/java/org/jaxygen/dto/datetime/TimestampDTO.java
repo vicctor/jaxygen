@@ -15,6 +15,7 @@
  */
 package org.jaxygen.dto.datetime;
 
+import java.io.Serializable;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.QueryMessage;
 
@@ -24,7 +25,7 @@ import org.jaxygen.annotations.QueryMessage;
  */
 @QueryMessage
 @NetAPI(description="Class handles the timestamp")
-public class TimestampDTO {
+public class TimestampDTO implements Serializable{
     private DateDTO date;
     private TimeDTO time;
 
