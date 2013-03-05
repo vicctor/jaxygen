@@ -24,15 +24,15 @@ import java.util.Collection;
  *
  * @author ak
  */
-public class PaginableCollectionResponseBaseDTO<T extends Collection> implements Serializable{
-    private T elements;
+public class PaginableListResponseBaseDTO<T> implements Serializable{
+    private Collection<T> elements;
     private long size;
 
-    public T getElements() {
+    public Collection<T> getElements() {
         return elements;
     }
 
-    public void setElements(T elements) {
+    public void setElements(Collection<T> elements) {
         this.elements = elements;
     }
 

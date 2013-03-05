@@ -23,7 +23,7 @@ import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.dto.collections.PaginableBaseRequestDTO;
-import org.jaxygen.dto.collections.PaginableCollectionResponseBaseDTO;
+import org.jaxygen.dto.collections.PaginableListResponseBaseDTO;
 import org.jaxygen.netserviceapisample.business.dto.*;
 import org.jaxygen.util.BeanUtil;
 
@@ -81,9 +81,9 @@ public class DTOSample {
   }
   
   @NetAPI(description = "Sample with paginable collection response")
-  public PaginableCollectionResponseBaseDTO<List<String>> getCollection(PaginableBaseRequestDTO request) {
-    PaginableCollectionResponseBaseDTO<List<String>> rc = new PaginableCollectionResponseBaseDTO<List<String>>();
-    List<String> elements = new ArrayList<String>();
+  public PaginableListResponseBaseDTO<String> getCollection(PaginableBaseRequestDTO request) {
+    PaginableListResponseBaseDTO<String> rc = new PaginableListResponseBaseDTO<String>();
+    List<String> elements = new ArrayList<String>((int)request.getPageSize());
     rc.setElements(elements);
     rc.setSize(request.getPageSize());
     
