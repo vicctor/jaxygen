@@ -25,5 +25,6 @@ package org.jaxygen.annotations;
     Mockup,            /** Method is implemened just as a mockup. It gives a result which fullfills the application design rules */
     Nonfunctional,     /** Method is implemented but not functional */
     ReleaseCandidate,  /** Method is implemented and realy for testing */
-    GenerallyAvailable /** Method is implemented and accepted by testers team */
+    GenerallyAvailable,/** Method is implemented and accepted by testers team */
+    Deprected          /** Method has been marked as deprected, subject to remove in the next version */ 
   }
