@@ -14,6 +14,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.NetAPI;
+import org.jaxygen.converters.json.JsonHRResponseConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.dto.Uploadable;
 import org.jaxygen.netservice.html.*;
@@ -74,6 +75,7 @@ public class MethodInvokerPage extends Page {
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "className", classFilter);
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "methodName", methodFilter);
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "inputType", "PROPERTIES");
+        propertiesInputForm.appendInput(HTMLInput.Type.hidden, "outputType", JsonHRResponseConverter.NAME);
 
 
         Class handerClass = Thread.currentThread().getContextClassLoader().loadClass(classFilter);
