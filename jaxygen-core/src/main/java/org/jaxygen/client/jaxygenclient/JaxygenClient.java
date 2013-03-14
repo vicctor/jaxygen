@@ -13,6 +13,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -34,10 +37,15 @@ import org.jaxygen.dto.Response;
  */
 public class JaxygenClient {
 
-  String servicePath;
-  String url;
-  Gson gson = new Gson();
-  Charset charset = Charset.forName("UTF-8");
+  private String servicePath;
+  private String url;
+  private Gson gson = new Gson();
+  private Charset charset = Charset.forName("UTF-8");
+  private Session session = new Session();
+  
+  private class Session {
+    public List<String> cookies= new ArrayList<String>();  
+  };
 
   private class IOProxy extends InputStream implements Appendable {
 
@@ -79,15 +87,27 @@ public class JaxygenClient {
   private class Handler implements InvocationHandler {
 
     private String urlBase;
+    private Session session;
 
-    public Handler(String urlBase) {
+    public Handler(String urlBase, Session session) {
       this.urlBase = urlBase;
+      this.session = session;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
       final String methodUrl = urlBase + "/" + method.getName();
       HttpPost post = new HttpPost(methodUrl);
       MultipartEntity mp = new MultipartEntity();
+      
+      if (session.cookies != null) {
+        StringBuilder cookiesStr = new StringBuilder();
+        for (String cookie : session.cookies) {
+          cookiesStr.append(cookie);
+          cookiesStr.append(";");         
+        }
+        post.setHeader("Cookie",cookiesStr.substring(0));
+      }
+      
       if (args != null) {
         for (Object o : args) {
           IOProxy p = new IOProxy();
@@ -103,6 +123,14 @@ public class JaxygenClient {
       HttpResponse response = new DefaultHttpClient().execute(post);
       final HttpEntity e = response.getEntity();
 
+      
+     Header[] hCookies = response.getHeaders("Set-Cookie");
+     if (hCookies != null) {
+       for (Header h : hCookies) {
+         session.cookies.add(h.getValue());
+       }
+     }
+      
       ObjectInputStream osi = null;
       final StringBuffer sb = new StringBuffer();
       try {
@@ -122,7 +150,7 @@ public class JaxygenClient {
           return wrappedResponse.getDto().getResponseObject();
         } catch (Throwable ex) {
           throw new InvocationTargetException(ex, "Unexpected server response: " + sb.toString());
-        }
+        }                        
       } finally {
         if (osi != null) {
           osi.close();
@@ -135,11 +163,11 @@ public class JaxygenClient {
     this.url = homeURL;
   }
 
-  public Object lookup(final String className, Class<?> remoteInterface) {
+  public <T> T lookup(final String className, Class<T> remoteInterface) {
     Class<?> interfaces[] = {remoteInterface};
-    return java.lang.reflect.Proxy.newProxyInstance(
+    return (T)java.lang.reflect.Proxy.newProxyInstance(
             remoteInterface.getClassLoader(),
             interfaces,
-            new Handler(url + "/" + className));
+            new Handler(url + "/" + className, session));
   }
 }
