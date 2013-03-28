@@ -4,12 +4,16 @@
  */
 package org.jaxygen.security.basic;
 
-/**Class describes single method that is alowed by the 
+import java.io.Serializable;
+
+/**Class describes single method that is allowed by the 
  * security system for execution in given security context
  *
  * @author artur
  */
-public class SecuredMethodDescriptor {
+public class SecuredMethodDescriptor implements Serializable {
+  private static final long serialVersionUID = 1678636735L;
+  
 
     private String className;
     private String methodName;

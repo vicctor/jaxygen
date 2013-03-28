@@ -6,6 +6,7 @@ package org.jaxygen.dto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 
@@ -15,7 +16,8 @@ import java.nio.charset.Charset;
  */
 public class ExceptionResponse extends Response {
 
- public static class ExceptionData {
+ public static class ExceptionData implements Serializable {
+    private static final long serialVersionUID = 133887542L;
 
   private String name;
   private String description;
@@ -71,5 +73,9 @@ public class ExceptionResponse extends Response {
   ByteArrayOutputStream bo = new ByteArrayOutputStream();  
   ex.printStackTrace(new PrintWriter(bo));
   exception.setStackTrace(new String(bo.toByteArray(),Charset.defaultCharset()));
+ }
+ 
+ public ExceptionData getExceptionData() {
+   return exception;
  }
 }

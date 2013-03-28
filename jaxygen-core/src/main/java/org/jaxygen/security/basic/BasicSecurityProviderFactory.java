@@ -18,10 +18,10 @@ import org.jaxygen.security.basic.annotations.UserProfile;
 
 /**
  * Security provider factory. This factor creates simple security provider
- * alowing the netservice to verify if the given method is alowed or not by the
+ * allowing the netservice to verify if the given method is allowed or not by the
  * system.
  *
- * This provider broses all classes withing classes registry and checks against
+ * This provider browses all classes within classes registry and checks against
  * UserProfile annotations. Follow UserProfile annotations the security groups
  * are assigned to particular methods.
  *
@@ -79,10 +79,14 @@ public class BasicSecurityProviderFactory implements SecurityProviderFactory {
  @Override
  public SecurityProfile getProvider() {
   return new SecurityProfile() {
-
    @Override
    public SecuredMethodDescriptor isAllowed(final String className, final String methodName) {
     return alowedMethods.get(className + "#" + methodName);
+   }
+   
+   @Override
+   public String[] getAllowedMethodDescriptors() {
+     return alowedMethods.keySet().toArray(new String[alowedMethods.size()]);
    }
 
    @Override

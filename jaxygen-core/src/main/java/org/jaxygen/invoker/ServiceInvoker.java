@@ -32,6 +32,7 @@ import org.jaxygen.converters.xml.XMLResponseConverter;
 import org.jaxygen.dto.Downloadable;
 import org.jaxygen.dto.ExceptionResponse;
 import org.jaxygen.dto.Response;
+import org.jaxygen.dto.security.SecurityProfileDTO;
 import org.jaxygen.exceptions.InvalidPropertyFormat;
 import org.jaxygen.exceptions.ParametersError;
 import org.jaxygen.http.HttpRequestParams;
@@ -45,10 +46,10 @@ import org.jaxygen.security.exceptions.NotAlowed;
 import org.jaxygen.util.BeanUtil;
 
 public class ServiceInvoker extends HttpServlet {
-  
+
   private static final long serialVersionUID = 566338505269576162L;
   private static final Logger log = Logger.getLogger(ServiceInvoker.class.getCanonicalName());
-  
+
   static {
     // Register default converters
     ConvertersFactory.registerRequestConverter(new PropertiesToBeanConverter());
@@ -60,13 +61,13 @@ public class ServiceInvoker extends HttpServlet {
     ConvertersFactory.registerResponseConverter(new XMLResponseConverter());
     ConvertersFactory.registerResponseConverter(new JsonHRResponseConverter());
   }
-  
+
   @Override
   protected void doGet(HttpServletRequest request,
           HttpServletResponse response) throws ServletException, IOException {
-    
+
     request.setCharacterEncoding("UTF-8");
-    
+
     HttpRequestParams params = null;
     HttpSession session = request.getSession(true);
     try {
@@ -77,24 +78,24 @@ public class ServiceInvoker extends HttpServlet {
     final String beensPath = getServletContext().getInitParameter("servicePath");
     final String resourcePath = request.getPathInfo();
     final String queryString = request.getQueryString();
-    
-    
+
+
     final String inputFormat = params.getAsString("inputType", 0, 32, PropertiesToBeanConverter.NAME);
     final String outputFormat = params.getAsString("outputType", 0, 32, JsonResponseConverter.NAME);
-    
+
     ResponseConverter responseConverter = ConvertersFactory.getResponseConverter(outputFormat);
     if (responseConverter == null) {
       responseConverter = new JsonResponseConverter();
     }
-    
+
     String query = "";
-    
+
     if (queryString != null) {
       query = URLDecoder.decode(queryString, "UTF-8");
     }
-    
+
     log("Requesting resource" + resourcePath);
-    
+
     String[] chunks = resourcePath.split("/");
     if (chunks.length < 2) {
       Logger.getLogger(ServiceInvoker.class.getName()).log(Level.SEVERE, "Invalid request, must be in format class/method");
@@ -102,8 +103,8 @@ public class ServiceInvoker extends HttpServlet {
     }
     final String methodName = chunks[chunks.length - 1];
     final String className = beensPath + "." + chunks[chunks.length - 2];
-    
-    
+
+
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
     Method[] methods;
     try {
@@ -127,8 +128,17 @@ public class ServiceInvoker extends HttpServlet {
                 if (o instanceof Downloadable) {
                   postFile(response, (Downloadable) o);
                 } else {
-                  response.setCharacterEncoding("UTF-8");                  
-                  sendSerializedResponse(o, responseConverter, response);
+                  if (o instanceof SecurityProfile) {
+                    SecurityProfileDTO profileDto = new SecurityProfileDTO();
+                    SecurityProfile profile = (SecurityProfile) o;
+                    profileDto.setGroups(profile.getUserGroups());
+                    profileDto.setAllowedMethods(profile.getAllowedMethodDescriptors());
+                    response.setCharacterEncoding("UTF-8");
+                    sendSerializedResponse(profileDto, responseConverter, response);
+                  } else {
+                    response.setCharacterEncoding("UTF-8");
+                    sendSerializedResponse(o, responseConverter, response);
+                  }
                 }
                 if (m.isAnnotationPresent(LoginMethod.class)) {
                   if (!(o instanceof SecurityProfile)) {
@@ -139,15 +149,15 @@ public class ServiceInvoker extends HttpServlet {
                 if (m.isAnnotationPresent(LogoutMethod.class)) {
                   detachSecurityContext(session);
                 }
-              } catch (InvocationTargetException ex) {                
-                throwError(response, responseConverter, "Call to bean failed : " + ex.getTargetException().getMessage(), ex);
+              } catch (InvocationTargetException ex) {
+                throwError(response, responseConverter, "Call to bean failed : " + ex.getTargetException().getMessage(), ex.getTargetException());
               } catch (Exception ex) {
                 throwError(response, responseConverter, "Call to bean failed : " + ex.getMessage(), ex);
               }
             } catch (Exception ex) {
               throwError(response, responseConverter, "Cann not intanitiate class " + clazz.getCanonicalName(), ex);
             }
-            
+
           }
         }
         if (!methodFound) {
@@ -156,20 +166,20 @@ public class ServiceInvoker extends HttpServlet {
       } else {
         throwError(response, responseConverter, "InternalError", "Class '" + className + "' not fount");
       }
-      
+
     } catch (ClassNotFoundException ex) {
       throwError(response, responseConverter, "Class '" + className + "' not fount", ex);
-      
+
     } finally {
       if (params != null) {
         params.dispose();
       }
     }
-    
-    
-    
+
+
+
   }
-  
+
   private Object[] parseParameters(final Class<?>[] parameterTypes, final String inputFormat, HttpRequestParams params, String query) throws ParametersError {
     Object parameters[] = new Object[parameterTypes.length];
     int i = 0;
@@ -188,14 +198,14 @@ public class ServiceInvoker extends HttpServlet {
     }
     return parameters;
   }
-  
+
   private static void callSetter(Field f, Object been, Object sp) throws SecurityException, IllegalArgumentException, IllegalAccessException {
     boolean accessibility = f.isAccessible();
     f.setAccessible(true);
     f.set(been, sp);
     f.setAccessible(accessibility);
   }
-  
+
   private void throwError(HttpServletResponse response, ResponseConverter converter, String string, Throwable ex) throws ServletException, IOException {
     log.log(Level.SEVERE, string, ex);
     ExceptionResponse resp = new ExceptionResponse(ex, string);
@@ -205,7 +215,7 @@ public class ServiceInvoker extends HttpServlet {
       log.log(Level.SEVERE, "Server was unable to inform peer about exception", ex);
     }
   }
-  
+
   private void throwError(HttpServletResponse response, ResponseConverter converter, final String codeName, String message) throws ServletException, IOException {
     log.log(Level.SEVERE, message);
     ExceptionResponse resp = new ExceptionResponse(codeName, message);
@@ -215,7 +225,7 @@ public class ServiceInvoker extends HttpServlet {
       log.log(Level.SEVERE, "Server was unable to inform peer about exception", ex1);
     }
   }
-  
+
   private void postFile(HttpServletResponse response, Downloadable downloadable) throws IOException {
     final String fileName = downloadable.getFileName();
     System.out.println("!!!!!! filename=" + fileName);
@@ -225,25 +235,25 @@ public class ServiceInvoker extends HttpServlet {
     IOUtils.copy(downloadable.getStream(), response.getOutputStream());
     downloadable.dispose();
   }
-  
+
   @Override
   protected void doPost(HttpServletRequest request,
           HttpServletResponse response) throws ServletException, IOException {
     System.out.println("POST");
     doGet(request, response);
   }
-  
+
   private void attachSecurityContextToSession(HttpSession session, SecurityProfile securityProvider) {
     session.setAttribute(SecurityProfile.class.getCanonicalName(), securityProvider);
   }
-  
+
   private void checkMethodAllowed(HttpSession session, final String clazz, Method method) throws NotAlowed {
     SecurityProfile sp = (SecurityProfile) session.getAttribute(SecurityProfile.class.getCanonicalName());
     if (method.isAnnotationPresent(Secured.class) && (sp == null || sp.isAllowed(clazz, method.getName()) == null)) {
       throw new NotAlowed(clazz, method.getName());
     }
   }
-  
+
   private void detachSecurityContext(HttpSession session) {
     session.setAttribute(SecurityProfile.class.getCanonicalName(), null);
   }
@@ -266,7 +276,7 @@ public class ServiceInvoker extends HttpServlet {
       }
     }
   }
-  
+
   private void validate(Object[] parameters) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, InvalidPropertyFormat {
     for (Object o : parameters) {
       if (o.getClass().isAnnotationPresent(Validable.class)) {
@@ -274,7 +284,7 @@ public class ServiceInvoker extends HttpServlet {
       }
     }
   }
-  
+
   private void sendSerializedResponse(Object o, ResponseConverter converter, HttpServletResponse response) throws SerializationError, IOException, ServletException {
     Response responseWraper = new Response(o);
     converter.serialize(responseWraper, response.getOutputStream());

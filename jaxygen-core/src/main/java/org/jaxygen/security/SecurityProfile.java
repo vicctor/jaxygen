@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jaxygen.security;
 
 import org.jaxygen.security.basic.SecuredMethodDescriptor;
@@ -11,7 +7,7 @@ import org.jaxygen.security.basic.SecuredMethodDescriptor;
  * @author artur
  */
 public interface SecurityProfile {
-    /**Returns an array of user profiles boud to this provider.
+    /**Returns an array of user profiles bound to this provider.
      * 
      * @return 
      */
@@ -24,4 +20,10 @@ public interface SecurityProfile {
      * @return 
      */
     SecuredMethodDescriptor isAllowed(final String className, final String methodName);
+    
+    /** Get the list of allowed methods
+     * 
+     * @return Each method is described by token className#methodName
+     */
+    String[] getAllowedMethodDescriptors();
 }

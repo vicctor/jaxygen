@@ -28,11 +28,14 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jaxygen.converters.json.JsonMultipartRequestConverter;
 import org.jaxygen.converters.sjo.SJOResponseConverter;
+import org.jaxygen.dto.ExceptionResponse;
 import org.jaxygen.dto.Response;
+import org.jaxygen.dto.security.SecurityProfileDTO;
+import org.jaxygen.security.SecurityProfile;
+import org.jaxygen.security.basic.SecuredMethodDescriptor;
 
 /**
- * Class enables Java applications for accessing Jaxygen web interface using
- * synchronous call.
+ * Class enables Java applications for accessing Jaxygen web interface using synchronous call.
  *
  */
 public class JaxygenClient {
@@ -42,9 +45,10 @@ public class JaxygenClient {
   private Gson gson = new Gson();
   private Charset charset = Charset.forName("UTF-8");
   private Session session = new Session();
-  
+
   private class Session {
-    public List<String> cookies= new ArrayList<String>();  
+
+    public List<String> cookies = new ArrayList<String>();
   };
 
   private class IOProxy extends InputStream implements Appendable {
@@ -98,16 +102,16 @@ public class JaxygenClient {
       final String methodUrl = urlBase + "/" + method.getName();
       HttpPost post = new HttpPost(methodUrl);
       MultipartEntity mp = new MultipartEntity();
-      
+
       if (session.cookies != null) {
         StringBuilder cookiesStr = new StringBuilder();
         for (String cookie : session.cookies) {
           cookiesStr.append(cookie);
-          cookiesStr.append(";");         
+          cookiesStr.append(";");
         }
-        post.setHeader("Cookie",cookiesStr.substring(0));
+        post.setHeader("Cookie", cookiesStr.substring(0));
       }
-      
+
       if (args != null) {
         for (Object o : args) {
           IOProxy p = new IOProxy();
@@ -123,14 +127,14 @@ public class JaxygenClient {
       HttpResponse response = new DefaultHttpClient().execute(post);
       final HttpEntity e = response.getEntity();
 
-      
-     Header[] hCookies = response.getHeaders("Set-Cookie");
-     if (hCookies != null) {
-       for (Header h : hCookies) {
-         session.cookies.add(h.getValue());
-       }
-     }
-      
+
+      Header[] hCookies = response.getHeaders("Set-Cookie");
+      if (hCookies != null) {
+        for (Header h : hCookies) {
+          session.cookies.add(h.getValue());
+        }
+      }
+
       ObjectInputStream osi = null;
       final StringBuffer sb = new StringBuffer();
       try {
@@ -144,18 +148,57 @@ public class JaxygenClient {
             return b;
           }
         };
+        Throwable appException = null;
         try {
           osi = new ObjectInputStream(inputProxy);
           Response wrappedResponse = (Response) osi.readObject();
-          return wrappedResponse.getDto().getResponseObject();
+          if (wrappedResponse instanceof ExceptionResponse) {
+            ExceptionResponse exr = (ExceptionResponse) wrappedResponse;
+            Class<Throwable> exClass = (Class<Throwable>) getClass().getClassLoader().loadClass(exr.getExceptionData().getExceptionClass());
+            appException = exClass.newInstance();
+          }
+          if (appException == null) {
+            if (SecurityProfile.class.equals(method.getReturnType())) {
+              return convertDtoToSecurityProfile((SecurityProfileDTO) wrappedResponse.getDto().getResponseObject());
+            } else {
+              return wrappedResponse.getDto().getResponseObject();
+            }
+          }
         } catch (Throwable ex) {
           throw new InvocationTargetException(ex, "Unexpected server response: " + sb.toString());
-        }                        
+        }
+        if (appException != null) {
+          throw appException;
+        }
       } finally {
         if (osi != null) {
           osi.close();
         }
       }
+      return null;
+    }
+
+    private SecurityProfile convertDtoToSecurityProfile(final SecurityProfileDTO dto) {
+
+      return new SecurityProfile() {
+        public String[] getUserGroups() {
+          return dto.getGroups();
+        }
+
+        public SecuredMethodDescriptor isAllowed(String className, String methodName) {
+          String idt = className + "#" + methodName;
+          for (String md : dto.getAllowedMethods()) {
+            if (idt.equals(md)) {
+              return new SecuredMethodDescriptor(className, methodName);
+            }
+          }
+          return null;
+        }
+
+        public String[] getAllowedMethodDescriptors() {
+          return dto.getAllowedMethods();
+        }
+      };
     }
   };
 
@@ -165,7 +208,7 @@ public class JaxygenClient {
 
   public <T> T lookup(final String className, Class<T> remoteInterface) {
     Class<?> interfaces[] = {remoteInterface};
-    return (T)java.lang.reflect.Proxy.newProxyInstance(
+    return (T) java.lang.reflect.Proxy.newProxyInstance(
             remoteInterface.getClassLoader(),
             interfaces,
             new Handler(url + "/" + className, session));
