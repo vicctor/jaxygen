@@ -116,8 +116,8 @@ public class ServiceInvoker extends HttpServlet {
           if (m.isAnnotationPresent(NetAPI.class)
                   && m.getName().equals(methodName)) {
             try {
-              checkMethodAllowed(session, clazz.getCanonicalName(), m);
               methodFound = true;
+              checkMethodAllowed(session, clazz.getCanonicalName(), m);
               final Class<?>[] parameterTypes = m.getParameterTypes();
               Object[] parameters = parseParameters(parameterTypes, inputFormat, params, query);
               Object been = clazz.newInstance();
