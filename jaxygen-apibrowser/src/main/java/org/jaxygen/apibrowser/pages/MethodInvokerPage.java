@@ -278,11 +278,11 @@ public class MethodInvokerPage extends Page {
           }
           if (multiplicity == 0) {
              renderFieldInputRow(request, table, parentFieldName + propertyName
-                      + "[]", counterName, defaultValue, componentType, 0);
+                      + "[]", counterName, null, componentType, 0);
           } else {
             for (int i = 0; i < multiplicity; i++) {
               renderFieldInputRow(request, table, parentFieldName + propertyName
-                      + "[" + i + "]", counterName, defaultValue, componentType, multiplicity);
+                      + "[" + i + "]", counterName, null, componentType, multiplicity);
             }
           }
         } else {
