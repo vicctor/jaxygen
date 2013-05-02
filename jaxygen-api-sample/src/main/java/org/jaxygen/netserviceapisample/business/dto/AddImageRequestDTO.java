@@ -18,7 +18,7 @@ package org.jaxygen.netserviceapisample.business.dto;
 import org.jaxygen.annotations.QueryMessage;
 import org.jaxygen.dto.Uploadable;
 
-/**This is a sample request contating file uploaded over HTTP
+/**This is a sample request containing file uploaded over HTTP
  *
  * @author Artur keska
  */
