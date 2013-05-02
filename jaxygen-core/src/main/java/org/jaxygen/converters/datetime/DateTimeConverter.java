@@ -48,4 +48,16 @@ public class DateTimeConverter {
         t.setDate(calendarToDate(calendar));
         return t;
     }
+    
+    public static Calendar timestampToCalendar(TimestampDTO ts) {
+      Calendar c = Calendar.getInstance();
+      c.set(Calendar.YEAR, ts.getDate().getYear());
+      c.set(Calendar.MONTH, ts.getDate().getMontOfYear());
+      c.set(Calendar.DAY_OF_MONTH, ts.getDate().getDayOfMonth());
+      
+      c.set(Calendar.HOUR_OF_DAY, ts.getTime().getHour());
+      c.set(Calendar.MINUTE, ts.getTime().getMinute());
+      c.set(Calendar.SECOND, ts.getTime().getSec());
+      return c;
+    }
 }
