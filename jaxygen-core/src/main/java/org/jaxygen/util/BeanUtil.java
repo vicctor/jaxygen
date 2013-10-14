@@ -50,6 +50,12 @@ public class BeanUtil {
             Method setter = cClass.getMethod(setterName, params);
             if (!setter.isAnnotationPresent(BeanTransient.class)) {
               Object args[] = {getter.invoke(from, getterValues)};
+              if (setter.getParameterTypes().length != 1) {
+                 throw new java.lang.IllegalArgumentException("setter must accept one parameter: " + setter.getName());
+              }
+              if (setter.getParameterTypes()[0].equals(getter.getReturnType()) == false) {
+                throw new java.lang.IllegalArgumentException("Type of setter " + cClass.getName() + "." + setter.getName() + " is " + setter.getParameterTypes()[0] + " not match geter return type " +from.getClass() + "." + getter.getReturnType().getName()); 
+              }
               setter.invoke(to, args);
             }
           }
