@@ -28,17 +28,16 @@ public class MethodInvokerPage extends Page {
 
   public static final String NAME = "MethodInvokerPage";
   private final String beensPath;
-  private final String browserPath;
-  private final String invokerPath;
+  
 
   public MethodInvokerPage(ServletContext context,
-          HttpServletRequest request) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException {
-    super(context);
+          HttpServletRequest request, String classRegistry) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException {
+    super(context, request, classRegistry);
     final String className = request.getParameter("className");
     final String method = request.getParameter("methodName");
     this.beensPath = context.getInitParameter("servicePath");
-    this.browserPath = request.getContextPath() + "/APIBrowser";
-    this.invokerPath = request.getContextPath() + "/invoker";
+    
+    
 
     renderClassForm(request, className, method);
   }

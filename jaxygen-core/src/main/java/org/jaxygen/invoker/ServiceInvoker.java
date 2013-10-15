@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +50,8 @@ public class ServiceInvoker extends HttpServlet {
 
   private static final long serialVersionUID = 566338505269576162L;
   private static final Logger log = Logger.getLogger(ServiceInvoker.class.getCanonicalName());
+  public static final String SERVICE_PATH = "servicePath";
+  private String beensPath = null;
 
   static {
     // Register default converters
@@ -60,6 +63,12 @@ public class ServiceInvoker extends HttpServlet {
     ConvertersFactory.registerResponseConverter(new SJOResponseConverter());
     ConvertersFactory.registerResponseConverter(new XMLResponseConverter());
     ConvertersFactory.registerResponseConverter(new JsonHRResponseConverter());
+  }
+
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    beensPath = config.getInitParameter(SERVICE_PATH);
   }
 
   @Override
@@ -75,10 +84,11 @@ public class ServiceInvoker extends HttpServlet {
     } catch (Exception ex) {
       throwError(response, new JsonResponseConverter(), "Could nor parse properties", ex);
     }
-    final String beensPath = getServletContext().getInitParameter("servicePath");
+    if (beensPath == null) {
+      beensPath = getServletContext().getInitParameter(SERVICE_PATH);
+    }
     final String resourcePath = request.getPathInfo();
     final String queryString = request.getQueryString();
-
 
     final String inputFormat = params.getAsString("inputType", 0, 32, PropertiesToBeanConverter.NAME);
     final String outputFormat = params.getAsString("outputType", 0, 32, JsonResponseConverter.NAME);
@@ -103,7 +113,6 @@ public class ServiceInvoker extends HttpServlet {
     }
     final String methodName = chunks[chunks.length - 1];
     final String className = beensPath + "." + chunks[chunks.length - 2];
-
 
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
     Method[] methods;
@@ -175,8 +184,6 @@ public class ServiceInvoker extends HttpServlet {
         params.dispose();
       }
     }
-
-
 
   }
 

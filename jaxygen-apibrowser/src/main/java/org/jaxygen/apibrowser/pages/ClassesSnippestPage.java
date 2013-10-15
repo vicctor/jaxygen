@@ -40,8 +40,8 @@ public class ClassesSnippestPage extends Page {
  public static final String NAME = "ClassesSnippestPage";
  private final String browserPath;
 
- public ClassesSnippestPage(ServletContext context, HttpServletRequest request) throws ServletException {
-  super(context);
+ public ClassesSnippestPage(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
+  super(context, request, classRegistry);
   browserPath = request.getContextPath() + "/APIBrowser";
   append(renderClassesList());
  }

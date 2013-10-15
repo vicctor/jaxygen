@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.ServerException;
 import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,15 @@ import org.jaxygen.apibrowser.pages.Page;
  * @author Artur Keska
  */
 public class APIBrowser extends HttpServlet {
+  private String classRegistryName = null;
+  
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    classRegistryName = config.getInitParameter("classRegistry");
+  }
+  
+  
 
  /**
   * Processes requests for both HTTP
@@ -79,13 +89,13 @@ public class APIBrowser extends HttpServlet {
   Page page;
   final String pageName = request.getParameter("page");
   if (ClassMethodsPage.NAME.equals(pageName)) {
-   page = new ClassMethodsPage(getServletContext(), request);
+   page = new ClassMethodsPage(getServletContext(), request, classRegistryName);
   } else if (MethodInvokerPage.NAME.equals(pageName)) {
-   page = new MethodInvokerPage(getServletContext(), request);
+   page = new MethodInvokerPage(getServletContext(), request, classRegistryName);
   } else if (ClassesListPage.NAME.equals(pageName)) {
-   page = new ClassesListPage(getServletContext(), request);
+   page = new ClassesListPage(getServletContext(), request, classRegistryName);
   } else {
-   page = new ClassesSnippestPage(getServletContext(), request);
+   page = new ClassesSnippestPage(getServletContext(), request, classRegistryName);
   }
   response.getWriter().append(page.render());
  }

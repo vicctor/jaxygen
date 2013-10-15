@@ -4,8 +4,10 @@
  */
 package org.jaxygen.apibrowser.pages;
 
+import java.io.File;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.invoker.ClassRegistry;
 import org.jaxygen.netservice.html.*;
 
@@ -16,20 +18,36 @@ import org.jaxygen.netservice.html.*;
 public class Page implements HTMLElement {
   protected ClassRegistry registry;
     
-  private HTML html = new HTML();
-  private HTMLBody body = new HTMLBody();
-  private HTMLHead head = new HTMLHead();
+  private final HTML html = new HTML();
+  private final HTMLBody body = new HTMLBody();
+  private final HTMLHead head = new HTMLHead();
+  
+  
+  protected String home;
+  protected String servletContext;
+  protected String browserPath;
+  protected String invokerPath;
 
-  public Page(ServletContext context) throws ServletException {
-    openClassRegistry(context);
+  public Page(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
+    final String serletPath = request.getServletPath();
+    this.browserPath = serletPath;
+    this.home = new File(serletPath).getParent();
+    this.invokerPath = home + "/invoker";
+    this.servletContext = context.getContextPath();
+    
+    String classRegistryName = classRegistry;
+    if (classRegistryName == null) {
+       classRegistryName  = context.getInitParameter("classRegistry");
+    }
+    openClassRegistry(classRegistryName);
     
     HTMLLinkCSS css = new HTMLLinkCSS();
-    css.setHref("css/org/jaxygen/apibrowser/page.css");
+    css.setHref(servletContext + "/css/org/jaxygen/apibrowser/page.css");
     
     head.append(css);
     
     css = new HTMLLinkCSS();
-    css.setHref("css/org/jaxygen/apibrowser/classes-snippest.css");    
+    css.setHref(servletContext + "/css/org/jaxygen/apibrowser/classes-snippest.css");    
     
     head.append(css);
     
@@ -56,9 +74,9 @@ public class Page implements HTMLElement {
     return html.render();
   }
 
-  private void openClassRegistry(ServletContext context) throws ServletException {
+  private void openClassRegistry(String registryClassName) throws ServletException {
 
-    final String registryClassName = context.getInitParameter("classRegistry");
+   
     if (registryClassName != null) {
       try {
         Class<ClassRegistry> registryClass = (Class<ClassRegistry>) Thread.currentThread().getContextClassLoader().loadClass(registryClassName);

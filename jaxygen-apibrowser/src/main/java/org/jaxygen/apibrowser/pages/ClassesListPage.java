@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jaxygen.apibrowser.pages;
 
 import org.jaxygen.netservice.html.HTMAnchor;
@@ -29,8 +25,8 @@ public class ClassesListPage extends Page {
   
   private final String browserPath;
 
-  public ClassesListPage(ServletContext context, HttpServletRequest request) throws ServletException {
-    super(context);
+  public ClassesListPage(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
+    super(context, request, classRegistry);
     browserPath = request.getContextPath() + "/APIBrowser";
     append(renderClassesList());
   }

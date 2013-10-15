@@ -35,8 +35,8 @@ public class ClassMethodsPage extends Page {
 
   public static final String NAME = "ClassMethodsPage";
 
-  public ClassMethodsPage(ServletContext context, HttpServletRequest request) throws ServletException {
-    super(context);
+  public ClassMethodsPage(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
+    super(context, request, classRegistry);
     final String className = request.getParameter("className");
     super.append(renderClassMethods(className));
   }
