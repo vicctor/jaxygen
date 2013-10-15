@@ -27,7 +27,6 @@ import org.jaxygen.netservice.html.HTMAnchor;
 import org.jaxygen.netservice.html.HTMLDiv;
 import org.jaxygen.netservice.html.HTMLElement;
 import org.jaxygen.netservice.html.HTMLLabel;
-import org.jaxygen.netservice.html.HTMLParagraph;
 import org.jaxygen.netservice.html.HTMLTable;
 import org.jaxygen.url.UrlQuery;
 
