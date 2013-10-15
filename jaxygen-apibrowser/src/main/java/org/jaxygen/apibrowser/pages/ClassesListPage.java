@@ -23,11 +23,10 @@ import org.jaxygen.url.UrlQuery;
 public class ClassesListPage extends Page {  
   public static final String NAME = "ClassesListPage";
   
-  private final String browserPath;
+
 
   public ClassesListPage(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
     super(context, request, classRegistry);
-    browserPath = request.getContextPath() + "/APIBrowser";
     append(renderClassesList());
   }
 
