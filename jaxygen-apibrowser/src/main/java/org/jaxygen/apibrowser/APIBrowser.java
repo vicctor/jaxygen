@@ -39,11 +39,13 @@ import org.jaxygen.apibrowser.pages.Page;
  */
 public class APIBrowser extends HttpServlet {
   private String classRegistryName = null;
+  private String beansPathName = null;
   
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
     classRegistryName = config.getInitParameter("classRegistry");
+    beansPathName = config.getInitParameter("servicePath");
   }
   
   
@@ -89,13 +91,13 @@ public class APIBrowser extends HttpServlet {
   Page page;
   final String pageName = request.getParameter("page");
   if (ClassMethodsPage.NAME.equals(pageName)) {
-   page = new ClassMethodsPage(getServletContext(), request, classRegistryName);
+   page = new ClassMethodsPage(getServletContext(), request, classRegistryName, beansPathName);
   } else if (MethodInvokerPage.NAME.equals(pageName)) {
-   page = new MethodInvokerPage(getServletContext(), request, classRegistryName);
+   page = new MethodInvokerPage(getServletContext(), request, classRegistryName, beansPathName);
   } else if (ClassesListPage.NAME.equals(pageName)) {
-   page = new ClassesListPage(getServletContext(), request, classRegistryName);
+   page = new ClassesListPage(getServletContext(), request, classRegistryName, beansPathName);
   } else {
-   page = new ClassesSnippestPage(getServletContext(), request, classRegistryName);
+   page = new ClassesSnippestPage(getServletContext(), request, classRegistryName, beansPathName);
   }
   response.getWriter().append(page.render());
  }

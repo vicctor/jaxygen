@@ -39,8 +39,8 @@ public class ClassesSnippestPage extends Page {
  public static final String NAME = "ClassesSnippestPage";
 
 
- public ClassesSnippestPage(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
-  super(context, request, classRegistry);
+ public ClassesSnippestPage(ServletContext context, HttpServletRequest request, String classRegistry, String beansPath) throws ServletException {
+  super(context, request, classRegistry, beansPath);
   append(renderClassesList());
  }
 
@@ -56,13 +56,13 @@ public class ClassesSnippestPage extends Page {
  private HTMLElement renderClassesList() {
   HTMLElement rc;
   int i;
-  if (registry != null) {
+  if (getRegistry() != null) {
    HTMLTable table = new HTMLTable();
    table.setCSSClassName("jaxygen-classes-snipest");
 
    table.getHeader().createColumns("className", "Description", "Methods");
    boolean even = false;
-   for (Class c : registry.getRegisteredClasses()) {
+   for (Class c : getRegistry().getRegisteredClasses()) {
     HTMLTable.Row row = new HTMLTable.Row();
     row.setCSSClassName("jaxygen-row-" + (even ? "even" : "odd"));
     even = !even;

@@ -35,8 +35,8 @@ public class ClassMethodsPage extends Page {
 
   public static final String NAME = "ClassMethodsPage";
 
-  public ClassMethodsPage(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
-    super(context, request, classRegistry);
+  public ClassMethodsPage(ServletContext context, HttpServletRequest request, String classRegistry, String beansPath) throws ServletException {
+    super(context, request, classRegistry, beansPath);
     final String className = request.getParameter("className");
     super.append(renderClassMethods(className));
   }
@@ -96,7 +96,7 @@ public class ClassMethodsPage extends Page {
 
   private Class getRegisteredClassByName(String className) {
     Class rc = null;
-    for (Class c : registry.getRegisteredClasses()) {
+    for (Class c : getRegistry().getRegisteredClasses()) {
       if (c.getName().equals(className)) {
         rc = c;
         break;

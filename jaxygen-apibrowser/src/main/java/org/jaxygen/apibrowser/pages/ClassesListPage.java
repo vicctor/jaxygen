@@ -25,8 +25,8 @@ public class ClassesListPage extends Page {
   
 
 
-  public ClassesListPage(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
-    super(context, request, classRegistry);
+  public ClassesListPage(ServletContext context, HttpServletRequest request, String classRegistry, String beansPath) throws ServletException {
+    super(context, request, classRegistry, beansPath);
     append(renderClassesList());
   }
 
@@ -41,10 +41,10 @@ public class ClassesListPage extends Page {
    */
   private HTMLElement renderClassesList() {
     HTMLElement rc;
-    if (registry != null) {
+    if (getRegistry() != null) {
       HTMLTable table = new HTMLTable();
       table.getHeader().createColumns("className", "methodName", "Description", "Allowed to");
-      for (Class c : registry.getRegisteredClasses()) {
+      for (Class c : getRegistry().getRegisteredClasses()) {
         table.addRows(renderMethodReferences(c));
       }
       rc = table;

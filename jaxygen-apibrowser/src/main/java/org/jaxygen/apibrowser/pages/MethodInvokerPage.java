@@ -27,17 +27,13 @@ import org.jaxygen.url.UrlQuery;
 public class MethodInvokerPage extends Page {
 
   public static final String NAME = "MethodInvokerPage";
-  private final String beensPath;
   
 
   public MethodInvokerPage(ServletContext context,
-          HttpServletRequest request, String classRegistry) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException {
-    super(context, request, classRegistry);
+          HttpServletRequest request, String classRegistry, String beansPath) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException {
+    super(context, request, classRegistry, beansPath);
     final String className = request.getParameter("className");
     final String method = request.getParameter("methodName");
-    this.beensPath = context.getInitParameter("servicePath");
-    
-    
 
     renderClassForm(request, className, method);
   }
@@ -55,7 +51,7 @@ public class MethodInvokerPage extends Page {
           InstantiationException, IllegalAccessException,
           InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException {
 
-    String simpleClassname = classFilter.substring(beensPath.length() + 1);
+    String simpleClassname = classFilter.substring(beansPath.length() + 1);
     HTMLTable exceptionsTable = new HTMLTable();
     exceptionsTable.getHeader().addColumn(new HTMLTable.HeadColumn(new HTMLLabel("Exception name")));
     exceptionsTable.getHeader().addColumn(new HTMLTable.HeadColumn(new HTMLLabel("Description")));

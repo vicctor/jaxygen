@@ -16,7 +16,7 @@ import org.jaxygen.netservice.html.*;
  * @author artur
  */
 public class Page implements HTMLElement {
-  protected ClassRegistry registry;
+  private ClassRegistry registry;
     
   private final HTML html = new HTML();
   private final HTMLBody body = new HTMLBody();
@@ -27,8 +27,9 @@ public class Page implements HTMLElement {
   protected String servletContext;
   protected String browserPath;
   protected String invokerPath;
+  protected String beansPath;
 
-  public Page(ServletContext context, HttpServletRequest request, String classRegistry) throws ServletException {
+  public Page(ServletContext context, HttpServletRequest request, String classRegistry, String beansPath) throws ServletException {
     final String serletPath = request.getServletPath();
     this.browserPath = serletPath;
     this.home = new File(serletPath).getParent();
@@ -40,6 +41,11 @@ public class Page implements HTMLElement {
        classRegistryName  = context.getInitParameter("classRegistry");
     }
     openClassRegistry(classRegistryName);
+    
+    this.beansPath = beansPath;
+    if (this.beansPath == null) {
+      this.beansPath = context.getInitParameter("servicePath");
+    }
     
     HTMLLinkCSS css = new HTMLLinkCSS();
     css.setHref(servletContext + "/css/org/jaxygen/apibrowser/page.css");
@@ -80,7 +86,7 @@ public class Page implements HTMLElement {
     if (registryClassName != null) {
       try {
         Class<ClassRegistry> registryClass = (Class<ClassRegistry>) Thread.currentThread().getContextClassLoader().loadClass(registryClassName);
-        registry = registryClass.newInstance();
+        setRegistry(registryClass.newInstance());
       } catch (InstantiationException ex) {
         throw new ServletException("Cann not instantiate class registy " + registryClassName + ". Please check classRegistry property in your web.xml <context-param> section", ex);
       } catch (IllegalAccessException ex) {
@@ -90,5 +96,19 @@ public class Page implements HTMLElement {
       }
     }
 
+  }
+
+  /**
+   * @return the registry
+   */
+  public ClassRegistry getRegistry() {
+    return registry;
+  }
+
+  /**
+   * @param registry the registry to set
+   */
+  public void setRegistry(ClassRegistry registry) {
+    this.registry = registry;
   }
 }
