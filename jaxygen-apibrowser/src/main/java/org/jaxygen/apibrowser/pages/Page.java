@@ -31,10 +31,10 @@ public class Page implements HTMLElement {
 
   public Page(ServletContext context, HttpServletRequest request, String classRegistry, String beansPath) throws ServletException {
     final String serletPath = request.getServletPath();
-    this.browserPath = serletPath;
-    this.home = new File(serletPath).getParent();
+    this.browserPath = "APIBrowser";
+    this.home = ".";
     this.invokerPath = home + "/invoker";
-    this.servletContext = context.getContextPath();
+    this.servletContext = "..";
     
     String classRegistryName = classRegistry;
     if (classRegistryName == null) {
