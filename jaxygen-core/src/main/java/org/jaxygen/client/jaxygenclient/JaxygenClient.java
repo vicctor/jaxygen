@@ -4,11 +4,9 @@ import com.google.gson.Gson;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.Reader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,8 +17,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.mime.FormBodyPart;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
@@ -40,15 +36,13 @@ import org.jaxygen.security.basic.SecuredMethodDescriptor;
  */
 public class JaxygenClient {
 
-  private String servicePath;
-  private String url;
-  private Gson gson = new Gson();
-  private Charset charset = Charset.forName("UTF-8");
-  private Session session = new Session();
+  private final String url;
+  private final Gson gson = new Gson();
+  private final Charset charset = Charset.forName("UTF-8");
+  private final Session session = new Session();
 
   private class Session {
-
-    public List<String> cookies = new ArrayList<String>();
+    public List<String> cookies = new ArrayList<String>(1);
   };
 
   private class IOProxy extends InputStream implements Appendable {
