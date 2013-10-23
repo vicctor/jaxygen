@@ -150,10 +150,13 @@ public class ServiceInvoker extends HttpServlet {
                   }
                 }
                 if (m.isAnnotationPresent(LoginMethod.class)) {
-                  if (!(o instanceof SecurityProfile)) {
+                  boolean profileConfigured = updateSessionSecurityProfile(been, session);
+                  if (!profileConfigured && !(o instanceof SecurityProfile)) {
                     throwError(response, responseConverter, "Incompatible interface", "Method " + clazz + "." + methodName + " is annotated with @Login but does not return " + SecurityProfile.class.getCanonicalName());
                   }
-                  attachSecurityContextToSession(session, (SecurityProfile) o);
+                  if (o instanceof SecurityProfile) {
+                    attachSecurityContextToSession(session, (SecurityProfile) o);
+                  }
                 }
                 if (m.isAnnotationPresent(LogoutMethod.class)) {
                   detachSecurityContext(session);
@@ -213,6 +216,14 @@ public class ServiceInvoker extends HttpServlet {
     f.setAccessible(accessibility);
   }
 
+  private static Object callGetter(Field f, Object been) throws SecurityException, IllegalArgumentException, IllegalAccessException {
+    boolean accessibility = f.isAccessible();
+    f.setAccessible(true);
+    Object sp = f.get(been);
+    f.setAccessible(accessibility);
+    return sp;
+  }
+
   private void throwError(HttpServletResponse response, ResponseConverter converter, String string, Throwable ex) throws ServletException, IOException {
     log.log(Level.SEVERE, string, ex);
     ExceptionResponse resp = new ExceptionResponse(ex, string);
@@ -235,7 +246,6 @@ public class ServiceInvoker extends HttpServlet {
 
   private void postFile(HttpServletResponse response, Downloadable downloadable) throws IOException {
     final String fileName = downloadable.getFileName();
-    System.out.println("!!!!!! filename=" + fileName);
     response.setHeader("Content-Disposition", downloadable.getDispositon().name() + "; filename=\"" + fileName + "\"");
     response.setCharacterEncoding(downloadable.getCharset().name());
     response.setContentType(downloadable.getContentType());
@@ -282,6 +292,25 @@ public class ServiceInvoker extends HttpServlet {
         }
       }
     }
+  }
+
+  private boolean updateSessionSecurityProfile(Object been, HttpSession session) throws IllegalArgumentException, IllegalAccessException {
+    SecurityProfile sp = (SecurityProfile) session.getAttribute(SecurityProfile.class.getCanonicalName());
+    boolean sessionContextUpdated = false;
+    SecurityProfile newSp = sp;
+    for (Field f : been.getClass().getDeclaredFields()) {
+      {
+        SecurityContext sc = f.getAnnotation(SecurityContext.class);
+        if (sc != null) {
+          newSp = (SecurityProfile) callGetter(f, been);
+          sessionContextUpdated = true;
+        }
+      }
+    }
+    if (sp != newSp) {
+      session.setAttribute(SecurityProfile.class.getCanonicalName(), newSp);
+    }
+    return sessionContextUpdated;
   }
 
   private void validate(Object[] parameters) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, InvalidPropertyFormat {
