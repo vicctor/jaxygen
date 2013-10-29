@@ -84,10 +84,10 @@ public class JaxygenClient {
 
   private class Handler implements InvocationHandler {
 
-    private String urlBase;
-    private Session session;
+    private final String urlBase;
+    private final Session session;
 
-    public Handler(String urlBase, Session session) {
+    Handler(String urlBase, Session session) {
       this.urlBase = urlBase;
       this.session = session;
     }
@@ -98,7 +98,7 @@ public class JaxygenClient {
       MultipartEntity mp = new MultipartEntity();
 
       if (session.cookies != null) {
-        StringBuilder cookiesStr = new StringBuilder();
+        StringBuilder cookiesStr = new StringBuilder(256);
         for (String cookie : session.cookies) {
           cookiesStr.append(cookie);
           cookiesStr.append(";");
@@ -130,7 +130,7 @@ public class JaxygenClient {
       }
 
       ObjectInputStream osi = null;
-      final StringBuffer sb = new StringBuffer();
+      final StringBuffer sb = new StringBuffer(256);
       try {
         InputStream inputProxy = new InputStream() {
           @Override
