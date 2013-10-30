@@ -226,6 +226,7 @@ public class ServiceInvoker extends HttpServlet {
 
   private void throwError(HttpServletResponse response, ResponseConverter converter, String string, Throwable ex) throws ServletException, IOException {
     log.log(Level.SEVERE, string, ex);
+    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     ExceptionResponse resp = new ExceptionResponse(ex, string);
     try {
       converter.serialize(resp, response.getOutputStream());
@@ -238,6 +239,7 @@ public class ServiceInvoker extends HttpServlet {
     log.log(Level.SEVERE, message);
     ExceptionResponse resp = new ExceptionResponse(codeName, message);
     try {
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       converter.serialize(resp, response.getOutputStream());
     } catch (SerializationError ex1) {
       log.log(Level.SEVERE, "Server was unable to inform peer about exception", ex1);
