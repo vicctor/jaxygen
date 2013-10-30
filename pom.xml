@@ -17,8 +17,8 @@
 
  <scm>
   <url>https://github.com/vicctor/jaxygen</url>
-  <developerConnection>scm:git:git://github.com/vicctor/jaxygen.git</developerConnection>
-  <connection>scm:git:https://github.com/vicctor/jaxygen.git</connection>
+  <developerConnection>scm:git:git@github.com:vicctor/jaxygen.git</developerConnection>
+  <connection>scm:git@github.com:vicctor/jaxygen.git</connection>
  </scm>
 
  <licenses>
