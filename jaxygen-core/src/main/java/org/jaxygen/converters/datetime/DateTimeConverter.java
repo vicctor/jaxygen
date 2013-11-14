@@ -16,6 +16,7 @@
 package org.jaxygen.converters.datetime;
 
 import java.util.Calendar;
+import java.util.Date;
 import org.jaxygen.dto.datetime.DateDTO;
 import org.jaxygen.dto.datetime.TimeDTO;
 import org.jaxygen.dto.datetime.TimestampDTO;
@@ -42,6 +43,12 @@ public class DateTimeConverter {
         return d;
     }
     
+    public static DateDTO dateDTOToDate(Date date) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(date);
+      return calendarToDate(calendar);
+    }
+    
     public static TimestampDTO calendarToTimestamp(Calendar calendar) {
         TimestampDTO t = new TimestampDTO();
         t.setTime(calendarToTime(calendar));
@@ -59,5 +66,21 @@ public class DateTimeConverter {
       c.set(Calendar.MINUTE, ts.getTime().getMinute());
       c.set(Calendar.SECOND, ts.getTime().getSec());
       return c;
+    }
+    
+     public static Calendar dateToCalendar(DateDTO ts) {
+      Calendar c = Calendar.getInstance();
+      c.set(Calendar.YEAR, ts.getYear());
+      c.set(Calendar.MONTH, ts.getMontOfYear());
+      c.set(Calendar.DAY_OF_MONTH, ts.getDayOfMonth());
+      return c;
+    }
+     
+     public static Date dateDTOToDate(DateDTO ts) {
+      Calendar c = Calendar.getInstance();
+      c.set(Calendar.YEAR, ts.getYear());
+      c.set(Calendar.MONTH, ts.getMontOfYear());
+      c.set(Calendar.DAY_OF_MONTH, ts.getDayOfMonth());
+      return c.getTime();
     }
 }
