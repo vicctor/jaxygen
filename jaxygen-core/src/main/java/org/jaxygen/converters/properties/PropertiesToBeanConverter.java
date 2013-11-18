@@ -52,6 +52,9 @@ public class PropertiesToBeanConverter implements RequestConverter {
   converters.put(Character.TYPE, new CharacterConverter());
   converters.put(Float.class, new FloatConverter());
   converters.put(Float.TYPE, new FloatConverter());
+  converters.put(Double.class, new DoubleConverter());
+  converters.put(Double.TYPE, new DoubleConverter());
+  converters.put(double.class, new DoubleConverter());
   converters.put(Integer.class, new IntegerConverter());
   converters.put(Integer.TYPE, new IntegerConverter());
   converters.put(Long.class, new LongConverter());

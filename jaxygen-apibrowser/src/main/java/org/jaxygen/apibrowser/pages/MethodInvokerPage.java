@@ -43,7 +43,7 @@ public class MethodInvokerPage extends Page {
   }
 
   private boolean isSimpleResultType(final Class<?> returnType) {
-    return returnType.isPrimitive() || returnType.equals(Integer.class) || returnType.equals(String.class);
+    return returnType.isPrimitive() || returnType.equals(Integer.class) || returnType.equals(Double.class) || returnType.equals(Float.class) || returnType.equals(String.class) || returnType.equals(double.class) || returnType.equals(float.class);
   }
 
   private void renderClassForm(HttpServletRequest request, final String classFilter, final String methodFilter)
