@@ -24,14 +24,16 @@ public class Response implements Serializable {
     private ResponseDTO(Class<?> responseClass, Object o) {
       if (o != null) {
         responseObject = o;
+        this.responseClass = o.getClass().getCanonicalName();
       } else {
+        if (responseClass != null) {
+          this.responseClass = responseClass.getCanonicalName();
+        } else {
+          this.responseClass = "null";
+        }
         responseObject = null;
       }
-      if (responseClass != null) {
-        this.responseClass = responseClass.getCanonicalName();
-      } else {
-        this.responseClass = null;
-      }
+
     }
 
     public String getResponseClass() {
