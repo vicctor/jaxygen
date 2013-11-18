@@ -133,6 +133,7 @@ public class ServiceInvoker extends HttpServlet {
               validate(parameters);
               try {
                 injectSecutityProfile(been, session);
+                Class<?> responseType = m.getReturnType();
                 Object o = m.invoke(been, parameters);
                 if (o instanceof Downloadable) {
                   postFile(response, (Downloadable) o);
@@ -143,10 +144,10 @@ public class ServiceInvoker extends HttpServlet {
                     profileDto.setGroups(profile.getUserGroups());
                     profileDto.setAllowedMethods(profile.getAllowedMethodDescriptors());
                     response.setCharacterEncoding("UTF-8");
-                    sendSerializedResponse(profileDto, responseConverter, response);
+                    sendSerializedResponse(SecurityProfileDTO.class, profileDto, responseConverter, response);
                   } else {
                     response.setCharacterEncoding("UTF-8");
-                    sendSerializedResponse(o, responseConverter, response);
+                    sendSerializedResponse(responseType, o, responseConverter, response);
                   }
                 }
                 if (m.isAnnotationPresent(LoginMethod.class)) {
@@ -323,8 +324,8 @@ public class ServiceInvoker extends HttpServlet {
     }
   }
 
-  private void sendSerializedResponse(Object o, ResponseConverter converter, HttpServletResponse response) throws SerializationError, IOException, ServletException {
-    Response responseWraper = new Response(o);
+  private void sendSerializedResponse(Class<?> responseClass, Object o, ResponseConverter converter, HttpServletResponse response) throws SerializationError, IOException, ServletException {
+    Response responseWraper = new Response(responseClass, o);
     converter.serialize(responseWraper, response.getOutputStream());
   }
 }

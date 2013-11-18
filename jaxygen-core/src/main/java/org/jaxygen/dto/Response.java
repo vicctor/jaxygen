@@ -21,13 +21,16 @@ public class Response implements Serializable {
     public ResponseDTO() {
     }
 
-    private ResponseDTO(Object o) {
+    private ResponseDTO(Class<?> responseClass, Object o) {
       if (o != null) {
-        responseClass = o.getClass().getCanonicalName();
         responseObject = o;
       } else {
-        responseClass = "null";
         responseObject = null;
+      }
+      if (responseClass != null) {
+        this.responseClass = responseClass.getCanonicalName();
+      } else {
+        this.responseClass = null;
       }
     }
 
@@ -52,8 +55,8 @@ public class Response implements Serializable {
   public Response() {
   }
 
-  public Response(Object o) {
-    dto = new ResponseDTO(o);
+  public Response(Class<?> responseClass, Object o) {
+    dto = new ResponseDTO(responseClass, o);
   }
 
   public ResponseDTO getDto() {
