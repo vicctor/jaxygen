@@ -19,9 +19,11 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.Map;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.exceptions.DeserialisationError;
+import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.http.HttpRequestParams;
 import org.jaxygen.network.UploadedFile;
 
@@ -31,37 +33,43 @@ import org.jaxygen.network.UploadedFile;
  */
 public class JsonMultipartRequestConverter implements RequestConverter {
 
-    public final static String NAME = "JSON/MULTIPART";
-    private static Gson gson = new Gson();
+  public final static String NAME = "JSON/MULTIPART";
+  private static Gson gson = new Gson();
+  private final static Map<String, String> nullPropertes = new HashMap<String, String>();
 
-    public String getName() {
-        return NAME;
-    }
+  public String getName() {
+    return NAME;
+  }
 
-    public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
-        Map<String, UploadedFile> files = params.getFiles();
-        Object rc = null;
-        if (files != null) {
-            UploadedFile f = files.get(beanClass.getName());
-            if (f != null) {
-                Reader reader = null;
-                try {
-                    reader = new InputStreamReader(f.getInputStream(), "UTF-8");
-                    rc = gson.fromJson(reader, beanClass);
-                } catch (IOException ex) {
-                    throw new DeserialisationError("Could not obtain field data for class " + beanClass.getName(), ex);
-                } finally {
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (IOException ex) {
-                            throw new DeserialisationError("Cluld not close input stream while deserializing class " + beanClass.getName(), ex);
-                                    
-                        }
-                    }
-                }
+  public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
+    Map<String, UploadedFile> files = params.getFiles();
+    Object rc = null;
+    if (files != null) {
+      UploadedFile f = files.get(beanClass.getName());
+      if (f != null) {
+        Reader reader = null;
+        try {
+          reader = new InputStreamReader(f.getInputStream(), "UTF-8");
+          rc = gson.fromJson(reader, beanClass);
+          try {
+            PropertiesToBeanConverter.convertPropertiesToBean(nullPropertes, files, rc);
+          } catch (Exception ex) {
+            throw new DeserialisationError("Could not feel been files", ex);
+          }
+        } catch (IOException ex) {
+          throw new DeserialisationError("Could not obtain field data for class " + beanClass.getName(), ex);
+        } finally {
+          if (reader != null) {
+            try {
+              reader.close();
+            } catch (IOException ex) {
+              throw new DeserialisationError("Cluld not close input stream while deserializing class " + beanClass.getName(), ex);
+
             }
+          }
         }
-        return rc;
+      }
     }
+    return rc;
+  }
 }
