@@ -38,11 +38,11 @@ public class DateDTO implements Serializable{
         this.dayOfMonth = dayOfMonth;
     }
 
-    public int getMontOfYear() {
+    public int getMonthOfYear() {
         return montOfYear;
     }
 
-    public void setMontOfYear(int montOfYear) {
+    public void setMonthOfYear(int montOfYear) {
         this.montOfYear = montOfYear;
     }
 

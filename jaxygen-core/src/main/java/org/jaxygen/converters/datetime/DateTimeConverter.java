@@ -38,7 +38,7 @@ public class DateTimeConverter {
     public static DateDTO calendarToDate(Calendar calendar) {
         DateDTO d = new DateDTO();
         d.setYear(calendar.get(Calendar.YEAR));
-        d.setMontOfYear(calendar.get(Calendar.MONTH));
+        d.setMonthOfYear(calendar.get(Calendar.MONTH));
         d.setDayOfMonth(calendar.get(Calendar.DAY_OF_MONTH));
         return d;
     }
@@ -59,7 +59,7 @@ public class DateTimeConverter {
     public static Calendar timestampToCalendar(TimestampDTO ts) {
       Calendar c = Calendar.getInstance();
       c.set(Calendar.YEAR, ts.getDate().getYear());
-      c.set(Calendar.MONTH, ts.getDate().getMontOfYear());
+      c.set(Calendar.MONTH, ts.getDate().getMonthOfYear());
       c.set(Calendar.DAY_OF_MONTH, ts.getDate().getDayOfMonth());
       
       c.set(Calendar.HOUR_OF_DAY, ts.getTime().getHour());
@@ -71,7 +71,7 @@ public class DateTimeConverter {
      public static Calendar dateToCalendar(DateDTO ts) {
       Calendar c = Calendar.getInstance();
       c.set(Calendar.YEAR, ts.getYear());
-      c.set(Calendar.MONTH, ts.getMontOfYear());
+      c.set(Calendar.MONTH, ts.getMonthOfYear());
       c.set(Calendar.DAY_OF_MONTH, ts.getDayOfMonth());
       return c;
     }
@@ -79,7 +79,7 @@ public class DateTimeConverter {
      public static Date dateDTOToDate(DateDTO ts) {
       Calendar c = Calendar.getInstance();
       c.set(Calendar.YEAR, ts.getYear());
-      c.set(Calendar.MONTH, ts.getMontOfYear());
+      c.set(Calendar.MONTH, ts.getMonthOfYear());
       c.set(Calendar.DAY_OF_MONTH, ts.getDayOfMonth());
       return c.getTime();
     }
