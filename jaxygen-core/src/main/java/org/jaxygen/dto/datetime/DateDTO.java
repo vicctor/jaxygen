@@ -27,7 +27,7 @@ import org.jaxygen.annotations.QueryMessage;
 @NetAPI(description="Class used to tranfer the Date information in Gregorian callendar (or similar notation)")
 public class DateDTO implements Serializable{
     private int dayOfMonth;
-    private int montOfYear;
+    private int monthOfYear;
     private int year;
 
     public int getDayOfMonth() {
@@ -39,11 +39,11 @@ public class DateDTO implements Serializable{
     }
 
     public int getMonthOfYear() {
-        return montOfYear;
+        return monthOfYear;
     }
 
     public void setMonthOfYear(int montOfYear) {
-        this.montOfYear = montOfYear;
+        this.monthOfYear = montOfYear;
     }
 
     public int getYear() {
