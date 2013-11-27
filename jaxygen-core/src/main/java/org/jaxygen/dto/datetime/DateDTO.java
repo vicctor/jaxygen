@@ -26,6 +26,7 @@ import org.jaxygen.annotations.QueryMessage;
 @QueryMessage
 @NetAPI(description="Class used to tranfer the Date information in Gregorian callendar (or similar notation)")
 public class DateDTO implements Serializable{
+  private static final long serialVersionUID = 123423423L;
     private int dayOfMonth;
     private int monthOfYear;
     private int year;

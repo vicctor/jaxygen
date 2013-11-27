@@ -26,6 +26,7 @@ import org.jaxygen.annotations.QueryMessage;
 @QueryMessage
 @NetAPI(description="Class handles the timestamp")
 public class TimestampDTO implements Serializable{
+  private static final long serialVersionUID = 1345345L;
     private DateDTO date;
     private TimeDTO time;
 

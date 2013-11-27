@@ -26,6 +26,7 @@ import org.jaxygen.annotations.QueryMessage;
 @QueryMessage
 @NetAPI(description="Class used to handle the time transferr.")
 public class TimeDTO implements Serializable {
+  private static final long serialVersionUID = 2346441L;
     private int hour;
     private int minute;
     private int sec;
