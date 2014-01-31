@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -40,6 +42,7 @@ public class JaxygenClient {
   private final Gson gson = new Gson();
   private final Charset charset = Charset.forName("UTF-8");
   private final Session session = new Session();
+private static final Logger logger = Logger.getLogger(Handler.class.getName());
 
   private class Session {
     public List<String> cookies = new ArrayList<String>(1);
@@ -103,7 +106,11 @@ public class JaxygenClient {
           cookiesStr.append(cookie);
           cookiesStr.append(";");
         }
-        post.setHeader("Cookie", cookiesStr.substring(0));
+        if(cookiesStr.length()>0) {
+            
+            logger.log(Level.INFO, "cookies: ", cookiesStr);
+           post.setHeader("Cookie", cookiesStr.substring(0));
+        }
       }
 
       if (args != null) {
