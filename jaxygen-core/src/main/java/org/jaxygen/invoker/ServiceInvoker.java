@@ -28,7 +28,6 @@ import org.jaxygen.converters.json.JsonResponseConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.converters.sjo.SJORRequestConverter;
 import org.jaxygen.converters.sjo.SJOResponseConverter;
-import org.jaxygen.converters.xml.XMLBeanParser;
 import org.jaxygen.converters.xml.XMLResponseConverter;
 import org.jaxygen.dto.Downloadable;
 import org.jaxygen.dto.ExceptionResponse;

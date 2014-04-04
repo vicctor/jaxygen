@@ -118,5 +118,6 @@
     <module>jaxygen-apibrowser</module>
     <module>jaxygen-apibrowser-style-simple</module>
     <module>jaxygen-client-it</module>
+    <module>jaxygen-typeconverter</module>
   </modules>
 </project>

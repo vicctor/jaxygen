@@ -16,8 +16,10 @@
 
 package pl.devservices.netservice.netserviceframework;
 
+import com.google.gson.Gson;
 import junit.framework.TestCase;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
+import pl.devservices.netservice.netserviceframework.pojo.Pojo;
 
 /**
  *
@@ -42,5 +44,11 @@ public class TypeConvertersTest extends TestCase {
 
   public void test_double_shallBeSimple() {
     assertTrue(PropertiesToBeanConverter.isCovertable(boolean.class));
+  }
+  
+  public void test_shallParseDouble() {
+    Gson gson = new Gson();
+    Pojo pojo = gson.fromJson("{doubleValue:'123'}", Pojo.class);
+    assertEquals(123.0d, pojo.getDoubleValue());
   }
 }
