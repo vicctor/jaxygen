@@ -25,6 +25,7 @@ import org.jaxygen.annotations.Status;
 import org.jaxygen.dto.collections.PaginableBaseRequestDTO;
 import org.jaxygen.dto.collections.PaginableListResponseBaseDTO;
 import org.jaxygen.netserviceapisample.business.dto.*;
+import org.jaxygen.netserviceapisample.business.exceptions.ParametrizedException;
 import org.jaxygen.util.BeanUtil;
 
 /**
@@ -91,5 +92,12 @@ public class DTOSample {
       elements.add("Element#" + i);
     }
     return rc;
+  }
+  
+  @NetAPI(description = "This method just throws an exception with custom property")
+  public void throwCustomException() throws ParametrizedException {
+      ParametrizedException ex = new ParametrizedException();
+      ex.setCustomMessage("This is custom message added to the base of exception. Beacause it's annotated with @NetAPI annotation, it's exposed in the response message as an exception argument");
+      throw ex;
   }
 }
