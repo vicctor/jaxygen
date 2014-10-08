@@ -4,68 +4,80 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
  * @author Artur Keska
  */
 @XmlRootElement
 public class Response implements Serializable {
 
-  public final static long serialVersionUID = 53489753810234L;
+    public final static long serialVersionUID = 53489753810234L;
 
-  public static class ResponseDTO implements Serializable {
+    public static class ResponseDTO implements Serializable {
 
-    public final static long serialVersionUID = 53489753810231L;
-    private String responseClass;
-    private Object responseObject;
+        public final static long serialVersionUID = 53489753810231L;
+        private String responseClass;
+        private Object responseObject;
+        private String responseIpAddress;
 
-    public ResponseDTO() {
-    }
-
-    private ResponseDTO(Class<?> responseClass, Object o) {
-      if (o != null) {
-        responseObject = o;
-        this.responseClass = o.getClass().getCanonicalName();
-      } else {
-        if (responseClass != null) {
-          this.responseClass = responseClass.getCanonicalName();
-        } else {
-          this.responseClass = "null";
+        public ResponseDTO() {
         }
-        responseObject = null;
-      }
 
+        private ResponseDTO(Class<?> responseClass, Object o, String ipAddress) {
+            if (o != null) {
+                responseObject = o;
+                this.responseClass = o.getClass().getCanonicalName();
+                if (ipAddress != null) {
+                    this.responseIpAddress = ipAddress;
+                }
+            } else {
+                if (responseClass != null) {
+                    this.responseClass = responseClass.getCanonicalName();
+                } else {
+                    this.responseClass = "null";
+                }
+                responseObject = null;
+            }
+
+        }
+
+        public String getResponseIpAddress() {
+            return responseIpAddress;
+        }
+
+        public void setResponseIpAddress(String responseIpAddress) {
+            this.responseIpAddress = responseIpAddress;
+        }
+
+        public String getResponseClass() {
+            return responseClass;
+        }
+
+        public void setResponseClass(String responseClass) {
+            this.responseClass = responseClass;
+        }
+
+        public Object getResponseObject() {
+            return responseObject;
+        }
+
+        public void setResponseObject(Object responseObject) {
+            this.responseObject = responseObject;
+        }
     }
 
-    public String getResponseClass() {
-      return responseClass;
+    private ResponseDTO dto;
+
+    public Response() {
     }
 
-    public void setResponseClass(String responseClass) {
-      this.responseClass = responseClass;
+    public Response(Class<?> responseClass, Object o, String ipAddress) {
+        dto = new ResponseDTO(responseClass, o, ipAddress);
     }
 
-    public Object getResponseObject() {
-      return responseObject;
+    public ResponseDTO getDto() {
+        return dto;
     }
 
-    public void setResponseObject(Object responseObject) {
-      this.responseObject = responseObject;
+    public void setDto(ResponseDTO dto) {
+        this.dto = dto;
     }
-  }
-  private ResponseDTO dto;
-
-  public Response() {
-  }
-
-  public Response(Class<?> responseClass, Object o) {
-    dto = new ResponseDTO(responseClass, o);
-  }
-
-  public ResponseDTO getDto() {
-    return dto;
-  }
-
-  public void setDto(ResponseDTO dto) {
-    this.dto = dto;
-  }
 }
