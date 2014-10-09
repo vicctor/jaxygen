@@ -111,6 +111,7 @@ public class ServiceInvoker extends HttpServlet {
         log("Requesting resource" + resourcePath);
 
         String[] chunks = resourcePath.split("/");
+
         if (chunks.length < 2) {
             Logger.getLogger(ServiceInvoker.class.getName()).log(Level.SEVERE, "Invalid request, must be in format class/method");
             throw new ServletException("Invalid '" + resourcePath + "' request, must be in format class/method");
@@ -139,6 +140,7 @@ public class ServiceInvoker extends HttpServlet {
                             String ipAddress = null;
                             if (sendIpAddress) {
                                 ipAddress = getPublicIpAddress(request);
+                                callSetIpAddress(parameterTypes, ipAddress, parameters);
                             }
                             try {
                                 injectSecutityProfile(been, session);
@@ -153,10 +155,10 @@ public class ServiceInvoker extends HttpServlet {
                                         profileDto.setGroups(profile.getUserGroups());
                                         profileDto.setAllowedMethods(profile.getAllowedMethodDescriptors());
                                         response.setCharacterEncoding("UTF-8");
-                                        sendSerializedResponse(SecurityProfileDTO.class, profileDto, responseConverter, response, ipAddress);
+                                        sendSerializedResponse(SecurityProfileDTO.class, profileDto, responseConverter, response);
                                     } else {
                                         response.setCharacterEncoding("UTF-8");
-                                        sendSerializedResponse(responseType, o, responseConverter, response, ipAddress);
+                                        sendSerializedResponse(responseType, o, responseConverter, response);
                                     }
                                 }
                                 if (m.isAnnotationPresent(LoginMethod.class)) {
@@ -198,6 +200,26 @@ public class ServiceInvoker extends HttpServlet {
             }
         }
 
+    }
+
+    private void callSetIpAddress(Class<?>[] parameterTypes, String ip, Object[] objects) throws NoSuchFieldException, IllegalAccessException, InstantiationException {
+        for (Class<?> p : parameterTypes) {
+            if (p.getSuperclass() == ClientIpAddressRequest.class) {
+                if (p.getSuperclass().getName() != null) {
+                    Field field = p.getSuperclass().getDeclaredField("ipAddress");
+                    if (field != null) {
+                        Object o = objects[0];
+                        field.set(o, ip);
+                    }
+                }
+            } else if (p == ClientIpAddressRequest.class) {
+                Field field = p.getDeclaredField("ipAddress");
+                if (field != null) {
+                    Object o = objects[0];
+                    field.set(o, ip);
+                }
+            }
+        }
     }
 
     private boolean didSendIpAddress(Class<?>[] parameterTypes) {
@@ -342,8 +364,8 @@ public class ServiceInvoker extends HttpServlet {
         }
     }
 
-    private void sendSerializedResponse(Class<?> responseClass, Object o, ResponseConverter converter, HttpServletResponse response, String ipAddress) throws SerializationError, IOException, ServletException {
-        Response responseWraper = new Response(responseClass, o, ipAddress);
+    private void sendSerializedResponse(Class<?> responseClass, Object o, ResponseConverter converter, HttpServletResponse response) throws SerializationError, IOException, ServletException {
+        Response responseWraper = new Response(responseClass, o);
         converter.serialize(responseWraper, response.getOutputStream());
     }
 

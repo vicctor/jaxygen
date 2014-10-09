@@ -16,18 +16,14 @@ public class Response implements Serializable {
         public final static long serialVersionUID = 53489753810231L;
         private String responseClass;
         private Object responseObject;
-        private String responseIpAddress;
 
         public ResponseDTO() {
         }
 
-        private ResponseDTO(Class<?> responseClass, Object o, String ipAddress) {
+        private ResponseDTO(Class<?> responseClass, Object o) {
             if (o != null) {
                 responseObject = o;
                 this.responseClass = o.getClass().getCanonicalName();
-                if (ipAddress != null) {
-                    this.responseIpAddress = ipAddress;
-                }
             } else {
                 if (responseClass != null) {
                     this.responseClass = responseClass.getCanonicalName();
@@ -37,14 +33,6 @@ public class Response implements Serializable {
                 responseObject = null;
             }
 
-        }
-
-        public String getResponseIpAddress() {
-            return responseIpAddress;
-        }
-
-        public void setResponseIpAddress(String responseIpAddress) {
-            this.responseIpAddress = responseIpAddress;
         }
 
         public String getResponseClass() {
@@ -69,8 +57,8 @@ public class Response implements Serializable {
     public Response() {
     }
 
-    public Response(Class<?> responseClass, Object o, String ipAddress) {
-        dto = new ResponseDTO(responseClass, o, ipAddress);
+    public Response(Class<?> responseClass, Object o) {
+        dto = new ResponseDTO(responseClass, o);
     }
 
     public ResponseDTO getDto() {

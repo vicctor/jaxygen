@@ -17,7 +17,6 @@ import org.jaxygen.http.ClientIpAddressRequest;
 public class EmailRequestDTO extends ClientIpAddressRequest {
  private String email;
 
-
  public void setEmail(String email) {
   this.email = email;
  }
