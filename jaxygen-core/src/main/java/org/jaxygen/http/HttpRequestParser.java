@@ -5,8 +5,6 @@ import org.jaxygen.network.UploadedFile;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -141,7 +139,6 @@ public class HttpRequestParser implements HttpRequestParams {
       Object value = request.getParameter(name);
       addParameter(name, value.toString());
     }
-
   }
 
   /*

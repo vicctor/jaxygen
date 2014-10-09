@@ -7,15 +7,15 @@ package org.jaxygen.netserviceapisample.business.dto;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.StringPropertyValidator;
 import org.jaxygen.annotations.Validable;
+import org.jaxygen.http.ClientIpAddressRequest;
 
 /** This is a sample validable request
  *
  * @author artur
  */
 @Validable // Class must be marked as Validable. Otherwise validators are not used.
-public class EmailRequestDTO {
+public class EmailRequestDTO extends ClientIpAddressRequest {
  private String email;
-
 
  public void setEmail(String email) {
   this.email = email;
