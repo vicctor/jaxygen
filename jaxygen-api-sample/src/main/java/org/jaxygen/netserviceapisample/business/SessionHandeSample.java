@@ -28,6 +28,7 @@ import org.jaxygen.netserviceapisample.business.exceptions.CouldNotLeanWithoutEn
 public class SessionHandeSample {
  @SessionContext
  private HttpSession session;
+
  
  @NetAPI(description="Increment counter. Method retuns nothing, just always successes",
          status= Status.ReleaseCandidate,

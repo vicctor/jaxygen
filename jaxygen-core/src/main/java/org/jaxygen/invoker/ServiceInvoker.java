@@ -5,9 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
@@ -18,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.jaxygen.annotations.ClientIp;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
 import org.jaxygen.annotations.Validable;
@@ -39,7 +37,6 @@ import org.jaxygen.dto.Response;
 import org.jaxygen.dto.security.SecurityProfileDTO;
 import org.jaxygen.exceptions.InvalidPropertyFormat;
 import org.jaxygen.exceptions.ParametersError;
-import org.jaxygen.http.ClientIpAddressRequest;
 import org.jaxygen.http.HttpRequestParams;
 import org.jaxygen.http.HttpRequestParser;
 import org.jaxygen.security.SecurityProfile;
@@ -136,13 +133,8 @@ public class ServiceInvoker extends HttpServlet {
                             Object[] parameters = parseParameters(parameterTypes, inputFormat, params, query);
                             Object been = clazz.newInstance();
                             validate(parameters);
-                            boolean sendIpAddress = didSendIpAddress(parameterTypes);
-                            String ipAddress = null;
-                            if (sendIpAddress) {
-                                ipAddress = getPublicIpAddress(request);
-                                callSetIpAddress(parameterTypes, ipAddress, parameters);
-                            }
                             try {
+                                injectClientIp(parameterTypes, parameters, request);
                                 injectSecutityProfile(been, session);
                                 Class<?> responseType = m.getReturnType();
                                 Object o = m.invoke(been, parameters);
@@ -202,33 +194,17 @@ public class ServiceInvoker extends HttpServlet {
 
     }
 
-    private void callSetIpAddress(Class<?>[] parameterTypes, String ip, Object[] objects) throws NoSuchFieldException, IllegalAccessException, InstantiationException {
+    private void injectClientIp(Class<?>[] parameterTypes, Object[] objects, HttpServletRequest request) throws IllegalAccessException {
+        String ip = getPublicIpAddress(request);
         for (Class<?> p : parameterTypes) {
-            if (p.getSuperclass() == ClientIpAddressRequest.class) {
-                if (p.getSuperclass().getName() != null) {
-                    Field field = p.getSuperclass().getDeclaredField("ipAddress");
-                    if (field != null) {
-                        Object o = objects[0];
-                        field.set(o, ip);
-                    }
-                }
-            } else if (p == ClientIpAddressRequest.class) {
-                Field field = p.getDeclaredField("ipAddress");
-                if (field != null) {
-                    Object o = objects[0];
-                    field.set(o, ip);
+            for (Field f : p.getDeclaredFields()) {
+                ClientIp clientIp = f.getAnnotation(ClientIp.class);
+                if (clientIp != null) {
+                    f.set(objects[0], ip);
+                    return;
                 }
             }
         }
-    }
-
-    private boolean didSendIpAddress(Class<?>[] parameterTypes) {
-        for (Class<?> p : parameterTypes) {
-            if (p.getSuperclass() == ClientIpAddressRequest.class || p == ClientIpAddressRequest.class) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private Object[] parseParameters(final Class<?>[] parameterTypes, final String inputFormat, HttpRequestParams params, String query) throws ParametersError {
