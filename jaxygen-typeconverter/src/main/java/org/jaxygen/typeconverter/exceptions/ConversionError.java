@@ -2,7 +2,7 @@ package org.jaxygen.typeconverter.exceptions;
 
 /**
  *
- * @author Artur Keska <artur.keska@xdsnet.pl>
+ * @author Artur
  */
 public class ConversionError extends Exception {
 

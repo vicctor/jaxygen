@@ -1,0 +1,97 @@
+/*
+ * Copyright 2014 Artur.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jaxygen.typeconverter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jaxygen.typeconverter.exceptions.ConversionError;
+import org.reflections.Reflections;
+
+/**
+ * Calls all ConvertersRegistry classes from selected package name, and add it
+ * to the registry.
+ *
+ * @author Artur
+ */
+public class PacketBrowserConvertersFactory {
+
+    private final TypeConverterFactory factory = new TypeConverterFactory();
+    private final String scannedPackageName;
+
+    protected PacketBrowserConvertersFactory(String scannedPackageName) {
+        this.scannedPackageName = scannedPackageName;
+    }
+
+    public List<Class> getRegisteredClasses() {
+        List<Class> classes = new ArrayList<Class>();
+        Reflections reflections = new Reflections(scannedPackageName);
+        Set<Class<? extends ConvertersRegistry>> annotated
+                = reflections.getSubTypesOf(ConvertersRegistry.class);
+
+        for (Class<? extends ConvertersRegistry> c : annotated) {
+            try {
+                ConvertersRegistry cr = c.newInstance();
+                for (TypeConverter tc : cr.getConverters()) {
+                    factory.registerConverter(tc);
+                }
+            } catch (InstantiationException ex) {
+                Logger.getLogger(PacketBrowserConvertersFactory.class.getName()).log(Level.SEVERE, "Could not register converter " + c.getName(), ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(PacketBrowserConvertersFactory.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return classes;
+    }
+
+    /**
+     * Get the converter which could translate an object from class from to
+     * class to.
+     *
+     * @param <FROM>
+     * @param <TO>
+     * @param from
+     * @param to
+     * @return
+     */
+    public <FROM, TO> TypeConverter<FROM, TO> get(Class<FROM> from, Class<TO> to) {
+        return (TypeConverter<FROM, TO>) factory.get(from, to);
+    }
+
+    ;
+  
+  public <FROM, TO> TO convert(FROM from, Class<TO> toClass) throws ConversionError {
+        return factory.convert(from, toClass);
+    }
+
+    /**
+     * Convenient method used in case if the from object could be null
+     *
+     * @param <FROM>
+     * @param <TO>
+     * @param from
+     * @param fromClass
+     * @param toClass
+     * @return
+     * @throws ConversionError
+     */
+    public <FROM, TO> TO convert(FROM from, Class<FROM> fromClass, Class<TO> toClass) throws ConversionError {
+        return factory.convert(from, fromClass, toClass);
+    }
+}
