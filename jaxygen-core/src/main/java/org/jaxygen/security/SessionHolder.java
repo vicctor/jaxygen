@@ -2,7 +2,7 @@ package org.jaxygen.security;
 
 /**
  *
- * @author Artur Keska <artur.keska@xdsnet.pl>
+ * @author Artur
  */
 public interface SessionHolder {
   void attachSecurityProfile(SecurityProfile profile);
