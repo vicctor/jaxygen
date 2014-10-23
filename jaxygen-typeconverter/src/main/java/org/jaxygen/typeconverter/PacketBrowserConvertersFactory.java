@@ -15,8 +15,6 @@
  */
 package org.jaxygen.typeconverter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,17 +27,10 @@ import org.reflections.Reflections;
  *
  * @author Artur
  */
-public class PacketBrowserConvertersFactory {
+public abstract class PacketBrowserConvertersFactory {
+    private final static TypeConverterFactory factory = new TypeConverterFactory();
 
-    private final TypeConverterFactory factory = new TypeConverterFactory();
-    private final String scannedPackageName;
-
-    protected PacketBrowserConvertersFactory(String scannedPackageName) {
-        this.scannedPackageName = scannedPackageName;
-    }
-
-    public List<Class> getRegisteredClasses() {
-        List<Class> classes = new ArrayList<Class>();
+    protected static void init(String scannedPackageName) {
         Reflections reflections = new Reflections(scannedPackageName);
         Set<Class<? extends ConvertersRegistry>> annotated
                 = reflections.getSubTypesOf(ConvertersRegistry.class);
@@ -56,8 +47,6 @@ public class PacketBrowserConvertersFactory {
                 Logger.getLogger(PacketBrowserConvertersFactory.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
-        return classes;
     }
 
     /**
@@ -70,13 +59,13 @@ public class PacketBrowserConvertersFactory {
      * @param to
      * @return
      */
-    public <FROM, TO> TypeConverter<FROM, TO> get(Class<FROM> from, Class<TO> to) {
+    public static <FROM, TO> TypeConverter<FROM, TO> get(Class<FROM> from, Class<TO> to) {
         return (TypeConverter<FROM, TO>) factory.get(from, to);
     }
 
     ;
   
-  public <FROM, TO> TO convert(FROM from, Class<TO> toClass) throws ConversionError {
+  public static <FROM, TO> TO convert(FROM from, Class<TO> toClass) throws ConversionError {
         return factory.convert(from, toClass);
     }
 
@@ -91,7 +80,7 @@ public class PacketBrowserConvertersFactory {
      * @return
      * @throws ConversionError
      */
-    public <FROM, TO> TO convert(FROM from, Class<FROM> fromClass, Class<TO> toClass) throws ConversionError {
+    public static <FROM, TO> TO convert(FROM from, Class<FROM> fromClass, Class<TO> toClass) throws ConversionError {
         return factory.convert(from, fromClass, toClass);
     }
 }
