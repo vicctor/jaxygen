@@ -30,6 +30,11 @@ import org.reflections.Reflections;
 public abstract class PacketBrowserConvertersFactory {
     private final static TypeConverterFactory factory = new TypeConverterFactory();
 
+    /**Lookup in the specified package name for all that implements 
+     * ConvertersRegistry interface.
+     * 
+     * @param scannedPackageName 
+     */
     protected static void init(String scannedPackageName) {
         Reflections reflections = new Reflections(scannedPackageName);
         Set<Class<? extends ConvertersRegistry>> annotated
