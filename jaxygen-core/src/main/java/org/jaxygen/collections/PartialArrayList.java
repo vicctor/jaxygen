@@ -23,7 +23,7 @@ import java.util.Collection;
  * @author Artur
  * @param <T>
  */
-public class PartialArrayList<T> extends ArrayList<T> implements PartialList<T> {
+public abstract class PartialArrayList<T> extends ArrayList<T> implements PartialList<T> {
     private long totalSize;
 
     public PartialArrayList() {

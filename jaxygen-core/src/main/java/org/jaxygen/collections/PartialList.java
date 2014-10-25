@@ -26,4 +26,6 @@ import java.util.List;
  */
 public interface PartialList<T> extends List<T> {
     public long getTotalSize();
+    public void setTotalSize(long size);
 }
+
