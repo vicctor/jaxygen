@@ -1,7 +1,7 @@
 ![jaxygen](https://raw.githubusercontent.com/vicctor/jaxygen/master/jaxygen.png)
 
 ## About JXYGen
-JAXYgen is a web-service building framework made by few people in the beginnig just for fun. Soon it turned out that the framework is enough usable to be productive, so we started to use it in our comercial projects. That's the story.
+JAXYgen is a web-service building framework made by few people in the begining just for fun. Soon it turned out that the framework is enough usable to be productive, so we started to use it in our comercial projects. That's the story end.
 
 ## What is it good for.
 If youre going to build a more or less complex application that utilizes some logic in the backend and you wish to create a nice view on the front end, then probaby you have different people doing these tasks. So the idea is to give the the backend people the tool that they could offer to the front end developers, and let them work without thinking too mych about the frontend details. So in my teams, backend people uses JAXygen to expose the business logic to frontend people. Frontend people uses the most modern tools like AngularJS or not that new like plain HTML/CSS that comunicates with JAXygen interfaces. And that's all. See more in samples.
