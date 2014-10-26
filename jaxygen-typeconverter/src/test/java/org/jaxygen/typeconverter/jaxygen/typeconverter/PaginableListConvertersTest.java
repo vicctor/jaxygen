@@ -16,7 +16,10 @@ import org.jaxygen.typeconverter.exceptions.ConversionError;
 public class PaginableListConvertersTest 
     extends TestCase
 {
-    static TypeConverterFactory converters = new TypeConverterFactory();
+    /** Get the default instance of the TypeConverterFactory
+     * 
+     */
+    static TypeConverterFactory converters = TypeConverterFactory.instance();
     
     public static class DTO {
         private String value;
@@ -84,16 +87,8 @@ public class PaginableListConvertersTest
     
     static class DTOtoDO extends BeanConverter<DTO, DO> {};
     static class DOtoDTO extends BeanConverter<DO, DTO> {};
-    static class PartialToPaginable extends PartialToPaginableConverter<PartialDO, PaginableDTO> {
-        PartialToPaginable() {
-            super(converters);
-        }
-    };
-    static class PaginableToPartial extends PaginableToPartialConverter<PaginableDTO, PartialDO> {
-        PaginableToPartial() {
-            super(converters);
-        }
-    };
+    static class PartialToPaginable extends PartialToPaginableConverter<PartialDO, PaginableDTO> {};
+    static class PaginableToPartial extends PaginableToPartialConverter<PaginableDTO, PartialDO> {};
     
     
     

@@ -19,12 +19,39 @@ import java.util.HashMap;
 import java.util.Map;
 import org.jaxygen.typeconverter.exceptions.ConversionError;
 
-/**
+/**Class is a registry of the TypeConverter classes. Once the converter registered
+ * it will be used whenever once calls {@link TypeConverterFactory#convert(java.lang.Object, java.lang.Class)} method.
+ * Factory automatically selects the required converter object by convert method 
+ * parameter classes.
+ * 
  *
  * @author Artur
  */
 public class TypeConverterFactory {
-  private Map<Class, Map<Class, TypeConverter>> converters = new HashMap<Class, Map<Class, TypeConverter>>();
+    public final static String DEFAULT_FACTORY = ".default_TypeConverterFactory";
+  private final Map<Class, Map<Class, TypeConverter>> converters = new HashMap<Class, Map<Class, TypeConverter>>();
+  private final static Map<String, TypeConverterFactory> factories = new HashMap<String, TypeConverterFactory>();
+  
+  static {
+      factories.put(DEFAULT_FACTORY, new TypeConverterFactory());
+  }
+  
+  /** Get default instance of the TypeConverterFactory class.
+   * 
+   * @return 
+   */
+  public static TypeConverterFactory instance() {
+     return factories.get(DEFAULT_FACTORY);
+  }
+  
+  /** Get named instance of the TypeConverterFactory class.
+   * 
+     * @param name specific name of the factory.
+   * @return 
+   */
+  public static TypeConverterFactory instance(final String name) {
+     return factories.get(name);
+  }
   
   /**Add a new converter to this converters factory.
    * 
@@ -58,6 +85,17 @@ public class TypeConverterFactory {
     return converter;
   };
   
+  /** Find converter that converts given object from class FROM to class TO.
+   * Note that the from parameter could not be null. If you expect that from 
+   * parameter could be null, please use {@link TypeConverterFactory#convert(java.lang.Object, java.lang.Class, java.lang.Class)} method,
+   * 
+   * @param <FROM>
+   * @param <TO>
+   * @param from
+   * @param toClass
+   * @return
+   * @throws ConversionError 
+   */
   public <FROM, TO> TO convert(FROM from, Class<TO> toClass) throws ConversionError {
       @SuppressWarnings("unchecked")
       TypeConverter<FROM, TO> converter = get((Class<FROM>)from.getClass(), toClass);

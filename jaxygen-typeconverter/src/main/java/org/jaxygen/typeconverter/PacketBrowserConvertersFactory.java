@@ -28,8 +28,22 @@ import org.reflections.Reflections;
  * @author Artur
  */
 public abstract class PacketBrowserConvertersFactory {
-    private final static TypeConverterFactory factory = new TypeConverterFactory();
-
+    /** Get instance TypeConverterFactory managed by the PacketBrowsersFactory class
+     * 
+     * @return 
+     */
+    public static TypeConverterFactory instance() {
+        return TypeConverterFactory.instance();
+    }
+    
+    /** Get instance TypeConverterFactory managed by the PacketBrowsersFactory class
+     * 
+     * @return 
+     */
+    public static TypeConverterFactory instance(String name) {
+        return TypeConverterFactory.instance(name);
+    }
+    
     /**Lookup in the specified package name for all that implements 
      * ConvertersRegistry interface.
      * 
@@ -44,7 +58,7 @@ public abstract class PacketBrowserConvertersFactory {
             try {
                 ConvertersRegistry cr = c.newInstance();
                 for (TypeConverter tc : cr.getConverters()) {
-                    factory.registerConverter(tc);
+                    instance().registerConverter(tc);
                 }
             } catch (InstantiationException ex) {
                 Logger.getLogger(PacketBrowserConvertersFactory.class.getName()).log(Level.SEVERE, "Could not register converter " + c.getName(), ex);
@@ -65,13 +79,13 @@ public abstract class PacketBrowserConvertersFactory {
      * @return
      */
     public static <FROM, TO> TypeConverter<FROM, TO> get(Class<FROM> from, Class<TO> to) {
-        return (TypeConverter<FROM, TO>) factory.get(from, to);
+        return (TypeConverter<FROM, TO>) instance().get(from, to);
     }
 
     ;
   
   public static <FROM, TO> TO convert(FROM from, Class<TO> toClass) throws ConversionError {
-        return factory.convert(from, toClass);
+        return instance().convert(from, toClass);
     }
 
     /**
@@ -86,6 +100,6 @@ public abstract class PacketBrowserConvertersFactory {
      * @throws ConversionError
      */
     public static <FROM, TO> TO convert(FROM from, Class<FROM> fromClass, Class<TO> toClass) throws ConversionError {
-        return factory.convert(from, fromClass, toClass);
+        return instance().convert(from, fromClass, toClass);
     }
 }

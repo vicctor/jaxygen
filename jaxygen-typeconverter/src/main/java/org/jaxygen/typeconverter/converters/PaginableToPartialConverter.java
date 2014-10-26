@@ -33,8 +33,19 @@ public abstract class PaginableToPartialConverter<FROM extends PaginableListResp
 
     private final TypeConverterFactory converters;
 
-    protected PaginableToPartialConverter(TypeConverterFactory converters) {
-        this.converters = converters;
+    /**Create PaginableToPartialConverter that uses named converters factory (see @TypeConverterFactory)
+     * 
+     * @param typeConvertersFactoryName 
+     */
+    protected PaginableToPartialConverter(String typeConvertersFactoryName) {
+        this.converters = TypeConverterFactory.instance(typeConvertersFactoryName);
+    }
+    
+    /**Create paginable partial converter that uses the default TypeConverterFactory
+     * 
+     */
+    protected PaginableToPartialConverter() {
+        this.converters = TypeConverterFactory.instance();
     }
 
     public TO convert(FROM from) throws ConversionError {
