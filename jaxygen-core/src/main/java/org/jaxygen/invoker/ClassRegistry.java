@@ -6,7 +6,7 @@ package org.jaxygen.invoker;
 
 import java.util.List;
 
-/**Implemet this interface int order to inform NetService about classes providing
+/**Implement this interface in order to inform JAXygen about classes providing
  * the remote service.
  *
  * @author artur
