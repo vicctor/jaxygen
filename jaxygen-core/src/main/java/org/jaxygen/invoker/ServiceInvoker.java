@@ -83,7 +83,7 @@ public class ServiceInvoker extends HttpServlet {
         try {
             params = new HttpRequestParser(request);
         } catch (Exception ex) {
-            throwError(response, new JsonResponseConverter(), "Could nor parse properties", ex);
+            throwError(response, new JsonResponseConverter(), "Could not parse properties", ex);
         }
         if (beensPath == null) {
             beensPath = getServletContext().getInitParameter(SERVICE_PATH);
