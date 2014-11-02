@@ -19,6 +19,8 @@ import org.jaxygen.annotations.ClientIp;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
 import org.jaxygen.annotations.Validable;
+import org.jaxygen.objectsbuilder.ObjectBuilder;
+import org.jaxygen.objectsbuilder.ObjectBuilderFactory;
 import org.jaxygen.converters.ConvertersFactory;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.ResponseConverter;
@@ -131,7 +133,8 @@ public class ServiceInvoker extends HttpServlet {
                             checkMethodAllowed(session, clazz.getCanonicalName(), m);
                             final Class<?>[] parameterTypes = m.getParameterTypes();
                             Object[] parameters = parseParameters(parameterTypes, inputFormat, params, query);
-                            Object been = clazz.newInstance();
+                            ObjectBuilder ob = ObjectBuilderFactory.instance();
+                            Object been = ob.create(clazz);
                             validate(parameters);
                             try {
                                 injectClientIp(parameterTypes, parameters, request);
