@@ -15,16 +15,16 @@
  */
 package org.jaxygen.annotations;
 
-/**Status of the implemention of given method or class
+/**Status of the implementation of given method or class.
  *
  * @author Artur Keska
  */
   public enum Status  {
     Undefined,         /** The status has not been defined by the developer */
     Placeholder,       /** The method is just a placeholder to keep in mind that probably one needed sych method */
-    Mockup,            /** Method is implemened just as a mockup. It gives a result which fullfills the application design rules */
+    Mockup,            /** Method is implemented just as a mockup. It gives a result which fulfils the application design rules */
     Nonfunctional,     /** Method is implemented but not functional */
-    ReleaseCandidate,  /** Method is implemented and realy for testing */
+    ReleaseCandidate,  /** Method is implemented and ready for testing */
     GenerallyAvailable,/** Method is implemented and accepted by testers team */
-    Deprected          /** Method has been marked as deprected, subject to remove in the next version */ 
+    Deprecated         /** Method has been marked as deprecated, subject to remove in the next version */ 
   }

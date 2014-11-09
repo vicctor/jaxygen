@@ -20,7 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**Marks a bean property as mandatory
+/**Marks a bean property as mandatory.
  * @author Artur Keska
  *
  */

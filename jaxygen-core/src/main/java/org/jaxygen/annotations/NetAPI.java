@@ -30,12 +30,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface NetAPI {
  /** Description shown in the APIBrowser
+     * @return Description that will be visible in in browsers.
   */
  String description() default "";
- /** Method implementation status
+ /** Method implementation status.
+     * @return Status of method implementation.
   */
  Status status() default Status.Undefined;
- /** Declares since which version of the seftware given method is avaliable
+ /** Declares since which version of the software given method is avaliable.
+     * @return Version name.
   */
  String version() default "";
 }

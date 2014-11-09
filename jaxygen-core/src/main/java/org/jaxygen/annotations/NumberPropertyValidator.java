@@ -20,9 +20,21 @@ import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.ElementType;
 
+/**Validator that matches numbers.
+ * 
+ * @author Artur
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface NumberPropertyValidator {
+    /**
+     * 
+     * @return Minimal value of the property.
+     */
     long minValue() default Long.MIN_VALUE;
+    /**
+     * 
+     * @return Maximal value of the property.
+     */
     long maxValue() default Long.MAX_VALUE;
 }

@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.jaxygen</groupId>
     <artifactId>jaxygen-project</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
   </parent>
   <groupId>org.jaxygen.typeconverter</groupId>
   <artifactId>jaxygen-typeconverter</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.3-SNAPSHOT</version>
   <name>jaxygen-typeconverter</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -25,7 +25,7 @@
     <dependency>
       <groupId>org.jaxygen</groupId>
       <artifactId>jaxygen-core</artifactId>
-      <version>1.0.2-SNAPSHOT</version>
+      <version>1.0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jodah</groupId>

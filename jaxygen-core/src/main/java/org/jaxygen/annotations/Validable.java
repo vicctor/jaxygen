@@ -20,7 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**Tells to the validator that the given object void be validated.
+/**Tells to the validator that the given object should be validated.
  * @author Artur Keska
  *
  */

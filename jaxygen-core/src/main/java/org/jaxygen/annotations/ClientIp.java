@@ -20,6 +20,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/** Use this annotation on String property that should be filled with client IP address.
+ * 
+ * @author Artur
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ClientIp {

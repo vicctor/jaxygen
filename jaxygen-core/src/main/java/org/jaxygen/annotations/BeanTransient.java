@@ -21,7 +21,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /** This annotation might be used for getter or setter method that should not be 
- * used to copy object content in the BeanUtil.translateBean method 
+ * used to copy object content in the BeanUtil.translateBean method.
+ * 
  * @author Artur Keska
  *
  */

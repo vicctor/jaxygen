@@ -20,10 +20,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/** Validates string property over the regular expression and expected length.
+ * 
+ * @author Artur
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface StringPropertyValidator {
+    /**
+     * 
+     * @return Java regexp that the property shall match.
+     */
   String regex() default "";
+  /**
+   * 
+   * @return Minimal length of the property.
+   */
   int minimalLength() default 0;
+  /**
+   * 
+   * @return Maximal length of the property.
+   */
   int maximalLength() default Integer.MAX_VALUE;
 }

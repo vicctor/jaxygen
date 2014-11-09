@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * This class tells to the HttpInterceptorBeanImplementation that the 
  * field is an HttpSession and shall be injected by the engine before
- * serivce class method call.
+ * service class method call.
  * 
  * @author Artur Keska
  * 
