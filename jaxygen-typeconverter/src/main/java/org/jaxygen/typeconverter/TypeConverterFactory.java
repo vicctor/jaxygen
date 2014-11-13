@@ -54,8 +54,13 @@ public class TypeConverterFactory {
      * @param name specific name of the factory.
      * @return
      */
-    public static TypeConverterFactory instance(final String name) {
-        return factories.get(name);
+    public static synchronized TypeConverterFactory instance(final String name) {
+        TypeConverterFactory rc = factories.get(name);
+        if (rc == null) {
+            rc = new TypeConverterFactory();
+            factories.put(name, rc);
+        }
+        return rc;
     }
 
     /**
@@ -93,7 +98,9 @@ public class TypeConverterFactory {
         if (converter == null) {
             for (Map<Class, TypeConverter> tcm : converters.values()) {
                 for (TypeConverter tc : tcm.values()) {
-                    if (tc.from().isAssignableFrom(from) && to.isAssignableFrom(tc.to())) {
+                    Class tcFrom = tc.from();
+                    Class tcTo = tc.to();
+                    if (tcFrom.isAssignableFrom(from) && tcTo.isAssignableFrom(to)) {
                         converter = tc;
                         break;
                     }

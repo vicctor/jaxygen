@@ -19,8 +19,8 @@
         <url>https://github.com/vicctor/jaxygen</url>
         <developerConnection>scm:git:git@github.com:vicctor/jaxygen.git</developerConnection>
         <connection>scm:git@github.com:vicctor/jaxygen.git</connection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <licenses>
         <license>
@@ -75,15 +75,16 @@
 
 
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>20040616</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.0</version>
         </dependency>
+
         
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
+            <version>1.2</version>
         </dependency>
         
         <dependency>
@@ -95,7 +96,7 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>20030211.134440</version>
+            <version>1.9.2</version>
         </dependency>
 
     </dependencies>
