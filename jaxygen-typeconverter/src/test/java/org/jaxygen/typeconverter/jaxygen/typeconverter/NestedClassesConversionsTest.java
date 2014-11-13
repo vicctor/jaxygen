@@ -22,20 +22,24 @@ import org.jaxygen.typeconverter.exceptions.ConversionError;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  *
  * @author Artur
  */
+@RunWith(MockitoJUnitRunner.class)
 public class NestedClassesConversionsTest {
 
-    private TypeConverter<B, A> bToAConverterMock;
-    private TypeConverter<A, B> aToBConverterMock;
-    private TypeConverter<A, C> aToCConverterMock;
-    private TypeConverter<C, A> cToAConverterMock;
-    private TypeConverter<C, B> cToBConverterMock;
+    @Mock private TypeConverter<B, A> bToAConverterMock;
+    @Mock private TypeConverter<A, B> aToBConverterMock;
+    @Mock private TypeConverter<A, C> aToCConverterMock;
+    @Mock private TypeConverter<C, A> cToAConverterMock;
+    @Mock private TypeConverter<C, B> cToBConverterMock;
 
     private final A a = new A();
     private final B b = new B();
@@ -85,13 +89,6 @@ public class NestedClassesConversionsTest {
 
     @Before
     public void setUp() throws ConversionError {
-
-        bToAConverterMock = Mockito.mock(TypeConverter.class);
-        aToBConverterMock = Mockito.mock(TypeConverter.class);
-        aToCConverterMock = Mockito.mock(TypeConverter.class);
-        cToAConverterMock = Mockito.mock(TypeConverter.class);
-        cToBConverterMock = Mockito.mock(TypeConverter.class);
-
         Mockito.when(bToAConverterMock.convert(b)).thenReturn(a);
         Mockito.when(aToBConverterMock.convert(a)).thenReturn(b);
         Mockito.when(aToCConverterMock.convert(a)).thenReturn(c);
