@@ -18,6 +18,7 @@ package org.jaxygen.typeconverter;
 import java.util.HashMap;
 import java.util.Map;
 import org.jaxygen.typeconverter.exceptions.ConversionError;
+import org.jodah.typetools.TypeResolver;
 
 /**
  * Class is a registry of the TypeConverter classes. Once the converter
