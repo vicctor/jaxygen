@@ -1,4 +1,5 @@
-![jaxygen](https://raw.githubusercontent.com/vicctor/jaxygen/master/jaxygen.png)
+[![Build Status](https://travis-ci.org/vicctor/jaxygen.svg)](https://travis-ci.org/vicctor/jaxygen)
+
 
 ## About JXYGen
 JAXYgen is a web-service building framework made by few people in the begining just for fun. Soon it turned out that the framework is enough usable to be productive, so we started to use it in our comercial projects. That's the story end.
