@@ -35,11 +35,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class NestedClassesConversionsTest {
 
-    @Mock private TypeConverter<B, A> bToAConverterMock;
-    @Mock private TypeConverter<A, B> aToBConverterMock;
-    @Mock private TypeConverter<A, C> aToCConverterMock;
-    @Mock private TypeConverter<C, A> cToAConverterMock;
-    @Mock private TypeConverter<C, B> cToBConverterMock;
+    @Mock
+    private TypeConverter<B, A> bToAConverterMock;
+    @Mock
+    private TypeConverter<A, B> aToBConverterMock;
+    @Mock
+    private TypeConverter<A, C> aToCConverterMock;
+    @Mock
+    private TypeConverter<C, A> cToAConverterMock;
+    @Mock
+    private TypeConverter<C, B> cToBConverterMock;
 
     private final A a = new A();
     private final B b = new B();
@@ -181,7 +186,6 @@ public class NestedClassesConversionsTest {
     public void test_shallConvertAtoB() throws ConversionError {
         TypeConverterFactory factory = TypeConverterFactory.instance("test_shallConvertAtoB");
         // given
-
         factory.registerConverter(cToAConverterMock);
         factory.registerConverter(bToAConverterMock);
         factory.registerConverter(aToCConverterMock);
@@ -194,7 +198,7 @@ public class NestedClassesConversionsTest {
         Mockito.verify(aToBConverterMock).convert(a);
         assertEquals(b, bFromA);
     }
-    
+
     @Test
     public void test_shallConvertCtoA_usingNested() throws ConversionError {
         TypeConverterFactory factory = TypeConverterFactory.instance("test_shallConvertCtoA_usingNested");
@@ -230,5 +234,27 @@ public class NestedClassesConversionsTest {
             Mockito.verify(aToCConverterMock, Mockito.never()).convert(a);
             assertNull(bFromA);
         }
+    }
+
+    @Test
+    public void test_shallForceConvertAtoB_using_BtoC() throws ConversionError {
+        TypeConverterFactory factory = TypeConverterFactory.instance("test_shallForceConvertAtoB_using_BtoC");
+        // given
+        factory.registerConverter(cToAConverterMock);
+        factory.registerConverter(bToAConverterMock);
+        factory.registerConverter(aToCConverterMock);
+        factory.registerConverter(A.class, B.class, aToCConverterMock);
+
+        B bFromA;
+
+        // when
+        bFromA = factory.convert(a, B.class);
+        
+        // then
+        Mockito.verify(aToBConverterMock, Mockito.never()).convert(a);
+        Mockito.verify(cToAConverterMock, Mockito.never()).convert(Matchers.any(C.class));
+        Mockito.verify(bToAConverterMock, Mockito.never()).convert(Matchers.any(B.class));
+        Mockito.verify(aToCConverterMock).convert(a);
+        assertEquals(c, bFromA);
     }
 }

@@ -45,6 +45,7 @@ public interface HttpFileUploadHandler {
      * @param fieldName name of file item.
      * @return File object pointing to the physical file where the file content
      *         has to be stored.
+     * @throws org.jaxygen.exceptions.FileUploadDiscarded Notified when upload is broken by peer.
      */
   File beginUpload(String fieldName, String fileName, String mimeType, long size)
       throws FileUploadDiscarded;

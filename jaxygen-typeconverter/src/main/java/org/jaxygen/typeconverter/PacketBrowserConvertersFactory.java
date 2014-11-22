@@ -28,9 +28,10 @@ import org.reflections.Reflections;
  * @author Artur
  */
 public abstract class PacketBrowserConvertersFactory {
+    
     /** Get instance TypeConverterFactory managed by the PacketBrowsersFactory class
      * 
-     * @return 
+     * @return Default instance of TypeConverterFactory.
      */
     public static TypeConverterFactory instance() {
         return TypeConverterFactory.instance();
@@ -38,18 +39,19 @@ public abstract class PacketBrowserConvertersFactory {
     
     /** Get instance TypeConverterFactory managed by the PacketBrowsersFactory class
      * 
-     * @return 
+     * @param name Name of factory instance.
+     * @return Instance of TypeConverterFactory.
      */
-    public static TypeConverterFactory instance(String name) {
+    public static TypeConverterFactory instance(final String name) {
         return TypeConverterFactory.instance(name);
     }
     
     /**Lookup in the specified package name for all that implements 
      * ConvertersRegistry interface.
      * 
-     * @param scannedPackageName 
+     * @param scannedPackageName Full qualified name of the java package containing converters.
      */
-    protected static void init(String scannedPackageName) {
+    protected static void init(final String scannedPackageName) {
         Reflections reflections = new Reflections(scannedPackageName);
         Set<Class<? extends ConvertersRegistry>> annotated
                 = reflections.getSubTypesOf(ConvertersRegistry.class);
@@ -72,32 +74,42 @@ public abstract class PacketBrowserConvertersFactory {
      * Get the converter which could translate an object from class from to
      * class to.
      *
-     * @param <FROM>
-     * @param <TO>
-     * @param from
-     * @param to
-     * @return
+     * @param <FROM> From type.
+     * @param <TO> To type.
+     * @param from From converter class.
+     * @param to To conversion class.
+     * @return Type converter that converts FROM from to TO.
      */
     public static <FROM, TO> TypeConverter<FROM, TO> get(Class<FROM> from, Class<TO> to) {
         return (TypeConverter<FROM, TO>) instance().get(from, to);
     }
 
-    ;
-  
+    /**
+     * Get the converter which could translate an object from class from to
+     * class to.
+     *
+     * @param <FROM> From type.
+     * @param <TO> To type.
+     * @param from From object.
+     * @param toClass To conversion class.
+     * @return Type converter that converts FROM from to TO.
+     * @throws org.jaxygen.typeconverter.exceptions.ConversionError Conversion error.
+     */  
   public static <FROM, TO> TO convert(FROM from, Class<TO> toClass) throws ConversionError {
         return instance().convert(from, toClass);
     }
 
     /**
-     * Convenient method used in case if the from object could be null
+     * Convenient method used in case if the from object could be null.
      *
-     * @param <FROM>
-     * @param <TO>
-     * @param from
-     * @param fromClass
-     * @param toClass
-     * @return
-     * @throws ConversionError
+     * @param <FROM> From type.
+     * @param <TO> To type.
+     * @param from From object.
+     * @param fromClass The class from which the conversion is done. Note that this could force using 
+     * another converter that that for class of form parameter.
+     * @param toClass To conversion class.
+     * @return Type converter that converts FROM from to TO.
+     * @throws org.jaxygen.typeconverter.exceptions.ConversionError Conversion error.
      */
     public static <FROM, TO> TO convert(FROM from, Class<FROM> fromClass, Class<TO> toClass) throws ConversionError {
         return instance().convert(from, fromClass, toClass);

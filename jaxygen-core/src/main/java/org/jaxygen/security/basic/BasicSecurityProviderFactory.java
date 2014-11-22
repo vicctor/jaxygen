@@ -1,6 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
  */
 package org.jaxygen.security.basic;
 
@@ -47,8 +45,8 @@ public class BasicSecurityProviderFactory implements SecurityProviderFactory {
   * methods that are assigned at least to one profile provided in the profiles
   * array.
   *
-  * @param registry
-  * @param profiles
+  * @param registry A class registry managed by this provider.
+  * @param profiles A list of available security profiles.
   */
  public BasicSecurityProviderFactory(ClassRegistry registry, String... profiles) {
   this.profiles = profiles;

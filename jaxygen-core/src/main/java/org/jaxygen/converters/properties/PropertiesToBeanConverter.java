@@ -93,15 +93,15 @@ public class PropertiesToBeanConverter implements RequestConverter {
    * Applies a collection of properties to a JavaBean. Converts String and String[] values to correct property types
    *
    * @param properties A map of the properties to set on the JavaBean
-   * @param files
-   * @param beanClass
-   * @return
-   * @throws InstantiationException
-   * @throws InvocationTargetException
-   * @throws IllegalAccessException
-   * @throws IntrospectionException
-   * @throws IllegalArgumentException
-   * @throws WrongProperyIndex
+   * @param files List of files.
+   * @param beanClass Bean class to be converted.
+   * @return A new object of beanClass.
+   * @throws InstantiationException .
+   * @throws InvocationTargetException .
+   * @throws IllegalAccessException .
+   * @throws IntrospectionException .
+   * @throws IllegalArgumentException .
+   * @throws WrongProperyIndex Exception thrown on property validation errors.
    */
   public static Object convertPropertiesToBean(Map<String, String> properties,
           Map<String, UploadedFile> files,

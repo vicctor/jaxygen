@@ -24,8 +24,8 @@ import org.jodah.typetools.TypeResolver;
  * returning the class types of the corresponding convertion subjects.
  *
  * @author Artur
- * @param <FROM>
- * @param <TO>
+ * @param <FROM> Convert from this class.
+ * @param <TO> Into this class.
  */
 public abstract class ClassToClassTypeConverter<FROM, TO> implements TypeConverter<FROM, TO> {
 

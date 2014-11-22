@@ -28,10 +28,10 @@ public class XMLBeanParser {
      /**
      * Parse input stream into a bean class specified by parameter c.
      *
-     * @param is
-     * @param c
-     * @return
-     * @throws JAXBException
+     * @param is XML data input stream.
+     * @param c Class into which the XML stream will be parsed.
+     * @return A new instance of c class.
+     * @throws JAXBException XML parse error.
      */
     static public Object parseXMLtoBean(InputStream is, Class<?> c)
             throws JAXBException {

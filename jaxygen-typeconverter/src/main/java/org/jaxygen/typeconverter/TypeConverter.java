@@ -21,25 +21,28 @@ import org.jaxygen.typeconverter.exceptions.ConversionError;
  * The TypeConverter is responsible to convert object of one class class to another.
  * 
  * @author Artur
+ * @param <FROM> From type.
+ * @param <TO> To type.
  */
 public interface TypeConverter<FROM, TO> {
+    
     /** The convert method creates a new instance of object of the class TO
      * by converting the object from of the class FROM.
-     * @param from
-     * @return
-     * @throws ConversionError 
+     * @param from The object that will be converted.
+     * @return Result of conversion.
+     * @throws ConversionError Conversion failed error.
      */
     TO convert(FROM from) throws ConversionError;
     
-    /** Get the class from which is an input for convert method
+    /** Get the class from which is an input for convert method.
      * 
-     * @return 
+     * @return The class from which the converter converts.
      */
     Class<FROM> from();
     
     /** Get the class which is an output of the convert method.
      *
-     * @return
+     * @return Class to which converter converts.
      */
     Class<TO> to();
 }

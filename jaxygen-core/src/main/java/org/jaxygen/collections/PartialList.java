@@ -22,7 +22,7 @@ import java.util.List;
  * result with limits).
  *
  * @author Artur
- * @param <T>
+ * @param <T> Class managed by the partial list.
  */
 public interface PartialList<T> extends List<T> {
     public long getTotalSize();

@@ -9,21 +9,21 @@ import org.jaxygen.security.basic.SecuredMethodDescriptor;
 public interface SecurityProfile {
     /**Returns an array of user profiles bound to this provider.
      * 
-     * @return 
+     * @return List of user groups.
      */
     String[] getUserGroups();
     
-    /**Check if the given method has assigned security descriptor
+    /**Check if the given method has assigned security descriptor.
      * 
-     * @param className
-     * @param methodName
-     * @return 
+     * @param className Name of the checked class.
+     * @param methodName Name of the checked method.
+     * @return Descriptor of the found method.
      */
     SecuredMethodDescriptor isAllowed(final String className, final String methodName);
     
-    /** Get the list of allowed methods
+    /** Get the list of allowed methods.
      * 
-     * @return Each method is described by token className#methodName
+     * @return Each method is described by token className#methodName.
      */
     String[] getAllowedMethodDescriptors();
 }

@@ -16,3 +16,4 @@
 .DS_Store
 .idea/
 *.iml
+/jaxygent-fluenconverters/jaxygen-fluentconverters/target/

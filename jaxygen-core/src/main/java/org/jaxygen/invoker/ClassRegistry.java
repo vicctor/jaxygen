@@ -13,9 +13,9 @@ import java.util.List;
  */
 public interface ClassRegistry {
 
-    /**Return the list of classes providing service methods 
+    /**Return the list of classes providing service methods.
      * 
-     * @return 
+     * @return A list of classes to be registered in this app contxt.
      */
     public List<Class> getRegisteredClasses();
     

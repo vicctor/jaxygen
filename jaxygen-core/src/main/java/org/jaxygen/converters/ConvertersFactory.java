@@ -18,7 +18,6 @@ package org.jaxygen.converters;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 
 /**
  *
@@ -40,7 +39,7 @@ public class ConvertersFactory {
   /** Obtain request converted for given name
    * 
    * @param name converter name (build in converters: PROPERTIES)
-   * @return 
+   * @return Request converter.
    */
   public static synchronized RequestConverter getRequestConverter(final String name) {
     return requestConverters.get(name);
@@ -49,7 +48,7 @@ public class ConvertersFactory {
     /** Obtain response converted for given name
    * 
    * @param name converter name
-   * @return 
+   * @return Response converter.
    */
   public static synchronized ResponseConverter getResponseConverter(final String name) {
     return responseConverters.get(name);

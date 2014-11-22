@@ -18,7 +18,6 @@ package org.jaxygen.typeconverter;
 import java.util.HashMap;
 import java.util.Map;
 import org.jaxygen.typeconverter.exceptions.ConversionError;
-import org.jodah.typetools.TypeResolver;
 
 /**
  * Class is a registry of the TypeConverter classes. Once the converter
@@ -43,7 +42,7 @@ public class TypeConverterFactory {
     /**
      * Get default instance of the TypeConverterFactory class.
      *
-     * @return
+     * @return A default instance of TypeConverterFactory.
      */
     public static TypeConverterFactory instance() {
         return factories.get(DEFAULT_FACTORY);
@@ -53,7 +52,7 @@ public class TypeConverterFactory {
      * Get named instance of the TypeConverterFactory class.
      *
      * @param name specific name of the factory.
-     * @return
+     * @return A named instance of type converters factory.
      */
     public static synchronized TypeConverterFactory instance(final String name) {
         TypeConverterFactory rc = factories.get(name);
@@ -67,31 +66,46 @@ public class TypeConverterFactory {
     /**
      * Add a new converter to this converters factory.
      *
-     * @param converter
+     * @param converter Add a new type converter to the registry.
      */
-    public void registerConverter(TypeConverter converter) {
+    public void registerConverter(final TypeConverter converter) {
         final Class from = converter.from();
+        final Class to = converter.to();
+        registerConverter(from, to, converter);
+    }
+
+    /**
+     * Add a new converter to this converters factory.
+     *
+     * @param <FROM> Type from which the conversion is done.
+     * @param <TO> Type to which the conversion is done.
+     * @param fromClass The class from which the conversion will be done.
+     * @param toClass The class into which conversion will be done.
+     * @param converter Converter used to replace from fromClass to toClass
+     */
+    public <FROM, TO> void registerConverter(final Class<FROM> fromClass, final Class<TO> toClass, TypeConverter<? extends FROM, ? extends TO> converter) {
+
         Map<Class, TypeConverter> toMap;
-        if (converters.containsKey(from) == false) {
+        if (converters.containsKey(fromClass) == false) {
             toMap = new HashMap<Class, TypeConverter>();
-            converters.put(from, toMap);
+            converters.put(fromClass, toMap);
         } else {
-            toMap = converters.get(from);
+            toMap = converters.get(fromClass);
         }
-        toMap.put(converter.to(), converter);
+        toMap.put(toClass, converter);
     }
 
     /**
      * Get the converter which could translate an object from class from to
      * class to.
      *
-     * @param <FROM>
-     * @param <TO>
-     * @param from
-     * @param to
-     * @return
+     * @param <FROM> Type from which the conversion is done.
+     * @param <TO> Type to which the conversion is done.
+     * @param from The class from which the conversion will be done.
+     * @param to The class into which conversion will be done.
+     * @return Type converter that changes from FROM to TO.
      */
-    public <FROM, TO> TypeConverter<FROM, TO> get(Class<FROM> from, Class<TO> to) {
+    public <FROM, TO> TypeConverter<FROM, TO> get(final Class<FROM> from, final Class<TO> to) {
         TypeConverter<FROM, TO> converter = null;
         if (converters.containsKey(from) && converters.get(from).containsKey(to)) {
             converter = converters.get(from).get(to);
@@ -117,14 +131,14 @@ public class TypeConverterFactory {
    * Note that the from parameter could not be null. If you expect that from 
    * parameter could be null, please use {@link TypeConverterFactory#convert(java.lang.Object, java.lang.Class, java.lang.Class)} method,
    * 
-   * @param <FROM>
-   * @param <TO>
-   * @param from
-   * @param toClass
-   * @return
-   * @throws ConversionError 
+     * @param <FROM> Type from which the conversion is done.
+     * @param <TO> Type to which the conversion is done.
+     * @param from The object from which the conversion will be done. Note, it could not be null.
+     * @param toClass The class into which conversion will be done.
+   * @return Type converter that changes from FROM to TO.
+   * @throws ConversionError Conversion error.
    */
-  public <FROM, TO> TO convert(FROM from, Class<TO> toClass) throws ConversionError {
+  public <FROM, TO> TO convert(final FROM from, final Class<TO> toClass) throws ConversionError {
         @SuppressWarnings("unchecked")
         TypeConverter<FROM, TO> converter = get((Class<FROM>) from.getClass(), toClass);
         if (converter == null) {
@@ -136,15 +150,15 @@ public class TypeConverterFactory {
     /**
      * Convenient method used in case if the from object could be null
      *
-     * @param <FROM>
-     * @param <TO>
-     * @param from
-     * @param fromClass
-     * @param toClass
-     * @return
-     * @throws ConversionError
+     * @param <FROM> Type from which the conversion is done.
+     * @param <TO> Type to which the conversion is done.
+     * @param from Object that well be converted.
+     * @param fromClass The class from which the conversion will be done.
+     * @param toClass The class into which conversion will be done.
+     * @return Instance of toClass.
+     * @throws ConversionError Conversion failed.
      */
-    public <FROM, TO> TO convert(FROM from, Class<FROM> fromClass, Class<TO> toClass) throws ConversionError {
+    public <FROM, TO> TO convert(final FROM from, final Class<FROM> fromClass, final Class<TO> toClass) throws ConversionError {
         @SuppressWarnings("unchecked")
         TypeConverter<FROM, TO> converter = get(fromClass, toClass);
         if (converter == null) {

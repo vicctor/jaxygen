@@ -7,25 +7,26 @@ package org.jaxygen.typeconverter.exceptions;
 public class ConversionError extends Exception {
 
     /**
-     * Creates a new instance of <code>ConversionError</code> without detail message.
+     * Creates a new instance of &lt;code&gt;ConversionError&lt;/code&gt; without detail message.
      */
     public ConversionError() {
     }
 
 
     /**
-     * Constructs an instance of <code>ConversionError</code> with the specified detail message.
+     * Constructs an instance of &lt;code&gt;ConversionError&lt;/code&gt; with the specified detail message.
      * @param msg the detail message.
      */
-    public ConversionError(String msg) {
+    public ConversionError(final String msg) {
         super(msg);
     }
 
   /**
-     * Constructs an instance of <code>ConversionError</code> with the specified detail message.
+     * Constructs an instance of &lt;code&gt;ConversionError&lt;/code&gt; with the specified detail message.
      * @param msg the detail message.
+     * @param ex Cause of this exception.
      */
-    public ConversionError(String msg, Throwable ex) {
+    public ConversionError(final String msg, final Throwable ex) {
         super(msg, ex);
     }
 }

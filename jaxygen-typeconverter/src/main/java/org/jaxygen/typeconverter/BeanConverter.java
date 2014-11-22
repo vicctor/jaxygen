@@ -24,9 +24,11 @@ import org.jaxygen.util.BeanUtil;
  * anther. NOTE: class is marked abstract due to JVM generics implementation
  * converter must be instantiated to the concrete form always:
  *
- * Example usage: b = new BeanConverter<AClasss, BClass>{}.convert(a);
+ * Example usage: b = new BeanConverter&lt;AClasss, BClass&gt;{}.convert(a);
  *
  * @author Artur
+ * @param <FROM> Convert from this class.
+ * @param <TO> Into this class.
  */
 public abstract class BeanConverter<FROM, TO> extends ClassToClassTypeConverter<FROM, TO> {
 

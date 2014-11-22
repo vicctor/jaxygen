@@ -24,9 +24,13 @@ import org.jaxygen.typeconverter.TypeConverterFactory;
 import org.jaxygen.typeconverter.exceptions.ConversionError;
 import org.jodah.typetools.TypeResolver;
 
-/**
- *
+/** Converts the PaginableListResponseBaseDTO into PartialList.
+ * Not that converter uses registered converter for changing elements of PaginableListResponseDTO to elements of
+ * ParialList.
+ * 
  * @author Artur
+ * @param <FROM> FROM paginable.
+ * @param <TO> TO partial.
  */
 public abstract class PaginableToPartialConverter<FROM extends PaginableListResponseBaseDTO, TO extends PartialList>
         extends ClassToClassTypeConverter<FROM, TO> {
@@ -35,9 +39,9 @@ public abstract class PaginableToPartialConverter<FROM extends PaginableListResp
 
     /**Create PaginableToPartialConverter that uses named converters factory (see @TypeConverterFactory)
      * 
-     * @param typeConvertersFactoryName 
+     * @param typeConvertersFactoryName Name of used converters factory.
      */
-    protected PaginableToPartialConverter(String typeConvertersFactoryName) {
+    protected PaginableToPartialConverter(final String typeConvertersFactoryName) {
         this.converters = TypeConverterFactory.instance(typeConvertersFactoryName);
     }
     
@@ -48,7 +52,7 @@ public abstract class PaginableToPartialConverter<FROM extends PaginableListResp
         this.converters = TypeConverterFactory.instance();
     }
 
-    public TO convert(FROM from) throws ConversionError {
+    public TO convert(final FROM from) throws ConversionError {
         TO rc;
         try {
             rc = to().newInstance();

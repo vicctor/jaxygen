@@ -24,12 +24,14 @@ import org.jaxygen.typeconverter.TypeConverterFactory;
 import org.jaxygen.typeconverter.exceptions.ConversionError;
 import org.jodah.typetools.TypeResolver;
 
-/**The PartialToPaginableConverter copies all elements of the instance of {@link ParialList} to
- * {@link PaginableListResponseBaseDTO}. When iterating over PartialList it call converter that
- * changes element of PartialList to object of class {@link PaginableListResponseBaseDTO}.
+/**The PartialToPaginableConverter copies all elements of the instance of {@link PartialList} to
+ * {@link org.jaxygen.dto.collections.PaginableListResponseBaseDTO}. When iterating over PartialList it call converter that
+ * changes element of PartialList to object of class {@link org.jaxygen.dto.collections.PaginableListResponseBaseDTO}.
  * If the required converter is not registered, converter will throw {@link ConversionError} exception.
  *
  * @author Artur
+ * @param <FROM> From type.
+ * @param <TO> To type.
  */
 public abstract class PartialToPaginableConverter<FROM extends PartialList, TO extends PaginableListResponseBaseDTO>
         extends ClassToClassTypeConverter<FROM, TO> {
@@ -38,7 +40,7 @@ public abstract class PartialToPaginableConverter<FROM extends PartialList, TO e
 
     /** Create PartialToPaginableConverter that uses named @see {@link TypeConverterFactory}
      * 
-     * @param typeConvertersFactoryName 
+     * @param typeConvertersFactoryName  Name of the used converters factory.
      */
     protected PartialToPaginableConverter(String typeConvertersFactoryName) {
         this.converters = TypeConverterFactory.instance(typeConvertersFactoryName);

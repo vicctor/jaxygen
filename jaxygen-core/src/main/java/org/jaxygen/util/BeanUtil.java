@@ -3,8 +3,6 @@ package org.jaxygen.util;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -24,7 +22,7 @@ public class BeanUtil {
      * that it is not obvious that both object are there same type, only set and
      * get methods must much.
      *
-     * @param from data provider object
+     * @param from data provider object.
      * @param to data acceptor object.
      */
     public static void translateBean(Object from, Object to) {
@@ -57,17 +55,16 @@ public class BeanUtil {
 
     /**
      * Method goes through bean getters, and check if the returned value matches
-     * the validator passed in @StringPropertyValidator or
-     *
-     * @NumberPropertyValidator Method check all methods which returns primitive
+     * the validator passed in {\link StringPropertyValidator} or
+     * {\link NumberPropertyValidator} Method check all methods which returns primitive
      * type, Long or Integer or a bean class annotated but the
-     * @Validable annotation type and does not takes any argument.
+     * {link Validable} annotation type and does not takes any argument.
      *
-     * @param bean
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvalidPropertyFormat
+     * @param bean Bean under validation.
+     * @throws InvocationTargetException .
+     * @throws IllegalAccessException .
+     * @throws IllegalArgumentException .
+     * @throws InvalidPropertyFormat .
      */
     public static void validateBean(Object bean) throws IllegalArgumentException,
             IllegalAccessException, InvocationTargetException, InvalidPropertyFormat {

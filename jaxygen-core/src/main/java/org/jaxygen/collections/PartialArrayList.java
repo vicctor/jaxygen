@@ -18,10 +18,10 @@ package org.jaxygen.collections;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
+/** A array list based implementation of {@link PartialList} class.
  *
  * @author Artur
- * @param <T>
+ * @param <T> Type of entity managed by partial list.
  */
 public abstract class PartialArrayList<T> extends ArrayList<T> implements PartialList<T> {
     private long totalSize;
