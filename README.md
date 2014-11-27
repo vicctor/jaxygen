@@ -1,4 +1,5 @@
-[![Coverage Status](https://img.shields.io/coveralls/vicctor/jaxygen.svg)](https://coveralls.io/r/vicctor/jaxygen)
+
+[![Build Status](https://travis-ci.org/vicctor/jaxygen.svg)](https://travis-ci.org/vicctor/jaxygen) [![Coverage Status](https://img.shields.io/coveralls/vicctor/jaxygen.svg)](https://coveralls.io/r/vicctor/jaxygen)
 
 ## About JAXYGen
 JAXYgen is a web-service building framework made by few people in the begining just for fun. Soon it turned out that the framework is enough usable to be productive, so we started to use it in our comercial projects. That's the story end.
