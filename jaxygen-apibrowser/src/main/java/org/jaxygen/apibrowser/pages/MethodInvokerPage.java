@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jaxygen.apibrowser.pages;
 
 import java.io.IOException;
@@ -16,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.converters.json.JsonHRResponseConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
+import org.jaxygen.dto.Downloadable;
 import org.jaxygen.dto.Uploadable;
 import org.jaxygen.netservice.html.*;
 import org.jaxygen.url.UrlQuery;
@@ -27,7 +24,6 @@ import org.jaxygen.url.UrlQuery;
 public class MethodInvokerPage extends Page {
 
   public static final String NAME = "MethodInvokerPage";
-  
 
   public MethodInvokerPage(ServletContext context,
           HttpServletRequest request, String classRegistry, String beansPath) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException {
@@ -51,7 +47,7 @@ public class MethodInvokerPage extends Page {
           InstantiationException, IllegalAccessException,
           InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException {
 
-    String simpleClassname = classFilter.substring(beansPath.length() + 1);
+    final String simpleClassname = classFilter.substring(beansPath.length() + 1);
     HTMLTable exceptionsTable = new HTMLTable();
     exceptionsTable.getHeader().addColumn(new HTMLTable.HeadColumn(new HTMLLabel("Exception name")));
     exceptionsTable.getHeader().addColumn(new HTMLTable.HeadColumn(new HTMLLabel("Description")));
@@ -62,16 +58,15 @@ public class MethodInvokerPage extends Page {
             new HTMLLabel("  "),
             new HTMLLabel("methodName=" + methodFilter));
 
-    HTMLForm propertiesInputForm = new HTMLForm();
-    propertiesInputForm.setMethod(HTMLForm.Action.post);
-    propertiesInputForm.setAction(invokerPath + "/" + simpleClassname + "/" + methodFilter);
+    HTMLForm propertiesInputForm = new HTMLForm("submitForm");
+    //propertiesInputForm.setMethod(HTMLForm.Action.post);
+    //propertiesInputForm.setAction(invokerPath + "/" + simpleClassname + "/" + methodFilter);
     propertiesInputForm.setEnctype("multipart/form-data");
 
     propertiesInputForm.appendInput(HTMLInput.Type.hidden, "className", classFilter);
     propertiesInputForm.appendInput(HTMLInput.Type.hidden, "methodName", methodFilter);
     propertiesInputForm.appendInput(HTMLInput.Type.hidden, "inputType", "PROPERTIES");
     propertiesInputForm.appendInput(HTMLInput.Type.hidden, "outputType", JsonHRResponseConverter.NAME);
-
 
     Class handerClass = Thread.currentThread().getContextClassLoader().loadClass(classFilter);
     Class resultType = null;
@@ -99,19 +94,119 @@ public class MethodInvokerPage extends Page {
         }
       }
     }
+    final Class resultClass = resultType;
+
     propertiesInputForm.appendInput(HTMLInput.Type.submit, "submit", null);
+    HTMLDiv mainDiv = new HTMLDiv("mainDiv");
+
+    mainDiv.append(pointer);
+    mainDiv.append(propertiesInputForm);
+    mainDiv.append((HTMLElement) () -> {
+      StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
+      sb.append("window.addEventListener(\"load\", function () {\n")
+              .append("  var form = document.getElementById(\"submitForm\");\n")
+              .append("\n")
+              .append("  form.addEventListener(\"submit\", function (event) {\n")
+              .append("    event.preventDefault();\n")
+              .append("    sendData();\n")
+              .append("  });\n")
+              .append("});\n");
+      sb.append("</script>");
+      
+      return sb.toString();
+    });
+    mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Return type")));
+    mainDiv.append(renderOutputObject(resultType));
+    mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Exceptions thrown by the method")));
+    mainDiv.append(exceptionsTable);
+
     Page page = this;
-    page.append(pointer);
-    page.append(propertiesInputForm);
-    page.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Return type")));
-    page.append(renderOutputObject(resultType));
-    page.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Exceptions thrown by the method")));
-    page.append(exceptionsTable);
+    // append script responsible for saving files
+    page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"http://eligrey.com/demos/FileSaver.js/FileSaver.js\"></script>");
+    // append script responsible for sending data to service
+    page.append((HTMLElement) () -> {
+      StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
+      sb.append("  function sendData() {\n")
+              .append("  document.getElementById(\"queryResult\").innerHTML='Czekaj...';\n")
+              .append("  document.getElementById(\"responseDiv\").style.display='block'\n")
+              .append("  document.getElementById(\"mainDiv\").style.display='none';\n")
+              .append("  var form = document.getElementById(\"submitForm\");\n")
+              .append("    var XHR = new XMLHttpRequest();\n")
+              .append("    var FD  = new FormData(form);\n")
+              .append("\n")
+              .append("    XHR.addEventListener(\"load\", function(event) {\n")
+              .append("      if (event.target.getResponseHeader('tabid')) {\n")
+              .append("       sessionStorage.setItem('tabid', event.target.getResponseHeader('tabid'));\n")
+              .append("      }\n");
+      if (resultClass.isAssignableFrom(Downloadable.class)) {
+        sb.append("      var blob=new Blob([event.target.response], {type:event.target.getResponseHeader('Content-Type')});\n")
+                .append("      var regex = /.*filename=\"(.*)\".*/g;\n")
+                .append("      saveAs(blob, regex.exec(event.target.getResponseHeader('Content-Disposition'))[1]);\n");
+      } else {
+        sb.append("      document.getElementById(\"queryResult\").innerHTML=JSON.stringify(event.target.response, null, 2);\n");
+      }
+      sb.append("    });\n");
+      if (resultClass.isAssignableFrom(Downloadable.class)) {
+        sb.append("    XHR.addEventListener(\"progress\", updateProgress, false);\n");
+      }
+      sb.append("\n")
+              .append("    XHR.open(\"POST\", \"").append(invokerPath).append("/").append(simpleClassname).append("/").append(methodFilter).append("\");\n");
+      if (resultClass.isAssignableFrom(Downloadable.class)) {
+        sb.append("    XHR.responseType='arraybuffer';\n");
+      } else {
+        sb.append("    XHR.responseType='json';\n");
+      }
+      sb.append("\n")
+              .append("    if (sessionStorage.getItem('tabid')) {\n")
+              .append("       XHR.setRequestHeader('tabid', sessionStorage.getItem('tabid'));\n")
+              .append("    }\n")
+              .append("    XHR.send(FD);\n")
+              .append("  }\n");
+      sb.append("  function updateProgress(event) {\n")
+              .append("   if (event.lengthComputable) {\n")
+              .append("     var percentageComplete = event.loaded*100 / event.total;\n")
+              .append("     document.getElementById(\"queryResult\").innerHTML='Pobieranie: ' + percentageComplete + '%';\n")
+              .append("   } else {\n")
+              .append("     document.getElementById(\"queryResult\").innerHTML='Pobieranie pliku...';\n")
+              .append("   }\n")
+              .append(" }");
+      sb.append("</script>");
+      return sb.toString();
+    });
+
     String[] codes = getJSCode(methodFilter, handerClass, methodFilter);
-    this.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("JS API code")));
-    this.append(new HTMLPre("js1", codes[0]));
-    this.append(new HTMLPre("js2", codes[1]));
-    this.append(new HTMLPre("js3", codes[2]));
+    mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("JS API code")));
+    mainDiv.append(new HTMLPre("js1", codes[0]));
+    mainDiv.append(new HTMLPre("js2", codes[1]));
+    mainDiv.append(new HTMLPre("js3", codes[2]));
+
+    page.append(mainDiv);
+    HTMLDiv responseDiv = new HTMLDiv("responseDiv");
+    responseDiv.setAttribute("style", "display:none");
+    responseDiv.append((HTMLElement) () -> {
+      StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
+      sb.append("function goBack() {\n")
+              .append("   document.getElementById(\"mainDiv\").style.display='block';\n")
+              .append("   document.getElementById(\"responseDiv\").style.display='none'\n")
+              .append("}");
+      sb.append("</script>");
+      return sb.toString();
+    });
+    HTMLInput backButton = new HTMLInput();
+    backButton.setType(HTMLInput.Type.button);
+    backButton.setValue("Wróć");
+    backButton.setAttribute("onClick", "goBack()");
+    responseDiv.append(backButton);
+    HTMLInput retryButton = new HTMLInput();
+    retryButton.setType(HTMLInput.Type.button);
+    retryButton.setValue("Prześlij ponownie");
+    retryButton.setAttribute("onClick", "sendData()");
+    responseDiv.append(retryButton);
+    HTMLParagraph responseQueryResult = new HTMLParagraph("queryResult");
+    responseQueryResult.setAttribute("style", "white-space:pre-wrap;font-family:monospace");
+    responseDiv.append(responseQueryResult);
+
+    page.append(responseDiv);
   }
 
   private String[] getJSCode(String methodName, Class handerClass, String methodFilter) {
@@ -122,7 +217,6 @@ public class MethodInvokerPage extends Page {
     for (Method method : handerClass.getMethods()) {
       if (method.getName().equals(methodFilter)) {
         Type[] parameters = method.getParameterTypes();
-
 
         for (Type type : parameters) {
           if (type instanceof Class<?>) {
@@ -230,7 +324,8 @@ public class MethodInvokerPage extends Page {
   }
 
   /**
-   * Add list of parameters from bean class passed in the parameter paramClass as a list of rows to the table.
+   * Add list of parameters from bean class passed in the parameter paramClass
+   * as a list of rows to the table.
    *
    * @param request
    * @param table
@@ -272,8 +367,8 @@ public class MethodInvokerPage extends Page {
             componentType = (Class<?>) t;
           }
           if (multiplicity == 0) {
-             renderFieldInputRow(request, table, parentFieldName + propertyName
-                      + "[]", counterName, null, componentType, 0);
+            renderFieldInputRow(request, table, parentFieldName + propertyName
+                    + "[]", counterName, null, componentType, 0);
           } else {
             for (int i = 0; i < multiplicity; i++) {
               renderFieldInputRow(request, table, parentFieldName + propertyName
@@ -313,24 +408,24 @@ public class MethodInvokerPage extends Page {
      * Build the query which adds more inputs to the rendered array
      */
     UrlQuery queryMultiplicityUp = new UrlQuery();
-    for (Object key : request.getParameterMap().keySet()) {
+    request.getParameterMap().keySet().stream().forEach((key) -> {
       if (key.toString().equals(counterName)) {
         queryMultiplicityUp.add(counterName, "" + (multiplicity + 1));
       } else {
         queryMultiplicityUp.add(key.toString(), request.getParameter(key.toString()));
       }
-    }
+    });
     /*
      * Build the query which removes one input from the rendered array
      */
     UrlQuery queryMultiplicityDown = new UrlQuery();
-    for (Object key : request.getParameterMap().keySet()) {
+    request.getParameterMap().keySet().stream().forEach((key) -> {
       if (key.toString().equals(counterName)) {
         queryMultiplicityDown.add(counterName, "" + (multiplicity - 1));
       } else {
         queryMultiplicityDown.add(key.toString(), request.getParameter(key.toString()));
       }
-    }
+    });
     if (queryMultiplicityUp.getParameters().containsKey(counterName) == false) {
       queryMultiplicityUp.add(counterName, "" + (multiplicity + 1));
     }
