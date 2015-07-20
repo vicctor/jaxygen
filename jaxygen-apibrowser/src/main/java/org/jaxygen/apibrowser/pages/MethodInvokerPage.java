@@ -127,7 +127,7 @@ public class MethodInvokerPage extends Page {
     page.append((HTMLElement) () -> {
       StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
       sb.append("  function sendData() {\n")
-              .append("  document.getElementById(\"queryResult\").innerHTML='Czekaj...';\n")
+              .append("  document.getElementById(\"queryResult\").innerHTML='Wait...';\n")
               .append("  document.getElementById(\"responseDiv\").style.display='block'\n")
               .append("  document.getElementById(\"mainDiv\").style.display='none';\n")
               .append("  var form = document.getElementById(\"submitForm\");\n")
@@ -165,9 +165,9 @@ public class MethodInvokerPage extends Page {
       sb.append("  function updateProgress(event) {\n")
               .append("   if (event.lengthComputable) {\n")
               .append("     var percentageComplete = event.loaded*100 / event.total;\n")
-              .append("     document.getElementById(\"queryResult\").innerHTML='Pobieranie: ' + percentageComplete + '%';\n")
+              .append("     document.getElementById(\"queryResult\").innerHTML='Downloading: ' + percentageComplete + '%';\n")
               .append("   } else {\n")
-              .append("     document.getElementById(\"queryResult\").innerHTML='Pobieranie pliku...';\n")
+              .append("     document.getElementById(\"queryResult\").innerHTML='Downloading file...';\n")
               .append("   }\n")
               .append(" }");
       sb.append("</script>");
@@ -194,12 +194,12 @@ public class MethodInvokerPage extends Page {
     });
     HTMLInput backButton = new HTMLInput();
     backButton.setType(HTMLInput.Type.button);
-    backButton.setValue("Wróć");
+    backButton.setValue("Back");
     backButton.setAttribute("onClick", "goBack()");
     responseDiv.append(backButton);
     HTMLInput retryButton = new HTMLInput();
     retryButton.setType(HTMLInput.Type.button);
-    retryButton.setValue("Prześlij ponownie");
+    retryButton.setValue("Resend request");
     retryButton.setAttribute("onClick", "sendData()");
     responseDiv.append(retryButton);
     HTMLParagraph responseQueryResult = new HTMLParagraph("queryResult");
