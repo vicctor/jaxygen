@@ -17,7 +17,7 @@ package org.jaxygen.objectsbuilder;
 
 import org.jaxygen.objectsbuilder.exceptions.ObjectCreateError;
 
-/**
+/** Implement this interface to provide a custom objects creation method.
  *
  * @author Artur
  */

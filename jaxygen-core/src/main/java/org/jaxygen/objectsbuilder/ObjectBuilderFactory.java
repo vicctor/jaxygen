@@ -15,7 +15,10 @@
  */
 package org.jaxygen.objectsbuilder;
 
-/**
+/** The factory used by the Jaxygen engine to create a new instance of invoked service classes.
+ * 
+ * The common usage pattern of this class is replacement of the standard new function with the
+ * custom version - like guice. This way one can implement a dependency injection in the application.
  *
  * @author Artur
  */
