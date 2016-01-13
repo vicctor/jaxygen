@@ -42,6 +42,9 @@ import org.jaxygen.exceptions.InvalidPropertyFormat;
 import org.jaxygen.exceptions.ParametersError;
 import org.jaxygen.http.HttpRequestParams;
 import org.jaxygen.http.HttpRequestParser;
+import org.jaxygen.propertyinjector.PropertyInjector;
+import org.jaxygen.propertyinjector.ValueProvider;
+import org.jaxygen.propertyinjector.exceptions.PropertyEnhancementException;
 import org.jaxygen.security.SecurityProfile;
 import org.jaxygen.security.annotations.LoginMethod;
 import org.jaxygen.security.annotations.LogoutMethod;
@@ -51,12 +54,12 @@ import org.jaxygen.security.exceptions.NotAlowed;
 import org.jaxygen.util.BeanUtil;
 
 public class ServiceInvoker extends HttpServlet {
-
+  
   private static final long serialVersionUID = 566338505269576162L;
   private static final Logger log = Logger.getLogger(ServiceInvoker.class.getCanonicalName());
   public static final String SERVICE_PATH = "servicePath";
   private String beensPath = null;
-
+  
   static {
     // Register default converters
     ConvertersFactory.registerRequestConverter(new PropertiesToBeanConverter());
@@ -68,19 +71,19 @@ public class ServiceInvoker extends HttpServlet {
     ConvertersFactory.registerResponseConverter(new XMLResponseConverter());
     ConvertersFactory.registerResponseConverter(new JsonHRResponseConverter());
   }
-
+  
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
     beensPath = config.getInitParameter(SERVICE_PATH);
   }
-
+  
   @Override
   protected void doGet(HttpServletRequest request,
           HttpServletResponse response) throws ServletException, IOException {
-
+    
     request.setCharacterEncoding("UTF-8");
-
+    
     HttpRequestParams params = null;
     HttpSession session = request.getSession(true);
     try {
@@ -93,32 +96,32 @@ public class ServiceInvoker extends HttpServlet {
     }
     final String resourcePath = request.getPathInfo();
     final String queryString = request.getQueryString();
-
+    
     final String inputFormat = params.getAsString("inputType", 0, 32, PropertiesToBeanConverter.NAME);
     final String outputFormat = params.getAsString("outputType", 0, 32, JsonResponseConverter.NAME);
-
+    
     ResponseConverter responseConverter = ConvertersFactory.getResponseConverter(outputFormat);
     if (responseConverter == null) {
       responseConverter = new JsonResponseConverter();
     }
-
+    
     String query = "";
-
+    
     if (queryString != null) {
       query = URLDecoder.decode(queryString, "UTF-8");
     }
-
+    
     log("Requesting resource" + resourcePath);
-
+    
     String[] chunks = resourcePath.split("/");
-
+    
     if (chunks.length < 2) {
       Logger.getLogger(ServiceInvoker.class.getName()).log(Level.SEVERE, "Invalid request, must be in format class/method");
       throw new ServletException("Invalid '" + resourcePath + "' request, must be in format class/method");
     }
     final String methodName = chunks[chunks.length - 1];
     final String className = beensPath + "." + chunks[chunks.length - 2];
-
+    
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
     Method[] methods;
     try {
@@ -138,7 +141,7 @@ public class ServiceInvoker extends HttpServlet {
               Object been = ob.create(clazz);
               validate(parameters);
               try {
-                injectClientIp(parameterTypes, parameters, request);
+                extendDTO(parameters, request);
                 injectSecutityProfile(been, session);
                 Class<?> responseType = m.getReturnType();
                 Object o = m.invoke(been, parameters);
@@ -177,7 +180,7 @@ public class ServiceInvoker extends HttpServlet {
             } catch (Exception ex) {
               throwError(response, responseConverter, "Cann not intanitiate class " + clazz.getCanonicalName(), ex);
             }
-
+            
           }
         }
         if (!methodFound) {
@@ -186,42 +189,25 @@ public class ServiceInvoker extends HttpServlet {
       } else {
         throwError(response, responseConverter, "InternalError", "Class '" + className + "' not fount");
       }
-
+      
     } catch (ClassNotFoundException ex) {
       throwError(response, responseConverter, "Class '" + className + "' not fount", ex);
-
+      
     } finally {
       if (params != null) {
         params.dispose();
       }
     }
-
+    
   }
-
-  private void injectClientIp(Class<?>[] parameterTypes, Object[] objects, HttpServletRequest request) throws IllegalAccessException {
-    String ip = getPublicIpAddress(request);
-    for (Class<?> p : parameterTypes) {
-      for (Field f : p.getDeclaredFields()) {
-        ClientIp clientIp = f.getAnnotation(ClientIp.class);
-        if (clientIp != null) {
-          boolean origAccess = f.isAccessible();
-          f.setAccessible(true);
-          f.set(objects[0], ip);
-          f.setAccessible(origAccess);
-
-        }
-
-        RequestURL requestUrlAnnotation = f.getAnnotation(RequestURL.class);
-        if (requestUrlAnnotation != null) {
-          boolean origAccess = f.isAccessible();
-          f.setAccessible(true);
-          f.set(objects[0], request.getRequestURL().toString());
-          f.setAccessible(origAccess);
-        }
-      }
-    }
+  
+  private void extendDTO(Object[] objects, final HttpServletRequest request) throws PropertyEnhancementException {
+    PropertyInjector.bind(objects,
+            ValueProvider.on(ClientIp.class).provide(() -> {return getPublicIpAddress(request);}),
+            ValueProvider.on(RequestURL.class).provide(() -> {return request.getRequestURL().toString();}));
   }
-
+  
+  
   private Object[] parseParameters(final Class<?>[] parameterTypes, final String inputFormat, HttpRequestParams params, String query) throws ParametersError {
     Object parameters[] = new Object[parameterTypes.length];
     int i = 0;
@@ -240,14 +226,14 @@ public class ServiceInvoker extends HttpServlet {
     }
     return parameters;
   }
-
+  
   private static void callSetter(Field f, Object been, Object sp) throws SecurityException, IllegalArgumentException, IllegalAccessException {
     boolean accessibility = f.isAccessible();
     f.setAccessible(true);
     f.set(been, sp);
     f.setAccessible(accessibility);
   }
-
+  
   private static Object callGetter(Field f, Object been) throws SecurityException, IllegalArgumentException, IllegalAccessException {
     boolean accessibility = f.isAccessible();
     f.setAccessible(true);
@@ -255,7 +241,7 @@ public class ServiceInvoker extends HttpServlet {
     f.setAccessible(accessibility);
     return sp;
   }
-
+  
   private void throwError(HttpServletResponse response, ResponseConverter converter, String string, Throwable ex) throws ServletException, IOException {
     log.log(Level.SEVERE, string, ex);
     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -266,7 +252,7 @@ public class ServiceInvoker extends HttpServlet {
       log.log(Level.SEVERE, "Server was unable to inform peer about exception", ex);
     }
   }
-
+  
   private void throwError(HttpServletResponse response, ResponseConverter converter, final String codeName, String message) throws ServletException, IOException {
     log.log(Level.SEVERE, message);
     ExceptionResponse resp = new ExceptionResponse(codeName, message);
@@ -277,7 +263,7 @@ public class ServiceInvoker extends HttpServlet {
       log.log(Level.SEVERE, "Server was unable to inform peer about exception", ex1);
     }
   }
-
+  
   private void postFile(HttpServletResponse response, Downloadable downloadable) throws IOException {
     final String fileName = downloadable.getFileName();
     response.setHeader("Content-Disposition", downloadable.getDispositon().name() + "; filename=\"" + fileName + "\"");
@@ -286,25 +272,25 @@ public class ServiceInvoker extends HttpServlet {
     IOUtils.copy(downloadable.getStream(), response.getOutputStream());
     downloadable.dispose();
   }
-
+  
   @Override
   protected void doPost(HttpServletRequest request,
           HttpServletResponse response) throws ServletException, IOException {
     System.out.println("POST");
     doGet(request, response);
   }
-
+  
   private void attachSecurityContextToSession(HttpSession session, SecurityProfile securityProvider) {
     session.setAttribute(SecurityProfile.class.getCanonicalName(), securityProvider);
   }
-
+  
   private void checkMethodAllowed(HttpSession session, final String clazz, Method method) throws NotAlowed {
     SecurityProfile sp = (SecurityProfile) session.getAttribute(SecurityProfile.class.getCanonicalName());
     if (method.isAnnotationPresent(Secured.class) && (sp == null || sp.isAllowed(clazz, method.getName()) == null)) {
       throw new NotAlowed(clazz, method.getName());
     }
   }
-
+  
   private void detachSecurityContext(HttpSession session) {
     session.setAttribute(SecurityProfile.class.getCanonicalName(), null);
   }
@@ -327,7 +313,7 @@ public class ServiceInvoker extends HttpServlet {
       }
     }
   }
-
+  
   private boolean updateSessionSecurityProfile(Object been, HttpSession session) throws IllegalArgumentException, IllegalAccessException {
     SecurityProfile sp = (SecurityProfile) session.getAttribute(SecurityProfile.class.getCanonicalName());
     boolean sessionContextUpdated = false;
@@ -346,7 +332,7 @@ public class ServiceInvoker extends HttpServlet {
     }
     return sessionContextUpdated;
   }
-
+  
   private void validate(Object[] parameters) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, InvalidPropertyFormat {
     for (Object o : parameters) {
       if (o.getClass().isAnnotationPresent(Validable.class)) {
@@ -354,12 +340,12 @@ public class ServiceInvoker extends HttpServlet {
       }
     }
   }
-
+  
   private void sendSerializedResponse(Class<?> responseClass, Object o, ResponseConverter converter, HttpServletResponse response) throws SerializationError, IOException, ServletException {
     Response responseWraper = new Response(responseClass, o);
     converter.serialize(responseWraper, response.getOutputStream());
   }
-
+  
   private String getPublicIpAddress(HttpServletRequest request) {
     String ipAddress = request.getHeader("x-forwarded-for");
     if (ipAddress == null) {
