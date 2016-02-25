@@ -34,4 +34,6 @@ public interface Downloadable {
   InputStream getStream() throws IOException;
   void dispose() throws IOException;
   String getFileName();
+  Long contentSize();
+  String getETag();
 }

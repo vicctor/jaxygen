@@ -142,7 +142,7 @@ public class ServiceInvoker extends HttpServlet {
                                 Class<?> responseType = m.getReturnType();
                                 Object o = m.invoke(been, parameters);
                                 if (o instanceof Downloadable) {
-                                    postFile(response, (Downloadable) o);
+                                    FileDeliveryHandler.postFile(request, response, (Downloadable) o);
                                 } else {
                                     if (o instanceof SecurityProfile) {
                                         SecurityProfileDTO profileDto = new SecurityProfileDTO();
@@ -264,15 +264,6 @@ public class ServiceInvoker extends HttpServlet {
         } catch (SerializationError ex1) {
             log.log(Level.SEVERE, "Server was unable to inform peer about exception", ex1);
         }
-    }
-
-    private void postFile(HttpServletResponse response, Downloadable downloadable) throws IOException {
-        final String fileName = downloadable.getFileName();
-        response.setHeader("Content-Disposition", downloadable.getDispositon().name() + "; filename=\"" + fileName + "\"");
-        response.setCharacterEncoding(downloadable.getCharset().name());
-        response.setContentType(downloadable.getContentType());
-        IOUtils.copy(downloadable.getStream(), response.getOutputStream());
-        downloadable.dispose();
     }
 
     @Override

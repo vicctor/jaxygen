@@ -34,33 +34,36 @@ import org.jaxygen.network.DownloadableFile;
 public class FileTransferSample {
 
   private final static String TMP = System.getProperty("java.io.tmpdir");
-  private final static String SHARED_FILE_NAME = "FileTransferSample.png";
-  private final static File SHARED_FILE = new File(TMP, SHARED_FILE_NAME);
+  private final static File SHARED_DIR = new File(TMP);
   private static String sharedFileMimeType = "";
-
+  private static Uploadable upladedFile;
+  private static File sharedFile;
+  
   @NetAPI(description = "Function demonstrates usage of the UploadedFile class usage",
          status= Status.ReleaseCandidate,
          version="1.0")
   public Uploadable uploadFile(AddImageRequestDTO request) throws IOException {
     // Get reference to the uploaded file descriptor
-    Uploadable uf = request.getFile();
+    upladedFile = request.getFile();
 
     // Get reference to the phisical temporary file
     // Note that it's not guaranteed that the file exists
     // after this call exited.
-    File f = uf.getFile();
-
+    File f = upladedFile.getFile();
+    
+    sharedFile = new File(SHARED_DIR, upladedFile.getOriginalName());
+    
     // Copy file to the SESSION_FILE
     // OK. It's not session related, but it's just a demo
-    FileUtils.copyFile(f, SHARED_FILE);
+    FileUtils.copyFile(f, sharedFile);
 
     // Get the content type follow the original file name
-    sharedFileMimeType = MimeTypeAnalyser.getMimeForExtension(new File(uf.getOriginalName()));
+    sharedFileMimeType = MimeTypeAnalyser.getMimeForExtension(new File(upladedFile.getOriginalName()));
     
     // Alternatively mime type could be read from request:
     // sharedFileMimeType = uf.getMimeType();
 
-    return uf;
+    return upladedFile;
   }
 
   @NetAPI(description = "Function demonstrates how to make the file downloadable. "
@@ -69,7 +72,7 @@ public class FileTransferSample {
          status= Status.ReleaseCandidate,
          version="1.0")
   public Downloadable showFile() {
-    return new DownloadableFile(SHARED_FILE, Downloadable.ContentDisposition.inline, sharedFileMimeType);
+    return new DownloadableFile(sharedFile, Downloadable.ContentDisposition.inline, sharedFileMimeType);
   }
 
   @NetAPI(description = "Function demonstrates how to make the file downloadable. "
@@ -78,6 +81,6 @@ public class FileTransferSample {
          status= Status.ReleaseCandidate,
          version="1.0")
   public Downloadable downloadFile() {
-    return new DownloadableFile(SHARED_FILE, Downloadable.ContentDisposition.attachment, sharedFileMimeType);
+    return new DownloadableFile(sharedFile, Downloadable.ContentDisposition.attachment, sharedFileMimeType);
   }
 }

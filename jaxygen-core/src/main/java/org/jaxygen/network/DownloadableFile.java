@@ -91,6 +91,16 @@ public class DownloadableFile implements Downloadable {
     public String getFileName() {
         return file.getName();
     }
+
+    @Override
+    public Long contentSize() {
+        return this.file.length();
+    }
+
+    @Override
+    public String getETag() {
+        return "\"" + this.file.getAbsolutePath().hashCode() + ":" + this.file.lastModified() + "\"";
+    }
   
   
 }

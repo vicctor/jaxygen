@@ -17,3 +17,4 @@
 .idea/
 *.iml
 /jaxygent-fluenconverters/jaxygen-fluentconverters/target/
+/jaxygen-core/nbproject/
