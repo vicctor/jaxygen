@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.objectsbuilder;
+package org.jaxygen.annotations;
 
-import org.jaxygen.objectsbuilder.exceptions.ObjectCreateError;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/** Implement this interface to provide a custom objects creation method.
- *
+/** Place this annotation before the DTO field that should be filled by the engine with re URL used by Client to request the server.
+ * 
  * @author Artur
  */
-public interface ObjectBuilder {
-    public Object create(Class clazz)  throws ObjectCreateError;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface RequestURL {
 }

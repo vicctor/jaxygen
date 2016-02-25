@@ -15,8 +15,6 @@
  */
 package org.jaxygen.objectsbuilder;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jaxygen.objectsbuilder.exceptions.ObjectCreateError;
 
 /**
@@ -27,6 +25,7 @@ import org.jaxygen.objectsbuilder.exceptions.ObjectCreateError;
  */
 public class DefautlObjectBuilder implements ObjectBuilder {
 
+    @Override
     public Object create(Class clazz) throws ObjectCreateError {
         try {
             return clazz.newInstance();

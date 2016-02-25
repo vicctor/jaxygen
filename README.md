@@ -28,3 +28,10 @@ return Converter.convert(db, ObjectDTO.class);
 ```
 
 The sample above is the most common pattern used when calling the create method.
+
+## sebimal changes
+I've added tabid header support. If tabid header is recieved from server http response then it is stored in browser session storage and sent back to the server in the future requests.
+
+Additionally I've improved look of API response page - it has now two new buttons: for going back to the parameters and for resending data to the server again.
+
+WARNING! jaxygen-apibrowser module source is now JDK1.8!

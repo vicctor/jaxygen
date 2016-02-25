@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
 import org.jaxygen.annotations.Status;
+import org.jaxygen.netserviceapisample.business.dto.NetworkInfoDTO;
 import org.jaxygen.netserviceapisample.business.exceptions.CouldNotLeanWithoutEntering;
 
 /**Class demonstrates the session handing using @SessionContext annotation
@@ -69,5 +70,13 @@ public class SessionHandeSample {
    counter = 0;
   }
   return counter;
+ }
+ 
+ 
+ @NetAPI(description = "Get the client connection information",
+        status = Status.GenerallyAvailable,
+        version = "1.0")
+ public NetworkInfoDTO echoNetworkInfo(NetworkInfoDTO info) {
+   return info;
  }
 }

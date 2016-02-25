@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Artur.
+ * Copyright 2016 Your Name <your.name at your.org>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.objectsbuilder;
+package org.jaxygen.propertyinjector.exceptions;
 
-import org.jaxygen.objectsbuilder.exceptions.ObjectCreateError;
-
-/** Implement this interface to provide a custom objects creation method.
+/**
  *
- * @author Artur
  */
-public interface ObjectBuilder {
-    public Object create(Class clazz)  throws ObjectCreateError;
+public class PropertyEnhancementException extends Exception {
+
+  public PropertyEnhancementException() {
+  }
+
+  public PropertyEnhancementException(Throwable cause) {
+    super(cause);
+  }
+ 
 }
