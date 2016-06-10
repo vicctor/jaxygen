@@ -40,7 +40,7 @@ public class SJORRequestConverter implements RequestConverter {
     }
 
     public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
-        Map<String, UploadedFile> files = params.getFiles();
+        Map<String, Uploadable> files = params.getFiles();
         Object rc = null;
         if (files != null) {
             Uploadable u = files.get(beanClass.getName());

@@ -24,6 +24,7 @@ import java.util.Map;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
+import org.jaxygen.dto.Uploadable;
 import org.jaxygen.http.HttpRequestParams;
 import org.jaxygen.network.UploadedFile;
 
@@ -42,10 +43,10 @@ public class JsonMultipartRequestConverter implements RequestConverter {
   }
 
   public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
-    Map<String, UploadedFile> files = params.getFiles();
+    Map<String, Uploadable> files = params.getFiles();
     Object rc = null;
     if (files != null) {
-      UploadedFile f = files.get(beanClass.getName());
+      Uploadable f = files.get(beanClass.getName());
       if (f != null) {
         Reader reader = null;
         try {

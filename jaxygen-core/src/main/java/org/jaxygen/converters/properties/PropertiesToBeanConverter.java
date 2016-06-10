@@ -38,6 +38,7 @@ import org.apache.commons.beanutils.converters.ShortConverter;
 import org.apache.commons.beanutils.converters.StringConverter;
 import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.converters.RequestConverter;
+import org.jaxygen.dto.Uploadable;
 import org.jaxygen.network.UploadedFile;
 import org.jaxygen.exceptions.WrongProperyIndex;
 import org.jaxygen.http.HttpRequestParams;
@@ -104,7 +105,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
    * @throws WrongProperyIndex Exception thrown on property validation errors.
    */
   public static Object convertPropertiesToBean(Map<String, String> properties,
-          Map<String, UploadedFile> files,
+          Map<String, Uploadable> files,
           Class<?> beanClass) throws IllegalArgumentException,
           IntrospectionException, IllegalAccessException,
           InvocationTargetException, InstantiationException, WrongProperyIndex {
@@ -115,7 +116,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
     }
 
     for (final String key : files.keySet()) {
-      final UploadedFile value = files.get(key);
+      final Uploadable value = files.get(key);
       bean = fillBeanValueByName(key, value, beanClass, bean);
     }
 
@@ -123,7 +124,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
   }
 
   public static Object convertPropertiesToBean(Map<String, String> properties,
-          Map<String, UploadedFile> files,
+          Map<String, Uploadable> files,
           Object bean) throws IllegalArgumentException,
           IntrospectionException, IllegalAccessException,
           InvocationTargetException, InstantiationException, WrongProperyIndex {
@@ -133,7 +134,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
       pojo = fillBeanValueByName(key, value, bean.getClass(), pojo);
     }
     for (final String key : files.keySet()) {
-      final UploadedFile value = files.get(key);
+      final Uploadable value = files.get(key);
       pojo = fillBeanValueByName(key, value, bean.getClass(), pojo);
     }
     return bean;
