@@ -277,7 +277,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
       ConvertUtils.register(new EnumConverter(), propertyType);
     }
 
-    if (valueObject.getClass().equals(String.class)) {
+    if (valueObject != null && valueObject.getClass().equals(String.class)) {
       value = ConvertUtils.convert((String) valueObject, propertyType);
     } else {
       value = valueObject;
