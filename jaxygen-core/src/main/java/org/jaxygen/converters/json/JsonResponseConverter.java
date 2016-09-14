@@ -32,7 +32,7 @@ public class JsonResponseConverter implements ResponseConverter {
 
  public void serialize(Object object, OutputStream writter) throws SerializationError {
   try {
-   Gson gson = new GsonBuilder().create();
+   Gson gson = JSONBuilderRegistry.getBuilder().build();
    final String json = gson.toJson(object);
    writter.write(json.getBytes(Charset.forName("UTF-8")));
   } catch (Exception ex) {

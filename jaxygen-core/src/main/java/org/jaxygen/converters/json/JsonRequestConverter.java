@@ -28,8 +28,7 @@ import org.jaxygen.http.HttpRequestParams;
 public class JsonRequestConverter implements RequestConverter {
 
   public final static String NAME = "JSON";
-  private static Gson gson = new Gson();
-
+  private static Gson gson = JSONBuilderRegistry.getBuilder().build();
   public String getName() {
     return NAME;
   }

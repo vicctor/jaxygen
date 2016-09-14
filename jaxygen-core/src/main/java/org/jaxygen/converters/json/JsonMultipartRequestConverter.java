@@ -34,7 +34,7 @@ import org.jaxygen.network.UploadedFile;
 public class JsonMultipartRequestConverter implements RequestConverter {
 
   public final static String NAME = "JSON/MULTIPART";
-  private static Gson gson = new Gson();
+  private static Gson gson = JSONBuilderRegistry.getBuilder().build();
   private final static Map<String, String> nullPropertes = new HashMap<String, String>();
 
   public String getName() {
