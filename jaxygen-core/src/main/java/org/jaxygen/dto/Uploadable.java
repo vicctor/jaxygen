@@ -61,4 +61,9 @@ public interface Uploadable extends Serializable {
      * @return Mime type.
      */
     String getMimeType();
+    
+    /** Free resources allocated by uploadable file
+     * 
+     */
+    void dispose();
 }

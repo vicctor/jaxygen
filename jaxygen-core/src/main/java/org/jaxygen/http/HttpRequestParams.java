@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.jaxygen.dto.Uploadable;
 import org.jaxygen.network.UploadedFile;
 import org.jaxygen.exceptions.InvalidRequestParameter;
 
@@ -33,7 +34,7 @@ public interface HttpRequestParams extends Serializable {
 
     public Map<String, String> getParameters();
 
-    public Map<String, UploadedFile> getFiles();
+    public Map<String, Uploadable> getFiles();
 
     public String getAsString(String paramName, int minLen, int maxLen,
             boolean mandatory) throws InvalidRequestParameter;

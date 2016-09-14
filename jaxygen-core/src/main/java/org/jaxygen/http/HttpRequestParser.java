@@ -37,6 +37,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.jaxygen.dto.Uploadable;
 import org.jaxygen.exceptions.InvalidRequestParameter;
 
 /**
@@ -52,7 +53,7 @@ public class HttpRequestParser implements HttpRequestParams {
      */
     private static final long serialVersionUID = -377032102000216172L;
     private HttpServletRequest request;
-    private Hashtable<String, UploadedFile> files = new Hashtable<String, UploadedFile>();
+    private Hashtable<String, Uploadable> files = new Hashtable<String, Uploadable>();
     private Hashtable<String, String> parameters = new Hashtable<String, String>();
     private final static DateFormat dateFormater = XMLDateAdapter.dateFormater;
     private HttpFileUploadHandler uploadHandler;
@@ -294,7 +295,7 @@ public class HttpRequestParser implements HttpRequestParams {
     }
 
     @Override
-    public Map<String, UploadedFile> getFiles() {
+    public Map<String, Uploadable> getFiles() {
         return files;
     }
 
@@ -408,7 +409,7 @@ public class HttpRequestParser implements HttpRequestParams {
      *
      */
     public void dispose() {
-        for (UploadedFile f : files.values()) {
+        for (Uploadable f : files.values()) {
             f.dispose();
         }
     }

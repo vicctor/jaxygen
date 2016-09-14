@@ -122,7 +122,7 @@ public class MethodInvokerPage extends Page {
 
     Page page = this;
     // append script responsible for saving files
-    page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"http://eligrey.com/demos/FileSaver.js/FileSaver.js\"></script>");
+     page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/FileSaver.js\"></script>");
     // append script responsible for sending data to service
     page.append((HTMLElement) () -> {
       StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");

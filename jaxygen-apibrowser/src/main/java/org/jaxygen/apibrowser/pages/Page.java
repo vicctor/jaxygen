@@ -48,12 +48,12 @@ public class Page implements HTMLElement {
     }
     
     HTMLLinkCSS css = new HTMLLinkCSS();
-    css.setHref(servletContext + "/css/org/jaxygen/apibrowser/page.css");
+    css.setHref("css/org/jaxygen/apibrowser/page.css");
     
     head.append(css);
     
     css = new HTMLLinkCSS();
-    css.setHref(servletContext + "/css/org/jaxygen/apibrowser/classes-snippest.css");    
+    css.setHref("css/org/jaxygen/apibrowser/classes-snippest.css");    
     
     head.append(css);
     
