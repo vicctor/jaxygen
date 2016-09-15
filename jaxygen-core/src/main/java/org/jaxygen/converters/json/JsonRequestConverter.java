@@ -33,6 +33,7 @@ public class JsonRequestConverter implements RequestConverter {
     return NAME;
   }
 
+  @Override
   public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
     Object rc = null;
     try {
