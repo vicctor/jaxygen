@@ -19,7 +19,6 @@ import java.util.Date;
 import org.assertj.core.api.Assertions;
 import org.jaxygen.http.HttpRequestParams;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.mockito.Mockito;
 
 /**
@@ -49,15 +48,18 @@ public class JsonRequestConverterTest {
         // given    
         HttpRequestParams params = Mockito.mock(HttpRequestParams.class);
         Mockito.when(params.getAsString(DateContainer.class.getName(), 1, Integer.MAX_VALUE, true))
-                .thenReturn("{\"date\":\"01-01-1970 01:00:00\"}");
+                .thenReturn("{\"date\":\"02-03-1980 11:32:1\"}");
         JsonRequestConverter instance = new JsonRequestConverter();
         
         // when
         Object result = instance.deserialise(params, DateContainer.class);
         
         // then
+        Date expectedDate = new Date(80, 2, 2, 11, 32, 1);
         Assertions.assertThat(result)
                 .isInstanceOf(DateContainer.class);
+        Assertions.assertThat(((DateContainer)result).getDate())
+                .isEqualTo(expectedDate);
                 
     }
     

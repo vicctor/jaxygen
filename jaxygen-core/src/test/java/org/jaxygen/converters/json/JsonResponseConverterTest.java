@@ -48,7 +48,7 @@ public class JsonResponseConverterTest {
     public void shall_serializeTimeToDefaultFormat() throws Exception {
         // given
         DateContainer dc = new DateContainer();
-        dc.setDate(new Date(0));
+        dc.setDate(new Date(99, 3, 1, 22, 55, 11));
         OutputStream writter = new ByteArrayOutputStream();        
         JsonResponseConverter instance = new JsonResponseConverter();
         
@@ -57,7 +57,7 @@ public class JsonResponseConverterTest {
         
         // then
         Assertions.assertThat(writter.toString())
-                .isEqualTo("{\"date\":\"01-01-1970 01:00:00\"}");
+                .isEqualTo("{\"date\":\"01-04-1999 22:55:11\"}");
     }
 
     
