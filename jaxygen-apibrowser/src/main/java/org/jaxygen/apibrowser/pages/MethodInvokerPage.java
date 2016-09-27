@@ -1,9 +1,13 @@
 package org.jaxygen.apibrowser.pages;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
@@ -26,7 +30,7 @@ public class MethodInvokerPage extends Page {
   public static final String NAME = "MethodInvokerPage";
 
   public MethodInvokerPage(ServletContext context,
-          HttpServletRequest request, String classRegistry, String beansPath) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException {
+          HttpServletRequest request, String classRegistry, String beansPath) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException, NoSuchFieldException {
     super(context, request, classRegistry, beansPath);
     final String className = request.getParameter("className");
     final String method = request.getParameter("methodName");
@@ -45,7 +49,7 @@ public class MethodInvokerPage extends Page {
   private void renderClassForm(HttpServletRequest request, final String classFilter, final String methodFilter)
           throws NamingException, IllegalArgumentException, SecurityException,
           InstantiationException, IllegalAccessException,
-          InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException {
+          InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, NoSuchFieldException {
 
     final String simpleClassname = classFilter.substring(beansPath.length() + 1);
     HTMLTable exceptionsTable = new HTMLTable();
@@ -338,10 +342,11 @@ public class MethodInvokerPage extends Page {
   private void addInputClassParameters(HttpServletRequest request,
           HTMLTable table, Class<?> paramClass, final String parentFieldName)
           throws InstantiationException, IllegalAccessException,
-          InvocationTargetException, NoSuchMethodException {
+          InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
     Object inputObject = paramClass.getConstructor().newInstance();
     for (Method setter : paramClass.getMethods()) {
-      if (setter.getName().startsWith("set")) {
+      String setterName = setter.getName();
+      if (!"set".equals(setterName) && setter.getName().startsWith("set")) {
         final String fieldName = setter.getName().substring(3);
         Method getter = paramClass.getMethod("get" + fieldName);
         Object defaultValue = "";
@@ -355,7 +360,27 @@ public class MethodInvokerPage extends Page {
         if (getter != null) {
           defaultValue = getter.invoke(inputObject);
         }
-        if (paramType.isArray()) {
+        if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class)) {
+          final String counterName = parentFieldName + propertyName + "Size";
+          int multiplicity = 0;
+          if (request.getParameter(counterName) != null) {
+            multiplicity = Integer.parseInt(request.getParameter(counterName));
+          }
+          Class clazz = paramClass;
+          Field[] fields = clazz.getDeclaredFields();
+          Field listField = paramClass.getDeclaredField(propertyName);
+          ParameterizedType type = (ParameterizedType) listField.getGenericType();
+          Class<?> componentType = (Class<?>) type.getActualTypeArguments()[0];
+          if (multiplicity == 0) {
+            renderFieldInputRow(request, table, parentFieldName + propertyName
+                    + "[]", counterName, null, componentType, 0);
+          } else {
+            for (int i = 0; i < multiplicity; i++) {
+              renderFieldInputRow(request, table, parentFieldName + propertyName
+                      + "[" + i + "]", counterName, null, componentType, multiplicity);
+            }
+          }
+        } else if (paramType.isArray()) {
           final String counterName = parentFieldName + propertyName + "Size";
           int multiplicity = 0;
           if (request.getParameter(counterName) != null) {
@@ -398,7 +423,7 @@ public class MethodInvokerPage extends Page {
   private void renderFieldInputRow(HttpServletRequest request, HTMLTable table,
           final String fieldName, final String counterName, Object defaultValue,
           Class<?> paramType, int multiplicity) throws InstantiationException,
-          IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+          IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
     HTMLTable.Row row = new HTMLTable.Row();
     String propertyName = fieldName;
     row.addColumn(new HTMLLabel(paramType.getCanonicalName()));

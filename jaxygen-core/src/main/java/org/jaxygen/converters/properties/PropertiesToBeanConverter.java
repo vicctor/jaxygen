@@ -20,11 +20,17 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.converters.BooleanConverter;
@@ -39,7 +45,6 @@ import org.apache.commons.beanutils.converters.StringConverter;
 import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.dto.Uploadable;
-import org.jaxygen.network.UploadedFile;
 import org.jaxygen.exceptions.WrongProperyIndex;
 import org.jaxygen.http.HttpRequestParams;
 
@@ -108,7 +113,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
           Map<String, Uploadable> files,
           Class<?> beanClass) throws IllegalArgumentException,
           IntrospectionException, IllegalAccessException,
-          InvocationTargetException, InstantiationException, WrongProperyIndex {
+          InvocationTargetException, InstantiationException, WrongProperyIndex, NoSuchFieldException {
     Object bean = beanClass.newInstance();
     for (final String key : properties.keySet()) {
       final String value = properties.get(key);
@@ -127,7 +132,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
           Map<String, Uploadable> files,
           Object bean) throws IllegalArgumentException,
           IntrospectionException, IllegalAccessException,
-          InvocationTargetException, InstantiationException, WrongProperyIndex {
+          InvocationTargetException, InstantiationException, WrongProperyIndex, NoSuchFieldException {
     Object pojo = bean;
     for (final String key : properties.keySet()) {
       final String value = properties.get(key);
@@ -161,7 +166,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
           Class<?> beanClass, Object baseBean)
           throws IntrospectionException, IllegalArgumentException,
           IllegalAccessException, InvocationTargetException,
-          InstantiationException, WrongProperyIndex {
+          InstantiationException, WrongProperyIndex, NoSuchFieldException {
     // parse name x.y[i].z[n].v
     Object bean = baseBean;
     if (bean == null) {
@@ -214,7 +219,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
           int bracketStart, int len)
           throws IllegalAccessException, InvocationTargetException,
           IntrospectionException, InstantiationException, IllegalArgumentException,
-          WrongProperyIndex {
+          WrongProperyIndex, NoSuchFieldException {
     final String indexStr = fieldName.substring(bracketStart + 1, len - 1);
     final String propertyName = fieldName.substring(0, bracketStart);
     int index = Integer.parseInt(indexStr);
@@ -230,7 +235,34 @@ public class PropertiesToBeanConverter implements RequestConverter {
         Method reader = pd.getReadMethod();
         if (writter != null && reader != null) {
           Object array = reader.invoke(bean);
-          if (pd.getPropertyType().isArray()) {
+          if (pd.getPropertyType().isAssignableFrom(ArrayList.class) || pd.getPropertyType().isAssignableFrom(LinkedList.class)) { // List
+            if (array == null) {
+              Class childType = pd.getPropertyType().getComponentType();
+              array = childType.newInstance();
+              writter.invoke(bean, array);
+            }
+            Field listField = bean.getClass().getDeclaredField(propertyName);
+            ParameterizedType type = (ParameterizedType) listField.getGenericType();
+            Class<?> componentType = (Class<?>) type.getActualTypeArguments()[0];
+
+            List list = (List) array;
+            while (list.size() < (index + 1)) {
+              try {
+                list.add(componentType.getConstructor().newInstance());
+              } catch (NoSuchMethodException ex) {
+                Logger.getLogger(PropertiesToBeanConverter.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (SecurityException ex) {
+                Logger.getLogger(PropertiesToBeanConverter.class.getName()).log(Level.SEVERE, null, ex);
+              }
+            }
+            if (path.length == 1) {
+              Object valueObject = parsePropertyToValue(value, componentType);
+              list.set(index, valueObject);
+            } else {
+              Object valueObject = fillBeanValueByName(childName, value, componentType, list.get(index));
+              list.set(index, valueObject);
+            }
+          } else if (pd.getPropertyType().isArray()) {
             if (array == null) {
               array = Array.newInstance(
                       pd.getPropertyType().getComponentType(), index + 1);
