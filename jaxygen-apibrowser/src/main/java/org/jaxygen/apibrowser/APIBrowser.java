@@ -86,7 +86,7 @@ public class APIBrowser extends HttpServlet {
   return is;
  }
 
- private void renderApiPage(HttpServletResponse response, HttpServletRequest request) throws InvocationTargetException, IllegalArgumentException, SecurityException, ServletException, NamingException, InstantiationException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, IOException {
+ private void renderApiPage(HttpServletResponse response, HttpServletRequest request) throws InvocationTargetException, IllegalArgumentException, SecurityException, ServletException, NamingException, InstantiationException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException, IOException, NoSuchFieldException {
   response.setContentType("text/html");
   Page page;
   final String pageName = request.getParameter("page");
