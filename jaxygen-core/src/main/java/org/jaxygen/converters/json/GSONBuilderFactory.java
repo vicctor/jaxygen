@@ -16,12 +16,16 @@
 package org.jaxygen.converters.json;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  *
  * @author Artur
  */
-public interface GSONBuilder {
+public interface GSONBuilderFactory {
+    //! Create new GsonBuilder object
+    GsonBuilder createBuilder();
+    
     //! Build a new Gson object
     Gson build();
 }
