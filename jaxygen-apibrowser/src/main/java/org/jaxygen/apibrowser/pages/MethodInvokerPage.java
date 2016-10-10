@@ -114,9 +114,12 @@ public class MethodInvokerPage extends Page {
               .append("    event.preventDefault();\n")
               .append("    sendData();\n")
               .append("  });\n")
+              .append("\n")
+              .append("  handleAnchors(form);\n")
+              .append("\n")
               .append("});\n");
       sb.append("</script>");
-      
+
       return sb.toString();
     });
     mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Return type")));
@@ -126,7 +129,8 @@ public class MethodInvokerPage extends Page {
 
     Page page = this;
     // append script responsible for saving files
-     page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/FileSaver.js\"></script>");
+    page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/FileSaver.js\"></script>");
+    page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/AnchorUpdater.js\"></script>");
     // append script responsible for sending data to service
     page.append((HTMLElement) () -> {
       StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
@@ -376,8 +380,8 @@ public class MethodInvokerPage extends Page {
                     + "[]", counterName, null, componentType, 0);
           } else {
             for (int i = 0; i < multiplicity; i++) {
-              renderFieldInputRow(request, table, parentFieldName + propertyName
-                      + "[" + i + "]", counterName, null, componentType, multiplicity);
+              String newFieldName = parentFieldName + propertyName + "[" + i + "]";
+              renderFieldInputRow(request, table, newFieldName, counterName, null, componentType, multiplicity); //TODO: add heredefault value object
             }
           }
         } else if (paramType.isArray()) {
@@ -454,16 +458,14 @@ public class MethodInvokerPage extends Page {
     if (queryMultiplicityUp.getParameters().containsKey(counterName) == false) {
       queryMultiplicityUp.add(counterName, "" + (multiplicity + 1));
     }
-
     if (multiplicity >= 0) {
-      row.addColumn(new HTMAnchor("" + browserPath + "?" + queryMultiplicityUp.toString(),
+      row.addColumn(new HTMAnchor("P" + propertyName, "anchor", ""  + browserPath + "?" + queryMultiplicityUp.toString(),
               new HTMLLabel("+")));
-
     } else {
       row.addColumn(new HTMLLabel(""));
     }
     if (multiplicity >= 1) {
-      row.addColumn(new HTMAnchor("" + browserPath + "?" + queryMultiplicityDown.toString(),
+      row.addColumn(new HTMAnchor("M" + propertyName, "anchor", "" + browserPath + "?" + queryMultiplicityDown.toString(),
               new HTMLLabel("-")));
     } else {
       row.addColumn(new HTMLLabel(""));
@@ -484,7 +486,10 @@ public class MethodInvokerPage extends Page {
         }
         row.addColumn(select);
       } else if (PropertiesToBeanConverter.isCovertable(paramType)) {
-        row.addColumn(new HTMLInput(propertyName, defaultValue));
+        String parameterName = propertyName + "_Value";
+        Object value = request.getParameter(parameterName);
+        Object v = value != null ? value : defaultValue;
+        row.addColumn(new HTMLInput(propertyName, propertyName, "INPUT_FIELD", v));
       } else if (paramType.isAssignableFrom(Uploadable.class)) {
         row.addColumn(new HTMLInput(HTMLInput.Type.file, propertyName));
       } else {
