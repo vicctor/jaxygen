@@ -25,21 +25,26 @@ import com.google.gson.GsonBuilder;
 public class JSONBuilderRegistry {
 
     //! default build in gson builder is created here.
-    private static GSONBuilder builder = new GSONBuilder() {
-        Gson gson = new GsonBuilder()
-                .setDateFormat("dd-MM-yyyy HH:mm:ss")
+    private static GSONBuilderFactory builder = new GSONBuilderFactory() {
+        Gson gson = createBuilder()
                 .create();
         @Override
         public Gson build() {
             return gson;
         }
+
+        @Override
+        public GsonBuilder createBuilder() {
+            return  new GsonBuilder()
+                .setDateFormat("dd-MM-yyyy HH:mm:ss");
+        }
     };
 
-    public static void setGSONBuilder(GSONBuilder builder) {
+    public static void setGSONBuilder(GSONBuilderFactory builder) {
         JSONBuilderRegistry.builder = builder;
     }
     
-    public static GSONBuilder getBuilder() {
+    public static GSONBuilderFactory getBuilder() {
         return JSONBuilderRegistry.builder;
     }
 }
