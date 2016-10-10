@@ -26,6 +26,13 @@ public final class HTMLInput extends BasicHTMLElement implements HTMLElement {
     setAttribute("name", name);
     setAttribute("value", defaultValue);
   }
+  
+  public HTMLInput(final String name, final String id, final String cssClass, final Object defaultValue) {
+    super(TAG_NAME, id);
+    setAttribute("name", name);
+    setCSSClassName(cssClass);
+    setAttribute("value", defaultValue);
+  }
 
   public HTMLInput(Type type, final String name, final Object defaultValue) {
     super(TAG_NAME);
