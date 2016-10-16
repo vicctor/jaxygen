@@ -230,7 +230,7 @@ public class MethodInvokerPage extends Page {
           if (type instanceof Class<?>) {
             Class<?> paramClass = (Class<?>) type;
             for (Method setter : paramClass.getMethods()) {
-              if (setter.getName().startsWith("set")) {
+              if (setter.getName().startsWith("set") && !"set".equals(setter.getName())) {
                 final String fieldName = setter.getName().substring(3);
                 if (fieldName != null) {
                   result[3] = "ok";
@@ -331,6 +331,21 @@ public class MethodInvokerPage extends Page {
     return clazz.isArray();
   }
 
+  private Class<?> retrieveListType(Class<?> paramClass, String propertyName) {
+    Class c = paramClass;
+    Field listField = null;
+    String name = c.getName();
+    while (listField == null || name.equals("java.lang.Object")) {
+      try {
+        listField = c.getDeclaredField(propertyName);
+      } catch (Exception e) {
+        c = c.getSuperclass();
+      }
+    }
+    ParameterizedType type = (ParameterizedType) listField.getGenericType();
+    return (Class<?>) type.getActualTypeArguments()[0];
+  }
+
   /**
    * Add list of parameters from bean class passed in the parameter paramClass
    * as a list of rows to the table.
@@ -370,11 +385,7 @@ public class MethodInvokerPage extends Page {
           if (request.getParameter(counterName) != null) {
             multiplicity = Integer.parseInt(request.getParameter(counterName));
           }
-          Class clazz = paramClass;
-          Field[] fields = clazz.getDeclaredFields();
-          Field listField = paramClass.getDeclaredField(propertyName);
-          ParameterizedType type = (ParameterizedType) listField.getGenericType();
-          Class<?> componentType = (Class<?>) type.getActualTypeArguments()[0];
+          Class<?> componentType = retrieveListType(paramClass, propertyName);
           if (multiplicity == 0) {
             renderFieldInputRow(request, table, parentFieldName + propertyName
                     + "[]", counterName, null, componentType, 0);
@@ -459,7 +470,7 @@ public class MethodInvokerPage extends Page {
       queryMultiplicityUp.add(counterName, "" + (multiplicity + 1));
     }
     if (multiplicity >= 0) {
-      row.addColumn(new HTMAnchor("P" + propertyName, "anchor", ""  + browserPath + "?" + queryMultiplicityUp.toString(),
+      row.addColumn(new HTMAnchor("P" + propertyName, "anchor", "" + browserPath + "?" + queryMultiplicityUp.toString(),
               new HTMLLabel("+")));
     } else {
       row.addColumn(new HTMLLabel(""));

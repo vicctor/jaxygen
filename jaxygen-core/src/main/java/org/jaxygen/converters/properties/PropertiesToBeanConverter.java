@@ -213,7 +213,22 @@ public class PropertiesToBeanConverter implements RequestConverter {
   // Object bean = c.newInstance();
     return bean;
   }
-
+  
+  private static Class<?> retrieveListType(Class<?> paramClass, String propertyName) { 
+    Class c = paramClass; 
+    Field listField = null; 
+    String name = c.getName(); 
+    while (listField == null || name.equals("java.lang.Object")) { 
+      try { 
+        listField = c.getDeclaredField(propertyName); 
+      } catch (Exception e) { 
+        c = c.getSuperclass(); 
+      } 
+    } 
+    ParameterizedType type = (ParameterizedType) listField.getGenericType(); 
+    return (Class<?>) type.getActualTypeArguments()[0]; 
+  } 
+   
   private static void fillBeanArrayField(final String name, Object value,
           Object bean, BeanInfo beanInfo, String[] path, final String fieldName,
           int bracketStart, int len)
@@ -241,10 +256,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
               array = childType.newInstance();
               writter.invoke(bean, array);
             }
-            Field listField = bean.getClass().getDeclaredField(propertyName);
-            ParameterizedType type = (ParameterizedType) listField.getGenericType();
-            Class<?> componentType = (Class<?>) type.getActualTypeArguments()[0];
-
+            Class<?> componentType = retrieveListType(bean.getClass(), propertyName); 
             List list = (List) array;
             while (list.size() < (index + 1)) {
               try {

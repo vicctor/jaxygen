@@ -15,11 +15,14 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
+import org.jaxygen.netserviceapisample.business.dto.ArrayListExampleCreateRequestDTO;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
+import org.jaxygen.netserviceapisample.business.dto.ArrayListExampleResponseDTO;
 import org.jaxygen.netserviceapisample.business.dto.ArrayListWithArrayListRequestDTO;
 import org.jaxygen.netserviceapisample.business.dto.ArrayListOfObjectsRequestDTO;
 import org.jaxygen.netserviceapisample.business.dto.SimpleArrayListRequestDTO;
+import org.jaxygen.util.BeanUtil;
 
 /**
  *
@@ -27,30 +30,38 @@ import org.jaxygen.netserviceapisample.business.dto.SimpleArrayListRequestDTO;
  */
 public class ArrayListRequestSample {
 
-    @NetAPI(description = "Very simple request contains ArrayList of strings.",
-            status = Status.GenerallyAvailable,
-            version = "1.0.5"
-    )
-    public SimpleArrayListRequestDTO simpleArrayListRequest(SimpleArrayListRequestDTO arrayListRequestDTO) {
-        return arrayListRequestDTO;
-    }
+  @NetAPI(description = "Very simple request contains ArrayList of strings.",
+          status = Status.GenerallyAvailable,
+          version = "1.0.5"
+  )
+  public SimpleArrayListRequestDTO simpleArrayListRequest(SimpleArrayListRequestDTO arrayListRequestDTO) {
+    return arrayListRequestDTO;
+  }
 
-    @NetAPI(description = "Request contains ArrayList of objects, UserDTO in this case.",
-            status = Status.GenerallyAvailable,
-            version = "1.0.5"
-    )
-    public ArrayListOfObjectsRequestDTO arrayListOfObjectsRequest(ArrayListOfObjectsRequestDTO listOfObjectsRequestDTO) {
-        return listOfObjectsRequestDTO;
-    }
-    
-    @NetAPI(description = "This sample show you ArrayList with field type ArrayList",
-            status = Status.GenerallyAvailable,
-            version = "1.0.5"
-    )
-    public ArrayListWithArrayListRequestDTO arrayListWithArrayListRequest(ArrayListWithArrayListRequestDTO arrayListWithArrayListRequestDTO) {
-        return arrayListWithArrayListRequestDTO;
-    }
+  @NetAPI(description = "Request contains ArrayList of objects, UserDTO in this case.",
+          status = Status.GenerallyAvailable,
+          version = "1.0.5"
+  )
+  public ArrayListOfObjectsRequestDTO arrayListOfObjectsRequest(ArrayListOfObjectsRequestDTO listOfObjectsRequestDTO) {
+    return listOfObjectsRequestDTO;
+  }
 
+  @NetAPI(description = "This sample show you ArrayList with field type ArrayList",
+          status = Status.GenerallyAvailable,
+          version = "1.0.5"
+  )
+  public ArrayListWithArrayListRequestDTO arrayListWithArrayListRequest(ArrayListWithArrayListRequestDTO arrayListWithArrayListRequestDTO) {
+    return arrayListWithArrayListRequestDTO;
+  }
 
+  @NetAPI(description = "This sample show you that request and response calsses can extend from base class with ArrayList",
+          status = Status.GenerallyAvailable,
+          version = "1.0.5"
+  )
+  public ArrayListExampleResponseDTO extendsBaseClassWithArrayList(ArrayListExampleCreateRequestDTO request) {
+    ArrayListExampleResponseDTO responseDTO = new ArrayListExampleResponseDTO();
+    BeanUtil.translateBean(request, responseDTO);
+    return responseDTO;
+  }
 
 }
