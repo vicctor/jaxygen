@@ -501,8 +501,14 @@ public class MethodInvokerPage extends Page {
         row.addColumn(select);
       } else if (paramType.isEnum()) {
         HTMLSelect select = new HTMLSelect(propertyName);
-        for (Object name : paramType.getEnumConstants()) {
-          select.addOption(new HTMLOption(name.toString(), new HTMLLabel(name.toString())));
+        String parameterName = propertyName + "_Value";
+        Object value = request.getParameter(parameterName);
+        for (Object obj : paramType.getEnumConstants()) {
+          String name = obj.toString();
+          HTMLOption htmlOptions = new HTMLOption(name, new HTMLLabel(name));
+          boolean isSelected = value != null && name.equals(value.toString());
+          htmlOptions.setSelected(isSelected);
+          select.addOption(htmlOptions);
         }
         row.addColumn(select);
       } else if (PropertiesToBeanConverter.isCovertable(paramType)) {

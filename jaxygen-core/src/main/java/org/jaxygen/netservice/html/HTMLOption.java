@@ -18,7 +18,9 @@ public class HTMLOption extends BasicHTMLElement {
   }
   
   public void setSelected(final boolean selected) {
-    setAttribute("selected", selected );
+    if (selected) { 
+      setAttribute("selected", "selected"); 
+    } 
   }
 
 }
