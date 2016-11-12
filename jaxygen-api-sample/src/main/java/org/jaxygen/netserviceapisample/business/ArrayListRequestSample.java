@@ -15,6 +15,8 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
+import org.jaxygen.netserviceapisample.business.dto.GenericArrayListRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.GenericArrayListResponseDTO;
 import org.jaxygen.netserviceapisample.business.dto.ArrayListExampleCreateRequestDTO;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
@@ -64,4 +66,13 @@ public class ArrayListRequestSample {
     return responseDTO;
   }
 
+  @NetAPI(description = "This sample presents that you can use generic types for ArrayList",
+          status = Status.GenerallyAvailable,
+          version = "1.0.5"
+  )
+  public GenericArrayListResponseDTO genericArrayListRequest(GenericArrayListRequestDTO request) {
+    GenericArrayListResponseDTO responseDTO = new GenericArrayListResponseDTO();
+    BeanUtil.translateBean(request, responseDTO);
+    return responseDTO;
+  }
 }

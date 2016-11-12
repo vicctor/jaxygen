@@ -335,15 +335,24 @@ public class MethodInvokerPage extends Page {
     Class c = paramClass;
     Field listField = null;
     String name = c.getName();
-    while (listField == null || name.equals("java.lang.Object")) {
+    while (listField == null || "java.lang.Object".equals(name)) {
       try {
         listField = c.getDeclaredField(propertyName);
       } catch (Exception e) {
         c = c.getSuperclass();
       }
     }
-    ParameterizedType type = (ParameterizedType) listField.getGenericType();
-    return (Class<?>) type.getActualTypeArguments()[0];
+    Type genericPropertyType = listField.getGenericType();
+    
+    ParameterizedType propertyType = null;
+    while (propertyType == null) {
+      if ((genericPropertyType instanceof ParameterizedType)) {
+        propertyType = (ParameterizedType) genericPropertyType;
+      } else {
+        genericPropertyType = ((Class<?>) genericPropertyType).getGenericSuperclass();
+      }
+    }
+    return (Class<?>) propertyType.getActualTypeArguments()[0];
   }
 
   /**
@@ -379,7 +388,7 @@ public class MethodInvokerPage extends Page {
         if (getter != null) {
           defaultValue = getter.invoke(inputObject);
         }
-        if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class)) {
+        if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
           final String counterName = parentFieldName + propertyName + "Size";
           int multiplicity = 0;
           if (request.getParameter(counterName) != null) {
