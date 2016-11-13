@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.naming.NamingException;
@@ -388,7 +389,9 @@ public class MethodInvokerPage extends Page {
         if (getter != null) {
           defaultValue = getter.invoke(inputObject);
         }
-        if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
+        if (paramType.isAssignableFrom(HashMap.class)) {
+          System.out.println("I am in hash map :)");
+        } else if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
           final String counterName = parentFieldName + propertyName + "Size";
           int multiplicity = 0;
           if (request.getParameter(counterName) != null) {
