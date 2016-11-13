@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto;
+package org.jaxygen.netserviceapisample.business.dto.maps;
 
 /**
  *
  * @author jknast
  */
-public class GenericArrayListRequestDTO extends GenericArrayListBase {
-
+public class HashMapRequestDTO extends HashMapBase{
+  
 }

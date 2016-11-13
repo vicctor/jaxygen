@@ -13,12 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto;
+package org.jaxygen.netserviceapisample.business.dto.maps;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- *w
+ *
  * @author jknast
  */
-public class GenericArrayListResponseDTO extends GenericArrayListBase {
+public class HashMapBase{
+  
+  Map<String, String> stringsMap = new HashMap<>();
 
+  public Map<String, String> getStringsMap() {
+    return stringsMap;
+  }
+
+  public void setStringsMap(Map<String, String> stringsMap) {
+    this.stringsMap = stringsMap;
+  }  
 }

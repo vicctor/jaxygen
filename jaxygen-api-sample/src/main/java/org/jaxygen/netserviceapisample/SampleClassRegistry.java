@@ -49,6 +49,7 @@ public class SampleClassRegistry implements ClassRegistry
         clases.add(FileTransferSample.class);
         clases.add(MethodsStatusesSample.class);
         clases.add(ArrayListRequestSample.class);
+        clases.add(MapRequestSample.class);
         return clases;
     }
 }

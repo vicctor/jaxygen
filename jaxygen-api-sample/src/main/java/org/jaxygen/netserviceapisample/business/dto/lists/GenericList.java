@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto;
+package org.jaxygen.netserviceapisample.business.dto.lists;
 
 import java.util.ArrayList;
 
@@ -21,14 +21,6 @@ import java.util.ArrayList;
  *
  * @author jknast
  */
-public class SimpleArrayListRequestDTO {
-    private ArrayList<String> list = new ArrayList<>();
-
-    public ArrayList<String> getList() {
-        return list;
-    }
-
-    public void setList(ArrayList<String> list) {
-        this.list = list;
-    }
+public class GenericList<T> extends ArrayList<T>{
+  
 }

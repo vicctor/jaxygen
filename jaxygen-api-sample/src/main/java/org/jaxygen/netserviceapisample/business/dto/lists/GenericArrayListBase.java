@@ -13,43 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto;
+package org.jaxygen.netserviceapisample.business.dto.lists;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.jaxygen.netserviceapisample.business.dto.UserDTO;
 
 /**
  *
  * @author jknast
  */
-public class ArrayListExampleBase {
-
-  private List<String> strings = new ArrayList<>();
-  private List<UserDTO> users = new ArrayList<>();
-  private String str;
-
-  public List<String> getStrings() {
-    return strings;
+public class GenericArrayListBase {
+  private GenericList<UserDTO> genericListStrings = new GenericList<>();
+ 
+  public GenericList<UserDTO> getGenericListStrings() {
+    return genericListStrings;
   }
 
-  public void setStrings(List<String> strings) {
-    this.strings = strings;
+  public void setGenericListStrings(GenericList<UserDTO> genericListStrings) {
+    this.genericListStrings = genericListStrings;
   }
-
-  public List<UserDTO> getUsers() {
-    return users;
-  }
-
-  public void setUsers(List<UserDTO> users) {
-    this.users = users;
-  }
-
-  public String getS() {
-    return str;
-  }
-
-  public void setS(String s) {
-    this.str = s;
-  }
-
 }

@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.naming.NamingException;
@@ -388,7 +389,9 @@ public class MethodInvokerPage extends Page {
         if (getter != null) {
           defaultValue = getter.invoke(inputObject);
         }
-        if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
+        if (paramType.isAssignableFrom(HashMap.class)) {
+          System.out.println("I am in hash map :)");
+        } else if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
           final String counterName = parentFieldName + propertyName + "Size";
           int multiplicity = 0;
           if (request.getParameter(counterName) != null) {
@@ -501,8 +504,14 @@ public class MethodInvokerPage extends Page {
         row.addColumn(select);
       } else if (paramType.isEnum()) {
         HTMLSelect select = new HTMLSelect(propertyName);
-        for (Object name : paramType.getEnumConstants()) {
-          select.addOption(new HTMLOption(name.toString(), new HTMLLabel(name.toString())));
+        String parameterName = propertyName + "_Value";
+        Object value = request.getParameter(parameterName);
+        for (Object obj : paramType.getEnumConstants()) {
+          String name = obj.toString();
+          HTMLOption htmlOptions = new HTMLOption(name, new HTMLLabel(name));
+          boolean isSelected = value != null && name.equals(value.toString());
+          htmlOptions.setSelected(isSelected);
+          select.addOption(htmlOptions);
         }
         row.addColumn(select);
       } else if (PropertiesToBeanConverter.isCovertable(paramType)) {

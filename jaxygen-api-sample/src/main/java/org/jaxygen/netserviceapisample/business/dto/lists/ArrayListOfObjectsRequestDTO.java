@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto;
+package org.jaxygen.netserviceapisample.business.dto.lists;
 
 import java.util.ArrayList;
+import org.jaxygen.netserviceapisample.business.dto.UserDTO;
+import org.jaxygen.netserviceapisample.business.dto.UserDTO;
 
 /**
  *
  * @author jknast
  */
-public class ArrayListWithArrayListRequestDTO {
-    private ArrayList<UserDTOList> listOfList = new ArrayList<>();
+public class ArrayListOfObjectsRequestDTO {
+    private ArrayList<UserDTO> list = new ArrayList<>();
 
-    public ArrayList<UserDTOList> getListOfList() {
-        return listOfList;
+    public ArrayList<UserDTO> getList() {
+        return list;
     }
 
-    public void setListOfList(ArrayList<UserDTOList> listOfList) {
-        this.listOfList = listOfList;
+    public void setList(ArrayList<UserDTO> list) {
+        this.list = list;
     }
-
-    
-
 }

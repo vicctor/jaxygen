@@ -15,15 +15,15 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
-import org.jaxygen.netserviceapisample.business.dto.GenericArrayListRequestDTO;
-import org.jaxygen.netserviceapisample.business.dto.GenericArrayListResponseDTO;
-import org.jaxygen.netserviceapisample.business.dto.ArrayListExampleCreateRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.GenericArrayListRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.GenericArrayListResponseDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListExampleCreateRequestDTO;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
-import org.jaxygen.netserviceapisample.business.dto.ArrayListExampleResponseDTO;
-import org.jaxygen.netserviceapisample.business.dto.ArrayListWithArrayListRequestDTO;
-import org.jaxygen.netserviceapisample.business.dto.ArrayListOfObjectsRequestDTO;
-import org.jaxygen.netserviceapisample.business.dto.SimpleArrayListRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListExampleResponseDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListWithArrayListRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListOfObjectsRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.SimpleArrayListRequestDTO;
 import org.jaxygen.util.BeanUtil;
 
 /**
