@@ -46,13 +46,21 @@ public class MethodInvokerPage extends Page {
   private boolean isSimpleResultType(final Class<?> returnType) {
     return returnType.isPrimitive() || returnType.equals(Integer.class) || returnType.equals(Double.class) || returnType.equals(Float.class) || returnType.equals(String.class) || returnType.equals(double.class) || returnType.equals(float.class);
   }
+  
+  private static String removePathContextFromClassName(final String className, final String beansPath) {
+      String simpleClassname = className.substring(beansPath.length());
+      if (className.startsWith(".")) {
+          simpleClassname = simpleClassname.substring(1);
+      }
+      return simpleClassname;
+  }
 
   private void renderClassForm(HttpServletRequest request, final String classFilter, final String methodFilter)
           throws NamingException, IllegalArgumentException, SecurityException,
           InstantiationException, IllegalAccessException,
           InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, NoSuchFieldException {
 
-    final String simpleClassname = classFilter.substring(beansPath.length() + 1);
+    final String simpleClassname = removePathContextFromClassName(classFilter, beansPath);
     HTMLTable exceptionsTable = new HTMLTable();
     exceptionsTable.getHeader().addColumn(new HTMLTable.HeadColumn(new HTMLLabel("Exception name")));
     exceptionsTable.getHeader().addColumn(new HTMLTable.HeadColumn(new HTMLLabel("Description")));
