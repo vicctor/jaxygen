@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto;
+package org.jaxygen.netserviceapisample.business.dto.lists;
 
 /**
  *
  * @author jknast
  */
-public class ArrayListExampleCreateRequestDTO extends ArrayListExampleBase{
-  
+public class GenericArrayListRequestDTO extends GenericArrayListBase {
+
 }

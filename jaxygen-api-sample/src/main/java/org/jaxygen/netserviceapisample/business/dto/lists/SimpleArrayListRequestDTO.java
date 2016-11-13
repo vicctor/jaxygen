@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto;
+package org.jaxygen.netserviceapisample.business.dto.lists;
 
 import java.util.ArrayList;
 
