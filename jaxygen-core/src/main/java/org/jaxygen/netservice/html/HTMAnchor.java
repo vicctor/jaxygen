@@ -17,4 +17,11 @@ public class HTMAnchor extends BasicHTMLElement {
     setAttribute("href", url);
     super.getContent().add(content);
   }
+  
+  public HTMAnchor( final String id, final String cssClass, final String url, HTMLElement content ) {
+    super("A", id);
+    setCSSClassName(cssClass);
+    setAttribute("href", url);
+    super.getContent().add(content);
+  }
 }

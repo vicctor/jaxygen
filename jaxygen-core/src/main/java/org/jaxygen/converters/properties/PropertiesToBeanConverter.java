@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -213,7 +214,31 @@ public class PropertiesToBeanConverter implements RequestConverter {
   // Object bean = c.newInstance();
     return bean;
   }
-
+  
+  private static Class<?> retrieveListType(Class<?> paramClass, String propertyName) { 
+    Class c = paramClass; 
+    Field listField = null; 
+    String name = c.getName(); 
+    while (listField == null || "java.lang.Object".equals(name)) { 
+      try { 
+        listField = c.getDeclaredField(propertyName); 
+      } catch (Exception e) { 
+        c = c.getSuperclass(); 
+      } 
+    } 
+    Type genericPropertyType = listField.getGenericType();
+    
+    ParameterizedType propertyType = null;
+    while (propertyType == null) {
+      if ((genericPropertyType instanceof ParameterizedType)) {
+        propertyType = (ParameterizedType) genericPropertyType;
+      } else {
+        genericPropertyType = ((Class<?>) genericPropertyType).getGenericSuperclass();
+      }
+    }
+    return (Class<?>) propertyType.getActualTypeArguments()[0];
+  } 
+   
   private static void fillBeanArrayField(final String name, Object value,
           Object bean, BeanInfo beanInfo, String[] path, final String fieldName,
           int bracketStart, int len)
@@ -235,16 +260,13 @@ public class PropertiesToBeanConverter implements RequestConverter {
         Method reader = pd.getReadMethod();
         if (writter != null && reader != null) {
           Object array = reader.invoke(bean);
-          if (pd.getPropertyType().isAssignableFrom(ArrayList.class) || pd.getPropertyType().isAssignableFrom(LinkedList.class)) { // List
+          if (pd.getPropertyType().isAssignableFrom(ArrayList.class) || pd.getPropertyType().isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(pd.getPropertyType())) { // List
             if (array == null) {
               Class childType = pd.getPropertyType().getComponentType();
               array = childType.newInstance();
               writter.invoke(bean, array);
             }
-            Field listField = bean.getClass().getDeclaredField(propertyName);
-            ParameterizedType type = (ParameterizedType) listField.getGenericType();
-            Class<?> componentType = (Class<?>) type.getActualTypeArguments()[0];
-
+            Class<?> componentType = retrieveListType(bean.getClass(), propertyName); 
             List list = (List) array;
             while (list.size() < (index + 1)) {
               try {
