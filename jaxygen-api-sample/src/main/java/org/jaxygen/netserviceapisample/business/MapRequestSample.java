@@ -15,11 +15,12 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
-import org.jaxygen.netserviceapisample.business.dto.maps.HashMapRequestDTO;
-import org.jaxygen.netserviceapisample.business.dto.maps.HashMapResponseDTO;
-import org.jaxygen.netserviceapisample.business.dto.lists.GenericArrayListResponseDTO;
+import org.jaxygen.netserviceapisample.business.dto.maps.HashMapSimpleRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.maps.HashMapSimpleResponseDTO;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
+import org.jaxygen.netserviceapisample.business.dto.maps.HashMapComplexRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.maps.HashMapComplexResponseDTO;
 import org.jaxygen.util.BeanUtil;
 
 /**
@@ -32,8 +33,18 @@ public class MapRequestSample {
           status = Status.GenerallyAvailable,
           version = "1.0.6"
   )
-  public HashMapResponseDTO simpeHashmapRequest(HashMapRequestDTO request) {
-    HashMapResponseDTO responseDTO = new HashMapResponseDTO();
+  public HashMapSimpleResponseDTO simpeHashmapRequest(HashMapSimpleRequestDTO request) {
+    HashMapSimpleResponseDTO responseDTO = new HashMapSimpleResponseDTO();
+    BeanUtil.translateBean(request, responseDTO);
+    return responseDTO;
+  }  
+  
+  @NetAPI(description = "",
+          status = Status.GenerallyAvailable,
+          version = "1.0.6"
+  )
+  public HashMapComplexResponseDTO complexHashmapRequest(HashMapComplexRequestDTO request) {
+    HashMapComplexResponseDTO responseDTO = new HashMapComplexResponseDTO();
     BeanUtil.translateBean(request, responseDTO);
     return responseDTO;
   }
