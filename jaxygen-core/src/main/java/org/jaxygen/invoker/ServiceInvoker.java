@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.jaxygen.annotations.ClientIp;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.RequestURL;
