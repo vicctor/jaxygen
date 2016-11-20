@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.util.Pair;
-import org.assertj.core.api.Assertions;
 import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.http.HttpRequestParams;
 import org.junit.Test;
