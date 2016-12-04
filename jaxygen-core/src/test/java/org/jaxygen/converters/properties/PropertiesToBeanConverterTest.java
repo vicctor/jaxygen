@@ -20,11 +20,11 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javafx.util.Pair;
+import static org.assertj.core.api.Assertions.*;
+import org.jaxygen.collections.Pair;
 import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.http.HttpRequestParams;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -105,7 +105,7 @@ public class PropertiesToBeanConverterTest {
         // given
         PropertiesToBeanConverter instance = new PropertiesToBeanConverter();
 
-        // whne
+        // when
         String result = instance.getName();
 
         // then
