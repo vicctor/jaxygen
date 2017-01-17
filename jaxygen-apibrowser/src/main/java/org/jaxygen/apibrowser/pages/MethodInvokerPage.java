@@ -125,6 +125,8 @@ public class MethodInvokerPage extends Page {
               .append("  });\n")
               .append("\n")
               .append("  handleAnchors(form);\n")
+              .append("  registerCopyButtonEventListener(form);\n")
+              .append("  registerUpdateShareLink(form);\n")
               .append("\n")
               .append("});\n");
       sb.append("</script>");
@@ -140,6 +142,7 @@ public class MethodInvokerPage extends Page {
     // append script responsible for saving files
     page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/FileSaver.js\"></script>");
     page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/AnchorUpdater.js\"></script>");
+    page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/shareThisPage.js\"></script>");
     // append script responsible for sending data to service
     page.append((HTMLElement) () -> {
       StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
@@ -196,7 +199,11 @@ public class MethodInvokerPage extends Page {
     mainDiv.append(new HTMLPre("js1", codes[0]));
     mainDiv.append(new HTMLPre("js2", codes[1]));
     mainDiv.append(new HTMLPre("js3", codes[2]));
-
+    
+    mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Share this page")));
+    mainDiv.append(new HTMLInput(HTMLInput.Type.text, "share it", "share_it", "share_it", "value"));
+    mainDiv.append(new HTMLInput(HTMLInput.Type.button, "copyButton", "copyButton", "copyButton", "Copy"));
+    
     page.append(mainDiv);
     HTMLDiv responseDiv = new HTMLDiv("responseDiv");
     responseDiv.setAttribute("style", "display:none");
