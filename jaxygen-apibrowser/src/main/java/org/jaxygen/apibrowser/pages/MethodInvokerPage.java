@@ -49,7 +49,7 @@ public class MethodInvokerPage extends Page {
   
   private static String removePathContextFromClassName(final String className, final String beansPath) {
       String simpleClassname = className.substring(beansPath.length());
-      if (className.startsWith(".")) {
+      if (simpleClassname.startsWith(".")) {
           simpleClassname = simpleClassname.substring(1);
       }
       return simpleClassname;
