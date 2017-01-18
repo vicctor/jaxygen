@@ -22,5 +22,5 @@ import org.jaxygen.objectsbuilder.exceptions.ObjectCreateError;
  * @author Artur
  */
 public interface ObjectBuilder {
-    public Object create(Class clazz)  throws ObjectCreateError;
+    public <T> T create(Class<T> clazz)  throws ObjectCreateError;
 }
