@@ -4,11 +4,11 @@
   <parent>
     <groupId>org.jaxygen</groupId>
     <artifactId>jaxygen-project</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
   </parent>
   <groupId>org.jaxygen.client</groupId>
   <artifactId>jaxygen-client-it</artifactId>
-  <version>1.0.6-SNAPSHOT</version>
+  <version>1.0.7-SNAPSHOT</version>
   <name>jaxygen-client-it</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -24,7 +24,7 @@
     <dependency>
       <groupId>org.jaxygen</groupId>
       <artifactId>jaxygen-core</artifactId>
-      <version>1.0.6-SNAPSHOT</version>
+      <version>1.0.7-SNAPSHOT</version>
     </dependency>
   </dependencies>
   

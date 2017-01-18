@@ -10,7 +10,7 @@
   <!-- The Basics -->
   <groupId>org.jaxygen</groupId>
   <artifactId>jaxygen-project</artifactId>
-  <version>1.0.6-SNAPSHOT</version>
+  <version>1.0.7-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>jaxygen-project</name>
