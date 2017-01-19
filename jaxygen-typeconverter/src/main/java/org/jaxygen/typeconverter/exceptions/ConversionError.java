@@ -4,7 +4,7 @@ package org.jaxygen.typeconverter.exceptions;
  *
  * @author Artur
  */
-public class ConversionError extends Exception {
+public class ConversionError extends RuntimeException {
 
     /**
      * Creates a new instance of &lt;code&gt;ConversionError&lt;/code&gt; without detail message.
