@@ -4,7 +4,6 @@
  */
 package org.jaxygen.apibrowser.pages;
 
-import java.io.File;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +29,6 @@ public class Page implements HTMLElement {
   protected String beansPath;
 
   public Page(ServletContext context, HttpServletRequest request, String classRegistry, String beansPath) throws ServletException {
-    final String serletPath = request.getServletPath();
     this.browserPath = "APIBrowser";
     this.home = ".";
     this.invokerPath = home + "/invoker";
