@@ -16,7 +16,10 @@
 
 package org.jaxygen.typeconverter;
 
-import org.jodah.typetools.TypeResolver;
+//import org.jodah.typetools.TypeResolver;
+
+import net.jodah.typetools.TypeResolver;
+
 
 /**
  * The abstract implementation of the TypeConverter which is a base for class to

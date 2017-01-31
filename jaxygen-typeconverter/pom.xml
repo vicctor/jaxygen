@@ -26,7 +26,12 @@
             <artifactId>jaxygen-core</artifactId>
             <version>1.0.7-SNAPSHOT</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/net.jodah/typetools -->
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>typetools</artifactId>
+            <version>0.4.8</version>
+        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>

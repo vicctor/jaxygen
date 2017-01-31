@@ -5,7 +5,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jaxygen.collections.PartialArrayList;
-import org.jaxygen.dto.collections.PaginableBaseRequestDTO;
 import org.jaxygen.dto.collections.PaginableListResponseBaseDTO;
 import org.jaxygen.typeconverter.BeanConverter;
 import org.jaxygen.typeconverter.TypeConverterFactory;

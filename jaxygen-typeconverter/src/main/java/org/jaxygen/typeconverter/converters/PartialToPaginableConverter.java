@@ -17,12 +17,12 @@ package org.jaxygen.typeconverter.converters;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.jodah.typetools.TypeResolver;
 import org.jaxygen.collections.PartialList;
 import org.jaxygen.dto.collections.PaginableListResponseBaseDTO;
 import org.jaxygen.typeconverter.ClassToClassTypeConverter;
 import org.jaxygen.typeconverter.TypeConverterFactory;
 import org.jaxygen.typeconverter.exceptions.ConversionError;
-import org.jodah.typetools.TypeResolver;
 
 /**The PartialToPaginableConverter copies all elements of the instance of {@link PartialList} to
  * {@link org.jaxygen.dto.collections.PaginableListResponseBaseDTO}. When iterating over PartialList it call converter that
