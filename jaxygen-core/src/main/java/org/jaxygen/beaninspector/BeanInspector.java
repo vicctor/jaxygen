@@ -28,15 +28,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import net.jodah.typetools.TypeResolver;
 import org.jaxygen.beaninspector.annotations.GenericType;
 import org.jaxygen.beaninspector.exceptions.InspectionError;
 import org.jaxygen.beaninspector.model.ArrayField;
 import org.jaxygen.beaninspector.model.BooleanField;
-import org.jaxygen.beaninspector.model.ObjectDescriptor;
+import org.jaxygen.beaninspector.model.EnumField;
 import org.jaxygen.beaninspector.model.FieldDescriptor;
 import org.jaxygen.beaninspector.model.IntegerField;
 import org.jaxygen.beaninspector.model.InvalidFieldDescriptor;
+import org.jaxygen.beaninspector.model.ObjectDescriptor;
 import org.jaxygen.beaninspector.model.StringField;
 
 /**
@@ -47,25 +49,29 @@ public class BeanInspector {
 
     private static final Map<Class, FieldDescriptorBuilder> BUILDERS = new HashMap<>();
 
+   
     interface FieldDescriptorBuilder {
 
         FieldDescriptor build();
     };
 
     static {
-        BUILDERS.put(String.class, () -> new StringField());
-        BUILDERS.put(Integer.TYPE, () -> new IntegerField());
+        BUILDERS.put(String.class,  () -> new StringField());
+        BUILDERS.put(Integer.TYPE,  () -> new IntegerField());
         BUILDERS.put(Integer.class, () -> new IntegerField());
-        BUILDERS.put(Boolean.TYPE, () -> new BooleanField());
+        BUILDERS.put(Boolean.TYPE,  () -> new BooleanField());
         BUILDERS.put(Boolean.class, () -> new BooleanField());
     }
 
-    private static boolean isPrimitive(final Class clazz) {
-        return BUILDERS.containsKey(clazz);
-    }
-
+    /** Inspect bean class and create a composed model of the class fields.
+     * 
+     * @param clazz bean class for analysis
+     * @return composed object model containing description of the clazz type.
+     * @throws InspectionError 
+     */
     public static FieldDescriptor inspect(final Class clazz) throws InspectionError {
         FieldDescriptor rc;
+        // Decide where this class is a simple type or a complex object
         if (isPrimitive(clazz)) {
             FieldDescriptorBuilder builder = BUILDERS.get(clazz);
             rc = builder.build();
@@ -75,13 +81,28 @@ public class BeanInspector {
         return rc;
     }
 
+    /** Verify if the given class type is primitive
+     * 
+     * @param clazz
+     * @return 
+     */
+    private static boolean isPrimitive(final Class clazz) {
+        return BUILDERS.containsKey(clazz);
+    }
+
+    /** Inspect complex class type
+     * 
+     * @param clazz
+     * @return
+     * @throws InspectionError 
+     */
     public static ObjectDescriptor inspectObject(final Class clazz) throws InspectionError {
         List<FieldDescriptor> fieldDescriptors = new ArrayList<>();
 
         try {
             BeanInfo info = Introspector.getBeanInfo(clazz);
             for (PropertyDescriptor descriptor : info.getPropertyDescriptors()) {
-                JXPropertyDescriptor pd = describe(clazz, descriptor);
+                JXPropertyDescriptor pd = describeProperty(clazz, descriptor);
                 FieldDescriptor fd = buildDescritptor(pd);
                 if (fd != null) {
                     fieldDescriptors.add(fd);
@@ -108,13 +129,20 @@ public class BeanInspector {
             try {
                 listField = parent.getDeclaredField(fieldName);
             } catch (Exception e) {
-                    parent = parent.getSuperclass();
+                parent = parent.getSuperclass();
             }
         }
         return listField;
     }
 
-    private static JXPropertyDescriptor describe(Class clazz, PropertyDescriptor pd) {
+    /**
+     * Obtain composed information about the type of the property.
+     *
+     * @param clazz class of the property type
+     * @param pd property descriptor
+     * @return composed property information
+     */
+    private static JXPropertyDescriptor describeProperty(Class clazz, PropertyDescriptor pd) {
         JXPropertyDescriptor rc = new JXPropertyDescriptor();
         Field field = getClassFieldFromParentClasses(clazz, pd.getName());
         rc.setWrittable(pd.getWriteMethod() != null);
@@ -140,6 +168,10 @@ public class BeanInspector {
         return rc;
     }
 
+    /**
+     * Verify if the given type should be ignored and not reported in the bean
+     * model descriptor.
+     */
     private static boolean isIgnorable(Class clazz) {
         return Class.class.equals(clazz);
     }
@@ -156,13 +188,15 @@ public class BeanInspector {
             rc = new ArrayField(contentDescriptor);
         } else if (clazz.isAssignableFrom(List.class)) {
             rc = resolveListType(descriptor);
+        } else if (clazz.isEnum()) {
+            rc = buildEnumDescriptor(clazz);
         } else if (!isIgnorable(clazz)) {
             rc = inspect(clazz);
         }
         return rc;
     }
 
-    private static Class<?> retrieveListType(Field listField) {
+    private static Class<?> resolveListTypeFromField(Field listField) {
         Type genericPropertyType = listField.getGenericType();
 
         ParameterizedType propertyType = null;
@@ -192,12 +226,22 @@ public class BeanInspector {
         }
         // Try to resolve generic type from instance of the class
         if (type.equals(TypeResolver.Unknown.class)) {
-            type = retrieveListType(descriptor.getField());
+            type = resolveListTypeFromField(descriptor.getField());
         }
         FieldDescriptor contentDescriptor = inspect(type);
         rc = new ArrayField(contentDescriptor);
         return rc;
     }
+    
+     private static FieldDescriptor buildEnumDescriptor(Class clazz) {
+        EnumField rc = new EnumField();
+        List<String> list = Lists.newArrayList(clazz.getEnumConstants()).stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
+        rc.setValues(list);
+        return rc;
+    }
+
 
     private static FieldDescriptor buildDescritptor(JXPropertyDescriptor descriptor) throws InspectionError {
         FieldDescriptor rc = null;

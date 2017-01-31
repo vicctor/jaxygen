@@ -19,11 +19,13 @@ import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import static org.assertj.core.api.Assertions.*;
 import org.jaxygen.beaninspector.data.ClassWithArrayOfPrimitiveTypes;
+import org.jaxygen.beaninspector.data.ClassWithEnumField;
 import org.jaxygen.beaninspector.data.ClassWithListTypes;
 import org.jaxygen.beaninspector.data.SimpleClassWithSimpleFields;
 import org.jaxygen.beaninspector.exceptions.InspectionError;
 import org.jaxygen.beaninspector.model.ArrayField;
 import org.jaxygen.beaninspector.model.BooleanField;
+import org.jaxygen.beaninspector.model.EnumField;
 import org.jaxygen.beaninspector.model.IntegerField;
 import org.jaxygen.beaninspector.model.ObjectDescriptor;
 import org.jaxygen.beaninspector.model.StringField;
@@ -314,6 +316,47 @@ public class BeanInspectorTest {
         // then
         assertThat(rc).isFalse();
     }
+    @Test
+    public void should_twoEnumWithDifferentValuesNotMatch() {
+        // given
+        EnumField f1 = new EnumField("a", "A", "B");
+        EnumField f2 = new EnumField("a", "Z", "B");
+        
+        // when
+        boolean expected = f1.equals(f2);
+        
+        // then
+        assertThat(expected)
+                .isFalse();
+    }
+    
+    @Test
+    public void should_twoEnumWithDifferentNamesNotMatch() {
+        // given
+        EnumField f1 = new EnumField("a", "A", "B");
+        EnumField f2 = new EnumField("b", "A", "B");
+        
+        // when
+        boolean expected = f1.equals(f2);
+        
+        // then
+        assertThat(expected)
+                .isFalse();
+    }
+    
+    @Test
+    public void should_twoEnumIdenticalEnumsMatch() {
+        // given
+        EnumField f1 = new EnumField("a", "A", "B");
+        EnumField f2 = new EnumField("a", "A", "B");
+        
+        // when
+        boolean expected = f1.equals(f2);
+        
+        // then
+        assertThat(expected)
+                .isTrue();
+    }
 
     @Test
     public void should_describeSimpleClassWithFields() throws InspectionError {
@@ -340,6 +383,28 @@ public class BeanInspectorTest {
                         new IntegerField("intField"),
                         new IntegerField("integerObjectField")
                 );
+    }
+    
+    @Test
+    public void should_describeClassWithEnum() throws InspectionError {
+        // given
+        Class input = ClassWithEnumField.class;
+
+        // when
+        ObjectDescriptor rc = (ObjectDescriptor)BeanInspector.inspect(input);
+
+        // then
+        assertThat(rc)
+                .isNotNull();
+        assertThat(rc.getClassName())
+                .isEqualTo("ClassWithEnumField");
+        assertThat(rc.getClassFullName())
+                .isEqualTo("org.jaxygen.beaninspector.data.ClassWithEnumField");
+        assertThat(rc.getType())
+                .isEqualTo("OBJECT");
+        assertThat(rc.getFields())
+                .contains(
+                        new EnumField("enumField", "E1", "E2", "E3"));
     }
 
     @Test
