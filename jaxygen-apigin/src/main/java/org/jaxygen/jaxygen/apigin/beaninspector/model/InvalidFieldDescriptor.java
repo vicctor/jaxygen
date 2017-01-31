@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.beaninspector.exceptions;
-
-import java.beans.IntrospectionException;
+package org.jaxygen.jaxygen.apigin.beaninspector.model;
 
 /**
  *
  * @author Artur
  */
-public class InspectionError extends Exception {
+public class InvalidFieldDescriptor extends FieldBase {
 
-    public InspectionError() {
-    }
+    private final static String TYPE = "INVALID";
 
-    public InspectionError(IntrospectionException ex) {
-    }
-    
+    public InvalidFieldDescriptor() {
+        super(TYPE);
+    } 
 }

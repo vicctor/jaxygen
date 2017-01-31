@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.beaninspector.annotations;
+package org.jaxygen.jaxygen.apigin.beaninspector.model;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/** Please annotate your generic type classes with this annotation,
- * so Jaxygen will recognize it's content, and populate to the engine.
+/**
  *
  * @author Artur
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface GenericType {
-    /** The type of the generic content class
-     * 
-     * @return 
-     */
-    Class type();
+public class BooleanField extends FieldBase {
+
+    public static String TYPE = "BOOLEAN";
+
+    public BooleanField() {
+        super(TYPE);
+    }
+
+    public BooleanField(final String name) {
+        super(TYPE, name);
+    }
 }

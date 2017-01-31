@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.beaninspector;
+package org.jaxygen.apigin.beaninspector;
 
 import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import static org.assertj.core.api.Assertions.*;
-import org.jaxygen.beaninspector.data.ClassWithArrayOfPrimitiveTypes;
-import org.jaxygen.beaninspector.data.ClassWithEnumField;
-import org.jaxygen.beaninspector.data.ClassWithListTypes;
-import org.jaxygen.beaninspector.data.SimpleClassWithSimpleFields;
-import org.jaxygen.beaninspector.exceptions.InspectionError;
-import org.jaxygen.beaninspector.model.ArrayField;
-import org.jaxygen.beaninspector.model.BooleanField;
-import org.jaxygen.beaninspector.model.EnumField;
-import org.jaxygen.beaninspector.model.IntegerField;
-import org.jaxygen.beaninspector.model.ObjectDescriptor;
-import org.jaxygen.beaninspector.model.StringField;
+import org.jaxygen.apigin.beaninspector.data.ClassWithArrayOfPrimitiveTypes;
+import org.jaxygen.apigin.beaninspector.data.ClassWithEnumField;
+import org.jaxygen.apigin.beaninspector.data.ClassWithListTypes;
+import org.jaxygen.apigin.beaninspector.data.SimpleClassWithSimpleFields;
+import org.jaxygen.jaxygen.apigin.beaninspector.BeanInspector;
+import org.jaxygen.jaxygen.apigin.beaninspector.exceptions.InspectionError;
+import org.jaxygen.jaxygen.apigin.beaninspector.model.ArrayField;
+import org.jaxygen.jaxygen.apigin.beaninspector.model.BooleanField;
+import org.jaxygen.jaxygen.apigin.beaninspector.model.EnumField;
+import org.jaxygen.jaxygen.apigin.beaninspector.model.IntegerField;
+import org.jaxygen.jaxygen.apigin.beaninspector.model.ObjectDescriptor;
+import org.jaxygen.jaxygen.apigin.beaninspector.model.StringField;
 import org.junit.Test;
 
 /**
@@ -372,7 +373,7 @@ public class BeanInspectorTest {
         assertThat(rc.getClassName())
                 .isEqualTo("SimpleClassWithSimpleFields");
         assertThat(rc.getClassFullName())
-                .isEqualTo("org.jaxygen.beaninspector.data.SimpleClassWithSimpleFields");
+                .isEqualTo("org.jaxygen.apigin.beaninspector.data.SimpleClassWithSimpleFields");
         assertThat(rc.getType())
                 .isEqualTo("OBJECT");
         assertThat(rc.getFields())
@@ -399,7 +400,7 @@ public class BeanInspectorTest {
         assertThat(rc.getClassName())
                 .isEqualTo("ClassWithEnumField");
         assertThat(rc.getClassFullName())
-                .isEqualTo("org.jaxygen.beaninspector.data.ClassWithEnumField");
+                .isEqualTo("org.jaxygen.apigin.beaninspector.data.ClassWithEnumField");
         assertThat(rc.getType())
                 .isEqualTo("OBJECT");
         assertThat(rc.getFields())
@@ -421,7 +422,7 @@ public class BeanInspectorTest {
         assertThat(rc.getClassName())
                 .isEqualTo("ClassWithArrayOfPrimitiveTypes");
         assertThat(rc.getClassFullName())
-                .isEqualTo("org.jaxygen.beaninspector.data.ClassWithArrayOfPrimitiveTypes");
+                .isEqualTo("org.jaxygen.apigin.beaninspector.data.ClassWithArrayOfPrimitiveTypes");
         assertThat(rc.getType())
                 .isEqualTo("OBJECT");
         assertThat(rc.getFields())
@@ -446,7 +447,7 @@ public class BeanInspectorTest {
         ObjectDescriptor content = new ObjectDescriptor();
         content.setName("SimpleClassWithSimpleFields");
         content.setClassName("SimpleClassWithSimpleFields");
-        content.setClassFullName("org.jaxygen.beaninspector.data.SimpleClassWithSimpleFields");
+        content.setClassFullName("org.jaxygen.apigin.beaninspector.data.SimpleClassWithSimpleFields");
         content.setFields(Lists.newArrayList(
                 new StringField("stringField"),
                 new BooleanField("booleanField"),
@@ -462,7 +463,7 @@ public class BeanInspectorTest {
         assertThat(rc.getClassName())
                 .isEqualTo("ClassWithListTypes");
         assertThat(rc.getClassFullName())
-                .isEqualTo("org.jaxygen.beaninspector.data.ClassWithListTypes");
+                .isEqualTo("org.jaxygen.apigin.beaninspector.data.ClassWithListTypes");
         assertThat(rc.getType())
                 .isEqualTo("OBJECT");
         assertThat(rc.getFields())
@@ -482,7 +483,7 @@ public class BeanInspectorTest {
         ObjectDescriptor content = new ObjectDescriptor();
         content.setName("SimpleClassWithSimpleFields");
         content.setClassName("SimpleClassWithSimpleFields");
-        content.setClassFullName("org.jaxygen.beaninspector.data.SimpleClassWithSimpleFields");
+        content.setClassFullName("org.jaxygen.apigin.beaninspector.data.SimpleClassWithSimpleFields");
         content.setFields(Lists.newArrayList(
                 new StringField("stringField"),
                 new BooleanField("booleanField"),
@@ -498,7 +499,7 @@ public class BeanInspectorTest {
         assertThat(rc.getClassName())
                 .isEqualTo("ClassWithListTypes");
         assertThat(rc.getClassFullName())
-                .isEqualTo("org.jaxygen.beaninspector.data.ClassWithListTypes");
+                .isEqualTo("org.jaxygen.apigin.beaninspector.data.ClassWithListTypes");
         assertThat(rc.getType())
                 .isEqualTo("OBJECT");
         assertThat(rc.getFields())
@@ -518,7 +519,7 @@ public class BeanInspectorTest {
         ObjectDescriptor content = new ObjectDescriptor();
         content.setName("SimpleClassWithSimpleFields");
         content.setClassName("SimpleClassWithSimpleFields");
-        content.setClassFullName("org.jaxygen.beaninspector.data.SimpleClassWithSimpleFields");
+        content.setClassFullName("org.jaxygen.apigin.beaninspector.data.SimpleClassWithSimpleFields");
         content.setFields(Lists.newArrayList(
                 new StringField("stringField"),
                 new BooleanField("booleanField"),
@@ -534,7 +535,7 @@ public class BeanInspectorTest {
         assertThat(rc.getClassName())
                 .isEqualTo("ClassWithListTypes");
         assertThat(rc.getClassFullName())
-                .isEqualTo("org.jaxygen.beaninspector.data.ClassWithListTypes");
+                .isEqualTo("org.jaxygen.apigin.beaninspector.data.ClassWithListTypes");
         assertThat(rc.getType())
                 .isEqualTo("OBJECT");
         assertThat(rc.getFields())

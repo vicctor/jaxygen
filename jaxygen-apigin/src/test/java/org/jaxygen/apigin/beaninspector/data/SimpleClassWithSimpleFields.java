@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.data;
 
 /**
  *
  * @author Artur
  */
-public class IntegerField extends FieldBase {
-    public static String TYPE = "INTEGER";
-
-    public IntegerField() {
-        super(TYPE);
-    }
-    
-    public IntegerField(final String name) {
-        super(TYPE,name);
-    }
+@lombok.Getter
+@lombok.Setter
+public class SimpleClassWithSimpleFields {
+    private String stringField;
+    private boolean  booleanField;
+    private Boolean booleanObjectField;
+    private int intField;
+    private Integer integerObjectField;
 }

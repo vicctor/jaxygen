@@ -18,3 +18,6 @@
 *.iml
 /jaxygent-fluenconverters/jaxygen-fluentconverters/target/
 /jaxygen-core/nbproject/
+/jaxygen-apigin/nbproject/
+/jaxygen-annotations/target/
+/jaxygen-apigin/target/
