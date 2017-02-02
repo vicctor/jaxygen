@@ -13,28 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.exceptions;
+package org.jaxygen.apigin.beaninspector.data;
 
-import java.beans.IntrospectionException;
+import org.jaxygen.annotations.NetAPI;
+import org.jaxygen.annotations.Status;
 
 /**
  *
  * @author Artur
  */
-public class InspectionError extends Exception {
-
-    public InspectionError() {
-    }
-
-    public InspectionError(String string) {
-        super(string);
-    }
-
-    public InspectionError(String string, Throwable thrwbl) {
-        super(string, thrwbl);
-    }
-
-    public InspectionError(IntrospectionException ex) {
-    }
+@NetAPI(description = "TEST1", status = Status.Mockup, version = "1000")
+public class ServiceWithotutMethods {
     
 }

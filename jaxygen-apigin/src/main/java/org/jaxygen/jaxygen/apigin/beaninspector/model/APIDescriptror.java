@@ -13,28 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.exceptions;
+package org.jaxygen.jaxygen.apigin.beaninspector.model;
 
-import java.beans.IntrospectionException;
+import java.util.List;
 
 /**
  *
  * @author Artur
  */
-public class InspectionError extends Exception {
-
-    public InspectionError() {
-    }
-
-    public InspectionError(String string) {
-        super(string);
-    }
-
-    public InspectionError(String string, Throwable thrwbl) {
-        super(string, thrwbl);
-    }
-
-    public InspectionError(IntrospectionException ex) {
-    }
-    
+@lombok.Data
+public class APIDescriptror {
+    private List<ServiceDescriptor> services;
 }
