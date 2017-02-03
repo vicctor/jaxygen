@@ -15,12 +15,17 @@
  */
 package org.jaxygen.apigin.beaninspector;
 
-import org.jaxygen.apigin.beaninspector.APIInspector;
 import com.google.common.collect.Lists;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
+import org.jaxygen.apigin.beaninspector.data.ServiceWithPublishedMethods;
 import org.jaxygen.apigin.beaninspector.data.ServiceWithotutMethods;
+import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
 import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
+import org.jaxygen.apigin.beaninspector.model.ArrayField;
+import org.jaxygen.apigin.beaninspector.model.MethodDescriptor;
+import org.jaxygen.apigin.beaninspector.model.StringField;
+import org.jaxygen.apigin.beaninspector.model.VoidField;
 import org.junit.Test;
 
 /**
@@ -28,8 +33,38 @@ import org.junit.Test;
  * @author Artur
  */
 public class APIInspectorTest {
-    
+
     public APIInspectorTest() {
+    }
+
+    @Test
+    public void shall_twoMethodDescriptrBeEqual() {
+        // given
+        ArrayField input = new ArrayField("arrayOfStrings", new StringField());
+        ArrayField output = new ArrayField("arrayOfStrings", new StringField());
+        MethodDescriptor d1 = new MethodDescriptor("name1", "path1", input, output);
+        MethodDescriptor d2 = new MethodDescriptor("name1", "path1", input, output);
+
+        // when
+        boolean res = d1.equals(d2);
+
+        // then
+        assertThat(res)
+                .isTrue();
+    }
+
+    @Test
+    public void shall_twoMethodsWithVoidsBeEuql() {
+        // given
+        MethodDescriptor m1 = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", VoidField.VOID, VoidField.VOID);
+        MethodDescriptor m2 = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", VoidField.VOID, VoidField.VOID);
+        
+        // when
+        boolean rc = m1.equals(m2);
+        
+        // then
+        assertThat(rc)
+                .isTrue();
     }
 
     @Test
@@ -38,10 +73,10 @@ public class APIInspectorTest {
         Class serviceClass = ServiceWithotutMethods.class;
         List<Class> services = Lists.newArrayList(serviceClass);
         String basePath = null;
-        
+
         // when
         APIDescriptror apiDescrptor = new APIInspector().inspect(services, basePath);
-        
+
         // then
         assertThat(apiDescrptor)
                 .isNotNull();
@@ -56,5 +91,61 @@ public class APIInspectorTest {
         assertThat(apiDescrptor.getServices().get(0).getMethods())
                 .isEmpty();
     }
-    
+
+    @Test
+    public void shall_pathShallBeShorten() throws Exception {
+        // given
+        Class serviceClass = ServiceWithotutMethods.class;
+        List<Class> services = Lists.newArrayList(serviceClass);
+        String basePath = "org/jaxygen/apigin/beaninspector/data";
+
+        // when
+        APIDescriptror apiDescrptor = new APIInspector().inspect(services, basePath);
+
+        // then
+        assertThat(apiDescrptor)
+                .isNotNull();
+        assertThat(apiDescrptor.getServices())
+                .hasSize(1);
+        assertThat(apiDescrptor.getServices().get(0).getSerivicePath())
+                .isEqualTo("ServiceWithotutMethods");
+    }
+
+    @Test
+    public void shall_throwExceptionIfNetAPIMissing() {
+        // given
+        final Class clazz = this.getClass();
+        final List<Class> services = Lists.newArrayList(clazz);
+
+        // when
+        Throwable res = catchThrowable(() -> new APIInspector().inspect(services, null));
+
+        // then
+        assertThat(res)
+                .isInstanceOf(InspectionError.class)
+                .hasMessage("Error while ispecting services");
+    }
+
+    @Test
+    public void shall_inspectServiceWithPublishedMethods() throws InspectionError {
+        // given
+        final Class clazz = ServiceWithPublishedMethods.class;
+        final List<Class> services = Lists.newArrayList(clazz);
+        String basePath = "org/jaxygen/apigin/beaninspector/data";
+
+        // when
+        APIDescriptror res = new APIInspector().inspect(services, basePath);
+
+        // then
+        assertThat(res)
+                .isNotNull();
+        assertThat(res.getServices())
+                .hasSize(1);
+        assertThat(res.getServices().get(0).getMethods())
+                .isNotNull()
+                .hasSize(3);
+        MethodDescriptor voidToVoid = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", VoidField.VOID, VoidField.VOID);
+        assertThat(res.getServices().get(0).getMethods())
+                .contains(voidToVoid);
+    }
 }

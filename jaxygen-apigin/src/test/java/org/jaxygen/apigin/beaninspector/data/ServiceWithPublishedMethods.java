@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.data;
+
+import org.jaxygen.annotations.NetAPI;
+import org.jaxygen.annotations.Status;
 
 /**
  *
  * @author Artur
  */
-@lombok.Data
-@lombok.EqualsAndHashCode
-@lombok.NoArgsConstructor
-@lombok.AllArgsConstructor
-public class MethodDescriptor {
-    private String name;
-    private String path;
-    private FieldDescriptor input;
-    private FieldDescriptor output;
+@NetAPI(description = "Service used for testing", status = Status.GenerallyAvailable)
+public class ServiceWithPublishedMethods {
+    @NetAPI(description = "void_void")
+    public void voidTovoidTest() {}
+    
+    @NetAPI(description = "int_int")
+    public int intToIntTest(int i) {return 0;}
+    
+    @NetAPI(description = "string_string")
+    public String stringToStringTest(String s) {return s;}
 }

@@ -19,13 +19,14 @@ package org.jaxygen.apigin.beaninspector.model;
  *
  * @author Artur
  */
-@lombok.Data
-@lombok.EqualsAndHashCode
-@lombok.NoArgsConstructor
-@lombok.AllArgsConstructor
-public class MethodDescriptor {
-    private String name;
-    private String path;
-    private FieldDescriptor input;
-    private FieldDescriptor output;
+public class VoidField extends FieldBase {
+    public final static String TYPE = "VOID";
+    public final static VoidField VOID = new VoidField();
+    public VoidField() {
+        super(TYPE);
+    }
+    
+    public VoidField(final String name) {
+        super(TYPE,name);
+    }
 }
