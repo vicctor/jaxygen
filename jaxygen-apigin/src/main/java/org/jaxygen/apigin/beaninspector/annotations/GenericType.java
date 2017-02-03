@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.annotations;
 
-/**
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/** Please annotate your generic type classes with this annotation,
+ * so Jaxygen will recognize it's content, and populate to the engine.
  *
  * @author Artur
  */
-public class IntegerField extends FieldBase {
-    public static String TYPE = "INTEGER";
-
-    public IntegerField() {
-        super(TYPE);
-    }
-    
-    public IntegerField(final String name) {
-        super(TYPE,name);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface GenericType {
+    /** The type of the generic content class
+     * 
+     * @return 
+     */
+    Class type();
 }

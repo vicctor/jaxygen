@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector;
+package org.jaxygen.apigin.beaninspector;
 
 import com.google.common.collect.Lists;
 import java.beans.BeanInfo;
@@ -30,16 +30,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import net.jodah.typetools.TypeResolver;
-import org.jaxygen.jaxygen.apigin.beaninspector.annotations.GenericType;
-import org.jaxygen.jaxygen.apigin.beaninspector.exceptions.InspectionError;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.ArrayField;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.BooleanField;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.EnumField;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.FieldDescriptor;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.IntegerField;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.InvalidFieldDescriptor;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.ObjectDescriptor;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.StringField;
+import org.jaxygen.apigin.beaninspector.annotations.GenericType;
+import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
+import org.jaxygen.apigin.beaninspector.model.ArrayField;
+import org.jaxygen.apigin.beaninspector.model.BooleanField;
+import org.jaxygen.apigin.beaninspector.model.EnumField;
+import org.jaxygen.apigin.beaninspector.model.FieldDescriptor;
+import org.jaxygen.apigin.beaninspector.model.IntegerField;
+import org.jaxygen.apigin.beaninspector.model.InvalidFieldDescriptor;
+import org.jaxygen.apigin.beaninspector.model.ObjectDescriptor;
+import org.jaxygen.apigin.beaninspector.model.StringField;
 
 /**
  *

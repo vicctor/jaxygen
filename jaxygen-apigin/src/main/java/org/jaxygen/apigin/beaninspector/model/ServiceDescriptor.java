@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.model;
+
+import java.util.List;
+import org.jaxygen.annotations.Status;
 
 /**
  *
  * @author Artur
  */
-public class BooleanField extends FieldBase {
-
-    public static String TYPE = "BOOLEAN";
-
-    public BooleanField() {
-        super(TYPE);
-    }
-
-    public BooleanField(final String name) {
-        super(TYPE, name);
-    }
+@lombok.Data
+public class ServiceDescriptor {
+    private String serviceName;
+    private String serviceClassName;
+    private String serivicePath;
+    private String serviceDescription;
+    private Status status = Status.Undefined;
+    private String sinceVersion;
+    private List<MethodDescriptor> methods;
 }

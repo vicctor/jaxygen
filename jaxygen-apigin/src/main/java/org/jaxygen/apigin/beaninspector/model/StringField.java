@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
-
-import java.util.List;
-import org.jaxygen.annotations.Status;
+package org.jaxygen.apigin.beaninspector.model;
 
 /**
  *
  * @author Artur
  */
-@lombok.Data
-public class ServiceDescriptor {
-    private String serviceName;
-    private String serviceClassName;
-    private String serivicePath;
-    private String serviceDescription;
-    private Status status = Status.Undefined;
-    private String sinceVersion;
-    private List<MethodDescriptor> methods;
+public class StringField extends FieldBase {
+
+    public static String TYPE = "STRING";
+
+    public StringField() {
+        super(TYPE);
+    }
+
+    public StringField(final String name) {
+        super(TYPE, name);
+    }
 }

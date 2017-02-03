@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector;
+package org.jaxygen.apigin.beaninspector;
 
+import org.jaxygen.apigin.beaninspector.APIInspector;
 import com.google.common.collect.Lists;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import org.jaxygen.apigin.beaninspector.data.ServiceWithotutMethods;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.APIDescriptror;
+import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
 import org.junit.Test;
 
 /**

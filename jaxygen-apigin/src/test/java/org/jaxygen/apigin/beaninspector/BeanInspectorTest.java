@@ -22,14 +22,13 @@ import org.jaxygen.apigin.beaninspector.data.ClassWithArrayOfPrimitiveTypes;
 import org.jaxygen.apigin.beaninspector.data.ClassWithEnumField;
 import org.jaxygen.apigin.beaninspector.data.ClassWithListTypes;
 import org.jaxygen.apigin.beaninspector.data.SimpleClassWithSimpleFields;
-import org.jaxygen.jaxygen.apigin.beaninspector.BeanInspector;
-import org.jaxygen.jaxygen.apigin.beaninspector.exceptions.InspectionError;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.ArrayField;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.BooleanField;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.EnumField;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.IntegerField;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.ObjectDescriptor;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.StringField;
+import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
+import org.jaxygen.apigin.beaninspector.model.ArrayField;
+import org.jaxygen.apigin.beaninspector.model.BooleanField;
+import org.jaxygen.apigin.beaninspector.model.EnumField;
+import org.jaxygen.apigin.beaninspector.model.IntegerField;
+import org.jaxygen.apigin.beaninspector.model.ObjectDescriptor;
+import org.jaxygen.apigin.beaninspector.model.StringField;
 import org.junit.Test;
 
 /**

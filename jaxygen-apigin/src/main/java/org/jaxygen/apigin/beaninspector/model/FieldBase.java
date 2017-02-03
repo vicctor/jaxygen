@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.model;
 
 import java.util.Objects;
 
@@ -23,32 +23,24 @@ import java.util.Objects;
  */
 @lombok.Getter
 @lombok.Setter
-public class ArrayField extends FieldBase {
+public abstract class FieldBase extends FieldDescriptor {
 
-    public static String TYPE = "ARRAY";
-    private FieldDescriptor contentType = new InvalidFieldDescriptor();
+    private String name = "";
 
-    public ArrayField() {
-        super(TYPE);
+    public FieldBase(String type) {
+        super(type);
     }
 
-    public ArrayField(final String name) {
-        super(TYPE, name);
-    }
-
-    public ArrayField(final String name, final FieldDescriptor contentType) {
-        super(TYPE, name);
-        this.contentType = contentType;
-    }
-
-    public ArrayField(FieldDescriptor contentDescriptor) {
-        super(TYPE);
-        this.contentType = contentDescriptor;
+    public FieldBase(String type, String name) {
+        super(type);
+        this.name = name;
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode() * contentType.hashCode();
+        int hash = 5;
+        hash = 47 * hash + Objects.hashCode(this.name) + Objects.hashCode(this.getType());
+        return hash;
     }
 
     @Override
@@ -62,9 +54,8 @@ public class ArrayField extends FieldBase {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ArrayField other = (ArrayField) obj;
-        if (!super.equals(obj)
-                || !Objects.equals(this.contentType, other.contentType)) {
+        final FieldBase other = (FieldBase) obj;
+        if (!Objects.equals(this.name, other.name)) {
             return false;
         }
         return true;
@@ -72,7 +63,7 @@ public class ArrayField extends FieldBase {
 
     @Override
     public String toString() {
-        return "ArrayField(" + contentType.toString() + ")";
+        return "" + getType() + "(" + getName() + ")";
     }
-    
+
 }

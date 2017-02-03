@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.model;
 
-import com.google.common.collect.Lists;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -25,28 +23,32 @@ import java.util.Objects;
  */
 @lombok.Getter
 @lombok.Setter
-public class EnumField extends FieldBase {
-    public static String TYPE = "ENUM";
-    private List<String> values = Lists.newArrayList();
-    
-    public EnumField() {
+public class ArrayField extends FieldBase {
+
+    public static String TYPE = "ARRAY";
+    private FieldDescriptor contentType = new InvalidFieldDescriptor();
+
+    public ArrayField() {
         super(TYPE);
     }
 
-    public EnumField(final String name) {
+    public ArrayField(final String name) {
         super(TYPE, name);
     }
-    
-    public EnumField(final String name, String... elements) {
+
+    public ArrayField(final String name, final FieldDescriptor contentType) {
         super(TYPE, name);
-        this.values = Lists.newArrayList(elements);
+        this.contentType = contentType;
+    }
+
+    public ArrayField(FieldDescriptor contentDescriptor) {
+        super(TYPE);
+        this.contentType = contentDescriptor;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.values) + super.hashCode();
-        return hash;
+        return super.hashCode() * contentType.hashCode();
     }
 
     @Override
@@ -60,12 +62,17 @@ public class EnumField extends FieldBase {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final EnumField other = (EnumField) obj;
-        if (!Objects.equals(this.values, other.values)) {
+        final ArrayField other = (ArrayField) obj;
+        if (!super.equals(obj)
+                || !Objects.equals(this.contentType, other.contentType)) {
             return false;
         }
-        return super.equals(obj);
+        return true;
     }
-    
+
+    @Override
+    public String toString() {
+        return "ArrayField(" + contentType.toString() + ")";
+    }
     
 }

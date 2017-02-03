@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.model;
 
+import com.google.common.collect.Lists;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,23 +25,27 @@ import java.util.Objects;
  */
 @lombok.Getter
 @lombok.Setter
-public abstract class FieldBase extends FieldDescriptor {
-
-    private String name = "";
-
-    public FieldBase(String type) {
-        super(type);
+public class EnumField extends FieldBase {
+    public static String TYPE = "ENUM";
+    private List<String> values = Lists.newArrayList();
+    
+    public EnumField() {
+        super(TYPE);
     }
 
-    public FieldBase(String type, String name) {
-        super(type);
-        this.name = name;
+    public EnumField(final String name) {
+        super(TYPE, name);
+    }
+    
+    public EnumField(final String name, String... elements) {
+        super(TYPE, name);
+        this.values = Lists.newArrayList(elements);
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 47 * hash + Objects.hashCode(this.name) + Objects.hashCode(this.getType());
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.values) + super.hashCode();
         return hash;
     }
 
@@ -54,16 +60,12 @@ public abstract class FieldBase extends FieldDescriptor {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final FieldBase other = (FieldBase) obj;
-        if (!Objects.equals(this.name, other.name)) {
+        final EnumField other = (EnumField) obj;
+        if (!Objects.equals(this.values, other.values)) {
             return false;
         }
-        return true;
+        return super.equals(obj);
     }
-
-    @Override
-    public String toString() {
-        return "" + getType() + "(" + getName() + ")";
-    }
-
+    
+    
 }

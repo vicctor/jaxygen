@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.model;
 
 /**
  *
  * @author Artur
  */
-public class InvalidFieldDescriptor extends FieldBase {
-
-    private final static String TYPE = "INVALID";
-
-    public InvalidFieldDescriptor() {
-        super(TYPE);
-    } 
+@lombok.Data
+public class MethodDescriptor {
+    private String name;
+    private String path;
+    private FieldDescriptor input;
+    private FieldDescriptor output;
 }

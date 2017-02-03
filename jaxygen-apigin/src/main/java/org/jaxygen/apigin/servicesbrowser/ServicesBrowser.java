@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.servicesbrowser;
+
+import org.jaxygen.annotations.NetAPI;
+import org.jaxygen.annotations.Status;
 
 /**
  *
  * @author Artur
  */
-@lombok.Data
-public class MethodDescriptor {
-    private String name;
-    private String path;
-    private FieldDescriptor input;
-    private FieldDescriptor output;
+@NetAPI(description = "This service provides information about all resrvices publised by Jaxygen from this interface",
+        version = "1.21",
+        status = Status.Mockup
+)
+public class ServicesBrowser {
+    
 }

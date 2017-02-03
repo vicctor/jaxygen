@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.model;
 
 /**
  *
  * @author Artur
  */
-@lombok.Getter
-@lombok.Setter
-public abstract class FieldDescriptor {
-    private String type;
-    private boolean writable;
-    private boolean readable;
-    public final String getType() {return type;}
-    public final void setType(String name) {type = name;}
-    public abstract String getName();
-    public abstract void setName(String name);
+public class BooleanField extends FieldBase {
 
-    public FieldDescriptor(String type) {
-        this.type = type;
+    public static String TYPE = "BOOLEAN";
+
+    public BooleanField() {
+        super(TYPE);
     }
-    
+
+    public BooleanField(final String name) {
+        super(TYPE, name);
+    }
 }

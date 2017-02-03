@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector;
+package org.jaxygen.apigin.beaninspector;
 
 import com.google.common.collect.Lists;
 import java.lang.reflect.Method;
@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.jaxygen.apigin.beaninspector.exceptions.InspectionError;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.APIDescriptror;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.FieldDescriptor;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.MethodDescriptor;
-import org.jaxygen.jaxygen.apigin.beaninspector.model.ServiceDescriptor;
+import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
+import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
+import org.jaxygen.apigin.beaninspector.model.FieldDescriptor;
+import org.jaxygen.apigin.beaninspector.model.MethodDescriptor;
+import org.jaxygen.apigin.beaninspector.model.ServiceDescriptor;
 
 /**
  *

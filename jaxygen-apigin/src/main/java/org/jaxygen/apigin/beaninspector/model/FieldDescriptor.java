@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
-
-import java.util.List;
+package org.jaxygen.apigin.beaninspector.model;
 
 /**
  *
  * @author Artur
  */
-@lombok.Data
-public class APIDescriptror {
-    private List<ServiceDescriptor> services;
+@lombok.Getter
+@lombok.Setter
+public abstract class FieldDescriptor {
+    private String type;
+    private boolean writable;
+    private boolean readable;
+    public final String getType() {return type;}
+    public final void setType(String name) {type = name;}
+    public abstract String getName();
+    public abstract void setName(String name);
+
+    public FieldDescriptor(String type) {
+        this.type = type;
+    }
+    
 }

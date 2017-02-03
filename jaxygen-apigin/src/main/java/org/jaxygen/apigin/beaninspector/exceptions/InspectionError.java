@@ -13,21 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.apigin.beaninspector.model;
+package org.jaxygen.apigin.beaninspector.exceptions;
+
+import java.beans.IntrospectionException;
 
 /**
  *
  * @author Artur
  */
-public class StringField extends FieldBase {
+public class InspectionError extends Exception {
 
-    public static String TYPE = "STRING";
-
-    public StringField() {
-        super(TYPE);
+    public InspectionError() {
     }
 
-    public StringField(final String name) {
-        super(TYPE, name);
+    public InspectionError(String string) {
+        super(string);
     }
+
+    public InspectionError(String string, Throwable thrwbl) {
+        super(string, thrwbl);
+    }
+
+    public InspectionError(IntrospectionException ex) {
+    }
+    
 }
