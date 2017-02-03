@@ -15,6 +15,7 @@
  */
 package org.jaxygen.apigin.beaninspector;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -95,10 +96,11 @@ public class APIInspector {
         MethodDescriptor descriptor = new MethodDescriptor();
         Class<?> returnType = method.getReturnType();
         Class<?>[] parameterTypes = method.getParameterTypes();
+        NetAPI annotation = method.getAnnotation(NetAPI.class);
         if (parameterTypes != null && parameterTypes.length > 1) {
             throw new InternalInspectError("Only one parameter per method allowed. It's not that we can not handle more, but your code will be much easier to read thanks that. Check out method " + method.getName());
         }
-        if (parameterTypes == null && parameterTypes.length == 1) {
+        if (parameterTypes != null && parameterTypes.length == 1) {
             try {
                 Class<?> paramType = parameterTypes[0];
                 FieldDescriptor input = BeanInspector.inspect(paramType);
@@ -123,6 +125,9 @@ public class APIInspector {
         
         descriptor.setName(method.getName());
         descriptor.setPath(path + "/" + method.getName());
+        descriptor.setDescription(annotation.description());
+        descriptor.setSinceVersion(Strings.nullToEmpty(annotation.version()));
+        descriptor.setStatus(descriptor.getStatus());
         return descriptor;
     }
 

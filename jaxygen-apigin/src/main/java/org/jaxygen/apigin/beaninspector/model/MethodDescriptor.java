@@ -15,6 +15,8 @@
  */
 package org.jaxygen.apigin.beaninspector.model;
 
+import org.jaxygen.annotations.Status;
+
 /**
  *
  * @author Artur
@@ -26,6 +28,9 @@ package org.jaxygen.apigin.beaninspector.model;
 public class MethodDescriptor {
     private String name;
     private String path;
+    private String description;
     private FieldDescriptor input;
     private FieldDescriptor output;
+    private Status status = Status.Undefined;
+    private String sinceVersion;
 }

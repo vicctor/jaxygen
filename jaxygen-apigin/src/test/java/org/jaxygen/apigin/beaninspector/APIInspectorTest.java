@@ -18,11 +18,13 @@ package org.jaxygen.apigin.beaninspector;
 import com.google.common.collect.Lists;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
+import org.jaxygen.annotations.Status;
 import org.jaxygen.apigin.beaninspector.data.ServiceWithPublishedMethods;
 import org.jaxygen.apigin.beaninspector.data.ServiceWithotutMethods;
 import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
 import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
 import org.jaxygen.apigin.beaninspector.model.ArrayField;
+import org.jaxygen.apigin.beaninspector.model.IntegerField;
 import org.jaxygen.apigin.beaninspector.model.MethodDescriptor;
 import org.jaxygen.apigin.beaninspector.model.StringField;
 import org.jaxygen.apigin.beaninspector.model.VoidField;
@@ -42,8 +44,8 @@ public class APIInspectorTest {
         // given
         ArrayField input = new ArrayField("arrayOfStrings", new StringField());
         ArrayField output = new ArrayField("arrayOfStrings", new StringField());
-        MethodDescriptor d1 = new MethodDescriptor("name1", "path1", input, output);
-        MethodDescriptor d2 = new MethodDescriptor("name1", "path1", input, output);
+        MethodDescriptor d1 = new MethodDescriptor("name1", "path1", "descriptrion", input, output, Status.Nonfunctional, "");
+        MethodDescriptor d2 = new MethodDescriptor("name1", "path1", "descriptrion",input, output, Status.Nonfunctional, "");
 
         // when
         boolean res = d1.equals(d2);
@@ -56,8 +58,8 @@ public class APIInspectorTest {
     @Test
     public void shall_twoMethodsWithVoidsBeEuql() {
         // given
-        MethodDescriptor m1 = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", VoidField.VOID, VoidField.VOID);
-        MethodDescriptor m2 = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", VoidField.VOID, VoidField.VOID);
+        MethodDescriptor m1 = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", "descriptrion", VoidField.VOID, VoidField.VOID, Status.Nonfunctional, "");
+        MethodDescriptor m2 = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", "descriptrion", VoidField.VOID, VoidField.VOID, Status.Nonfunctional, "");
         
         // when
         boolean rc = m1.equals(m2);
@@ -144,8 +146,10 @@ public class APIInspectorTest {
         assertThat(res.getServices().get(0).getMethods())
                 .isNotNull()
                 .hasSize(3);
-        MethodDescriptor voidToVoid = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", VoidField.VOID, VoidField.VOID);
+        MethodDescriptor voidToVoid = new MethodDescriptor("voidTovoidTest", "ServiceWithPublishedMethods/voidTovoidTest", "void_void", VoidField.VOID, VoidField.VOID, Status.Undefined, "");
+        MethodDescriptor intToInt = new MethodDescriptor("intToIntTest", "ServiceWithPublishedMethods/intToIntTest", "int_int", new IntegerField(), new IntegerField(), Status.Undefined, "");
+        MethodDescriptor stringToString = new MethodDescriptor("stringToStringTest", "ServiceWithPublishedMethods/stringToStringTest", "string_string", new StringField(), new StringField(), Status.Undefined, "");
         assertThat(res.getServices().get(0).getMethods())
-                .contains(voidToVoid);
+                .contains(voidToVoid, intToInt, stringToString);
     }
 }
