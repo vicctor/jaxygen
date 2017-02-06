@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apigin.beaninspector;
+package org.jaxygen.apigin.beaninspector.engine;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -58,6 +58,7 @@ public class APIInspector {
      */
     public APIDescriptror inspect(Collection<Class> services, final String basePath) throws InspectionError {
         APIDescriptror descriptor = new APIDescriptror();
+        descriptor.setServiceBase(Strings.emptyToNull(basePath));
         try {
             List<ServiceDescriptor> serviceDescriptors = services.stream()
                     .map(c -> classToServiceDescriptor(c, basePath))

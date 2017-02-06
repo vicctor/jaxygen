@@ -23,5 +23,6 @@ import java.util.List;
  */
 @lombok.Data
 public class APIDescriptror {
+    private String serviceBase;
     private List<ServiceDescriptor> services;
 }

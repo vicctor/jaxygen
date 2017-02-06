@@ -29,6 +29,11 @@ public class Registry implements ClassRegistry{
     static {
         classes.add(TestBean.class);
     }
+
+    @Override
+    public String getPackageBase() {
+        return "org.jaxygen.client.it";
+    }
     
     public List<Class> getRegisteredClasses() {
         return classes;

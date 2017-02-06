@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jaxygen.invoker;
 
 import java.util.List;
@@ -19,4 +15,10 @@ public interface ClassRegistry {
      */
     public List<Class> getRegisteredClasses();
     
+    /** Return the base name of the package, so all services will be exposed
+     * without the package name as a prefix.
+     * 
+     * @return 
+     */
+    public String getPackageBase();
 }

@@ -15,11 +15,6 @@
  */
 package org.jaxygen.netserviceapisample;
 
-import org.jaxygen.netserviceapisample.business.HelloWorld;
-import org.jaxygen.netserviceapisample.business.ValidatorsSample;
-import org.jaxygen.netserviceapisample.business.SecuritySample;
-import org.jaxygen.netserviceapisample.business.DTOSample;
-import org.jaxygen.netserviceapisample.business.SessionHandeSample;
 import java.util.ArrayList;
 import java.util.List;
 import org.jaxygen.invoker.ClassRegistry;
@@ -35,7 +30,6 @@ import org.jaxygen.netserviceapisample.business.*;
  */
 public class SampleClassRegistry implements ClassRegistry
 {
-
     @Override
     public List<Class> getRegisteredClasses() {
         List<Class> clases = new ArrayList<Class>();
@@ -51,5 +45,10 @@ public class SampleClassRegistry implements ClassRegistry
         clases.add(ArrayListRequestSample.class);
         clases.add(MapRequestSample.class);
         return clases;
+    }
+
+    @Override
+    public String getPackageBase() {
+        return "org.jaxygen.netserviceapisample";
     }
 }

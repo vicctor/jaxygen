@@ -15,6 +15,7 @@
  */
 package org.jaxygen.apigin.beaninspector;
 
+import org.jaxygen.apigin.beaninspector.engine.APIInspector;
 import com.google.common.collect.Lists;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;

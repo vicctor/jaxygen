@@ -42,8 +42,14 @@ public abstract class PackageBrowserClassRegistry implements ClassRegistry {
         this.scannedPackageName = scannedPackageName;
     }
 
+    @Override
+    public String getPackageBase() {
+        return this.scannedPackageName;
+    }
+
+    @Override
     public List<Class> getRegisteredClasses() {
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         Reflections reflections = new Reflections(scannedPackageName);
         Set<Class<?>> annotated
                 = reflections.getTypesAnnotatedWith(NetAPI.class);
