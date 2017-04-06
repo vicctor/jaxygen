@@ -10,7 +10,7 @@
   <!-- The Basics -->
   <groupId>org.jaxygen</groupId>
   <artifactId>jaxygen-project</artifactId>
-  <version>1.0.7</version>
+  <version>1.0.8-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>jaxygen-project</name>
@@ -19,7 +19,7 @@
     <url>https://github.com/vicctor/jaxygen</url>
     <developerConnection>scm:git:git@github.com:vicctor/jaxygen.git</developerConnection>
     <connection>scm:git@github.com:vicctor/jaxygen.git</connection>
-    <tag>jaxygen-project-1.0.7</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <licenses>
