@@ -43,11 +43,12 @@ import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.apache.commons.beanutils.converters.LongConverter;
 import org.apache.commons.beanutils.converters.ShortConverter;
 import org.apache.commons.beanutils.converters.StringConverter;
-import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.converters.RequestConverter;
+import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.dto.Uploadable;
 import org.jaxygen.exceptions.WrongProperyIndex;
 import org.jaxygen.http.HttpRequestParams;
+import org.jaxygen.util.ClassTypeUtil;
 
 /**
  *
@@ -115,10 +116,19 @@ public class PropertiesToBeanConverter implements RequestConverter {
           Class<?> beanClass) throws IllegalArgumentException,
           IntrospectionException, IllegalAccessException,
           InvocationTargetException, InstantiationException, WrongProperyIndex, NoSuchFieldException {
-    Object bean = beanClass.newInstance();
-    for (final String key : properties.keySet()) {
-      final String value = properties.get(key);
-      bean = fillBeanValueByName(key, value, beanClass, bean);
+      Object bean = beanClass.newInstance();
+      for (final String key : properties.keySet()) {
+          if (key.contains("<key>")) {
+              final String keyBase = key.replace("<key>", "");
+              final String keykey = key;
+              final String keyval = properties.get(keykey);
+              final String valkey = key.replace("<key>", "<value>");
+              final String valval = properties.get(valkey);
+              bean = fillBeanValueForMapField(keyBase, keykey, keyval, valkey, valval, beanClass, bean);
+          }else{
+              final String value = properties.get(key);
+              bean = fillBeanValueByName(key, value, beanClass, bean);
+          }
     }
 
     for (final String key : files.keySet()) {
@@ -163,57 +173,87 @@ public class PropertiesToBeanConverter implements RequestConverter {
    * @throws InstantiationException
    * @throws WrongProperyIndex
    */
-  private static Object fillBeanValueByName(final String name, Object value,
-          Class<?> beanClass, Object baseBean)
-          throws IntrospectionException, IllegalArgumentException,
-          IllegalAccessException, InvocationTargetException,
-          InstantiationException, WrongProperyIndex, NoSuchFieldException {
-    // parse name x.y[i].z[n].v
-    Object bean = baseBean;
-    if (bean == null) {
-      bean = beanClass.newInstance();
-    }
-    Class<?> c = beanClass;
-    BeanInfo beanInfo = Introspector.getBeanInfo(c, Object.class);
-    final String childName = name.substring(name.indexOf(".") + 1);
-    String path[] = name.split("\\.");
-
-    final String fieldName = path[0];
-    // parse arrays [n]
-    if (fieldName.endsWith("]")) {
-      int bracketStart = fieldName.indexOf("[");
-      int len = fieldName.length();
-      if (bracketStart > 0) {
-        fillBeanArrayField(name, value, bean, beanInfo, path, fieldName,
-                bracketStart, len);
-      } else {
-        throw new WrongProperyIndex(name);
-      }
-    } else {
-      // parse non arrays
-      for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-        if (pd.getName().equals(fieldName)) {
-          Method writter = pd.getWriteMethod();
-          Method reader = pd.getReadMethod();
-          if (writter != null && reader != null) {
-            Class<?> valueType = reader.getReturnType();
-            if (path.length == 1) {
-              Object valueObject = parsePropertyToValue(value, valueType);
-              writter.invoke(bean, valueObject);
-            } else {
-              Object childBean = reader.invoke(bean);
-              Object valueObject = fillBeanValueByName(childName, value,
-                      valueType, childBean);
-              writter.invoke(bean, valueObject);
-            }
-          }
+    private static Object fillBeanValueByName(final String name, Object value,
+            Class<?> beanClass, Object baseBean)
+            throws IntrospectionException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException,
+            InstantiationException, WrongProperyIndex, NoSuchFieldException {
+        // parse name x.y[i].z[n].v
+        Object bean = baseBean;
+        if (bean == null) {
+            bean = beanClass.newInstance();
         }
-      }
+        Class<?> c = beanClass;
+        BeanInfo beanInfo = Introspector.getBeanInfo(c, Object.class);
+        final String childName = name.substring(name.indexOf(".") + 1);
+        String path[] = name.split("\\.");
+
+        final String fieldName = path[0];
+        // parse arrays [n]
+        if (fieldName.endsWith("]")) {
+            int bracketStart = fieldName.indexOf("[");
+            int len = fieldName.length();
+            if (bracketStart > 0) {
+                fillBeanArrayField(name, value, bean, beanInfo, path, fieldName,
+                        bracketStart, len);
+            } else {
+                throw new WrongProperyIndex(name);
+            }
+        } else {
+            // parse non arrays
+            for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+                if (pd.getName().equals(fieldName)) {
+                    Method writter = pd.getWriteMethod();
+                    Method reader = pd.getReadMethod();
+                    if (writter != null && reader != null) {
+                        Class<?> valueType = reader.getReturnType();
+                        if (path.length == 1) {
+                            Object valueObject = parsePropertyToValue(value, valueType);
+                            writter.invoke(bean, valueObject);
+                        } else {
+                            Object childBean = reader.invoke(bean);
+                            Object valueObject = fillBeanValueByName(childName, value,
+                                    valueType, childBean);
+                            writter.invoke(bean, valueObject);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Object bean = c.newInstance();
+        return bean;
     }
 
-  // Object bean = c.newInstance();
-    return bean;
-  }
+    private static Object fillBeanValueForMapField(final String keybase, final String keykey,
+            Object keyval, final String valkey, Object valval,
+            Class<?> beanClass, Object baseBean)
+            throws IntrospectionException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException,
+            InstantiationException, WrongProperyIndex, NoSuchFieldException {
+        // parse name x.y[i].z[n].v
+        Object bean = baseBean;
+        if (bean == null) {
+            bean = beanClass.newInstance();
+        }
+        Class<?> c = beanClass;
+        BeanInfo beanInfo = Introspector.getBeanInfo(c, Object.class);
+        String path[] = keybase.split("\\.");
+
+        final String fieldName = path[0];
+        // parse arrays [n]
+        if (fieldName.endsWith("]")) {
+            int bracketStart = fieldName.indexOf("[");
+            int len = fieldName.length();
+            if (bracketStart > 0) {
+                fillBeanMapField(keybase, keykey, keyval, valkey, valval, bean, beanInfo, path, fieldName,
+                        bracketStart, len);
+            } else {
+                throw new WrongProperyIndex(keybase);
+            }
+        }
+        return bean;
+    }
   
   private static Class<?> retrieveListType(Class<?> paramClass, String propertyName) { 
     Class c = paramClass; 
@@ -238,88 +278,136 @@ public class PropertiesToBeanConverter implements RequestConverter {
     }
     return (Class<?>) propertyType.getActualTypeArguments()[0];
   } 
-   
-  private static void fillBeanArrayField(final String name, Object value,
-          Object bean, BeanInfo beanInfo, String[] path, final String fieldName,
-          int bracketStart, int len)
-          throws IllegalAccessException, InvocationTargetException,
-          IntrospectionException, InstantiationException, IllegalArgumentException,
-          WrongProperyIndex, NoSuchFieldException {
-    final String indexStr = fieldName.substring(bracketStart + 1, len - 1);
-    final String propertyName = fieldName.substring(0, bracketStart);
-    int index = Integer.parseInt(indexStr);
-    String childName = "";
-    int firstDot = name.indexOf(".");
-    if (firstDot > 0) {
-      childName = name.substring(firstDot + 1);
+
+    private static void fillBeanMapField(final String keybase, final String keykey,
+            Object keyval, final String valkey, Object valval,
+            Object bean, BeanInfo beanInfo, String[] path, final String fieldName,
+            int bracketStart, int len)
+            throws IllegalAccessException, InvocationTargetException,
+            IntrospectionException, InstantiationException, IllegalArgumentException,
+            WrongProperyIndex, NoSuchFieldException {
+        final String indexStr = fieldName.substring(bracketStart + 1, len - 1);
+        final String propertyName = fieldName.substring(0, bracketStart);
+        int index = Integer.parseInt(indexStr);
+        String childName = "";
+        int firstDot = keybase.indexOf(".");
+        if (firstDot > 0) {
+            childName = keybase.substring(firstDot + 1);
+        }
+
+        for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+            if (pd.getName().equals(propertyName)) {
+                Method writter = pd.getWriteMethod();
+                Method reader = pd.getReadMethod();
+                if (writter != null && reader != null) {
+                    Object object = reader.invoke(bean);
+                    if (pd.getPropertyType().isAssignableFrom(HashMap.class)) {
+                        if (object == null) {
+                            Class childType = pd.getPropertyType().getComponentType();
+                            object = childType.newInstance();
+                            writter.invoke(bean, object);
+                        }
+                        Class<?>[] keyValueTypes = ClassTypeUtil.retrieveMapTypes(bean.getClass(), propertyName);
+                        Class<?> keyType = keyValueTypes[0];
+                        Class<?> valueType = keyValueTypes[1];
+                        Map map = (Map) object;
+                        while (map.size() < (index + 1)) {
+                            Object keyObject = parsePropertyToValue(keyval, keyType);
+                            Object valueObject = parsePropertyToValue(valval, valueType);
+                            map.put(keyObject, valueObject);
+                        }
+                        /*  if (path.length == 1) {
+                            Object valueObject = parsePropertyToValue(keyval, componentType);
+                            map.set(index, valueObject);
+                        } else {
+                            Object valueObject = fillBeanValueByName(childName, keyval, componentType, list.get(index));
+                            map.set(index, valueObject);
+                        }*/
+                    }
+                }
+            }
+        }
     }
 
-    for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-      if (pd.getName().equals(propertyName)) {
-        Method writter = pd.getWriteMethod();
-        Method reader = pd.getReadMethod();
-        if (writter != null && reader != null) {
-          Object array = reader.invoke(bean);
-          if (pd.getPropertyType().isAssignableFrom(ArrayList.class) || pd.getPropertyType().isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(pd.getPropertyType())) { // List
-            if (array == null) {
-              Class childType = pd.getPropertyType().getComponentType();
-              array = childType.newInstance();
-              writter.invoke(bean, array);
-            }
-            Class<?> componentType = retrieveListType(bean.getClass(), propertyName); 
-            List list = (List) array;
-            while (list.size() < (index + 1)) {
-              try {
-                list.add(componentType.getConstructor().newInstance());
-              } catch (NoSuchMethodException ex) {
-                Logger.getLogger(PropertiesToBeanConverter.class.getName()).log(Level.SEVERE, null, ex);
-              } catch (SecurityException ex) {
-                Logger.getLogger(PropertiesToBeanConverter.class.getName()).log(Level.SEVERE, null, ex);
-              }
-            }
-            if (path.length == 1) {
-              Object valueObject = parsePropertyToValue(value, componentType);
-              list.set(index, valueObject);
-            } else {
-              Object valueObject = fillBeanValueByName(childName, value, componentType, list.get(index));
-              list.set(index, valueObject);
-            }
-          } else if (pd.getPropertyType().isArray()) {
-            if (array == null) {
-              array = Array.newInstance(
-                      pd.getPropertyType().getComponentType(), index + 1);
-              writter.invoke(bean, array);
-            }
-            if (Array.getLength(array) < (index + 1)) {
-              array = resizeArray(array, index + 1);
-              writter.invoke(bean, array);
-            }
-            if (path.length == 1) {
-              Object valueObject = parsePropertyToValue(value, array.getClass().getComponentType());
-              Array.set(array, index, valueObject);
-            } else {
-              Object valueObject = fillBeanValueByName(childName, value, array.getClass().getComponentType(), Array.get(array, index));
-              Array.set(array, index, valueObject);
-            }
-          } else if (pd.getPropertyType().equals(List.class)) {
-            if (array == null) {
-              array = pd.getPropertyType().newInstance();
-              writter.invoke(bean, array);
-            }
-            Class<?> genericClass = array.getClass().getTypeParameters()[0].getClass();
-            if (path.length == 1) {
-              Object valueObject = parsePropertyToValue(value, genericClass);
-              Array.set(array, index, valueObject);
-            } else {
-              Object valueObject = fillBeanValueByName(childName, value,
-                      genericClass, null);
-              Array.set(array, index, valueObject);
-            }
-          }
+    private static void fillBeanArrayField(final String name, Object value,
+            Object bean, BeanInfo beanInfo, String[] path, final String fieldName,
+            int bracketStart, int len)
+            throws IllegalAccessException, InvocationTargetException,
+            IntrospectionException, InstantiationException, IllegalArgumentException,
+            WrongProperyIndex, NoSuchFieldException {
+        final String indexStr = fieldName.substring(bracketStart + 1, len - 1);
+        final String propertyName = fieldName.substring(0, bracketStart);
+        int index = Integer.parseInt(indexStr);
+        String childName = "";
+        int firstDot = name.indexOf(".");
+        if (firstDot > 0) {
+            childName = name.substring(firstDot + 1);
         }
-      }
+
+        for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+            if (pd.getName().equals(propertyName)) {
+                Method writter = pd.getWriteMethod();
+                Method reader = pd.getReadMethod();
+                if (writter != null && reader != null) {
+                    Object array = reader.invoke(bean);
+                    if (pd.getPropertyType().isAssignableFrom(ArrayList.class) || pd.getPropertyType().isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(pd.getPropertyType())) { // List
+                        if (array == null) {
+                            Class childType = pd.getPropertyType().getComponentType();
+                            array = childType.newInstance();
+                            writter.invoke(bean, array);
+                        }
+                        Class<?> componentType = retrieveListType(bean.getClass(), propertyName);
+                        List list = (List) array;
+                        while (list.size() < (index + 1)) {
+                            try {
+                                list.add(componentType.getConstructor().newInstance());
+                            } catch (NoSuchMethodException | SecurityException ex) {
+                                Logger.getLogger(PropertiesToBeanConverter.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        if (path.length == 1) {
+                            Object valueObject = parsePropertyToValue(value, componentType);
+                            list.set(index, valueObject);
+                        } else {
+                            Object valueObject = fillBeanValueByName(childName, value, componentType, list.get(index));
+                            list.set(index, valueObject);
+                        }
+                    } else if (pd.getPropertyType().isArray()) {
+                        if (array == null) {
+                            array = Array.newInstance(
+                                    pd.getPropertyType().getComponentType(), index + 1);
+                            writter.invoke(bean, array);
+                        }
+                        if (Array.getLength(array) < (index + 1)) {
+                            array = resizeArray(array, index + 1);
+                            writter.invoke(bean, array);
+                        }
+                        if (path.length == 1) {
+                            Object valueObject = parsePropertyToValue(value, array.getClass().getComponentType());
+                            Array.set(array, index, valueObject);
+                        } else {
+                            Object valueObject = fillBeanValueByName(childName, value, array.getClass().getComponentType(), Array.get(array, index));
+                            Array.set(array, index, valueObject);
+                        }
+                    } else if (pd.getPropertyType().equals(List.class)) {
+                        if (array == null) {
+                            array = pd.getPropertyType().newInstance();
+                            writter.invoke(bean, array);
+                        }
+                        Class<?> genericClass = array.getClass().getTypeParameters()[0].getClass();
+                        if (path.length == 1) {
+                            Object valueObject = parsePropertyToValue(value, genericClass);
+                            Array.set(array, index, valueObject);
+                        } else {
+                            Object valueObject = fillBeanValueByName(childName, value,
+                                    genericClass, null);
+                            Array.set(array, index, valueObject);
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
 
   private static Object parsePropertyToValue(Object valueObject,
           Class<?> propertyType) {

@@ -17,6 +17,7 @@ package org.jaxygen.converters.properties;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,6 +47,18 @@ public class PropertiesToBeanConverterTest {
         }
     }
 
+    public static class HashMapRequest {
+
+        private Map<String, String> stringsMap = new HashMap<>();
+
+        public Map<String, String> getStringsMap() {
+            return stringsMap;
+        }
+
+        public void setStringsMap(Map<String, String> stringsMap) {
+            this.stringsMap = stringsMap;
+        }
+    }
     public PropertiesToBeanConverterTest() {
     }
 
@@ -111,6 +124,28 @@ public class PropertiesToBeanConverterTest {
         // then
         String expResult = "PROPERTIES";
         assertThat(expResult).isEqualTo(result);
+    }
+
+    @Test
+    public void shall_convertDeserializeHashMapRequest() throws DeserialisationError {
+        // given
+        Map<String, String> props = Maps.newHashMap();
+        props.put("stringsMap[0]<key>", "myKey1");
+        props.put("stringsMap[0]<value>", "myValue1");
+        props.put("stringsMap[1]<key>", "myKey2");
+        props.put("stringsMap[1]<value>", "myValue2");
+        HttpRequestParams params = mock(HttpRequestParams.class);
+        when(params.getParameters()).thenReturn(props);
+        HashMapRequest expected = new HashMapRequest();
+        expected.setStringsMap(new HashMap<>());
+        expected.getStringsMap().put("myKey1", "myValue1");
+        expected.getStringsMap().put("myKey2", "myValue2");
+
+        // when
+        HashMapRequest resutl = (HashMapRequest) new PropertiesToBeanConverter().deserialise(params, HashMapRequest.class);
+
+        // then
+        assertThat(resutl).isEqualToComparingFieldByField(expected);
     }
 
 }
