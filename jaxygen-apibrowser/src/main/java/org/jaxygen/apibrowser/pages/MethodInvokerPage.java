@@ -13,13 +13,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.apibrowser.util.ClassTypeUtil;
 import org.jaxygen.converters.json.JsonHRResponseConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.dto.Downloadable;
 import org.jaxygen.dto.Uploadable;
 import org.jaxygen.netservice.html.*;
 import org.jaxygen.url.UrlQuery;
+import org.jaxygen.util.ClassTypeUtil;
 
 /**
  *
@@ -28,14 +28,12 @@ import org.jaxygen.url.UrlQuery;
 public class MethodInvokerPage extends Page {
 
     public static final String NAME = "MethodInvokerPage";
-    private final ClassTypeUtil classTypeUtil;
 
   public MethodInvokerPage(ServletContext context,
           HttpServletRequest request, String classRegistry, String beansPath) throws NamingException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException, IOException, ServletException, NoSuchFieldException {
     super(context, request, classRegistry, beansPath);
     final String className = request.getParameter("className");
-    final String method = request.getParameter("methodName");
-      classTypeUtil = new ClassTypeUtil();
+      final String method = request.getParameter("methodName");
     renderClassForm(request, className, method);
   }
 
@@ -296,11 +294,11 @@ public class MethodInvokerPage extends Page {
           final Class<?> returnType = getter.getReturnType();
           if (isSimpleResultType(returnType)) {
             gettersTale.addRow().addColumns(new HTMLLabel(getter.getName()), new HTMLLabel(returnType.getSimpleName()));
-          } else if (classTypeUtil.isBoolType(returnType)) {
+          } else if (ClassTypeUtil.isBoolType(returnType)) {
             gettersTale.addRow().addColumns(new HTMLLabel(getter.getName()), new HTMLLabel(returnType.getSimpleName()), enumBoolValues());
-          } else if (classTypeUtil.isEnumType(returnType)) {
+          } else if (ClassTypeUtil.isEnumType(returnType)) {
             gettersTale.addRow().addColumns(new HTMLLabel(getter.getName()), new HTMLLabel(returnType.getSimpleName()), enumValues(returnType));
-          } else if (classTypeUtil.isArrayType(paramClass)) {
+          } else if (ClassTypeUtil.isArrayType(paramClass)) {
             gettersTale.addRow().addColumns(new HTMLLabel(getter.getName() + "[]"), new HTMLLabel(returnType.getSimpleName()));
           } else if (returnType.equals(List.class)) {
             gettersTale.addRow().addColumns(new HTMLLabel(getter.getName()), new HTMLLabel(returnType.getSimpleName()));
@@ -375,7 +373,7 @@ public class MethodInvokerPage extends Page {
             if (request.getParameter(counterName) != null) {
                 multiplicity = Integer.parseInt(request.getParameter(counterName));
             }
-              Class<?>[] componentsTypes = classTypeUtil.retrieveMapTypes(paramClass, propertyName);
+              Class<?>[] componentsTypes = ClassTypeUtil.retrieveMapTypes(paramClass, propertyName);
             if (multiplicity == 0) {
                 renderMapFieldInputRow(request, table, parentFieldName + propertyName
                         + "[]", counterName, null, componentsTypes, 0);
@@ -392,7 +390,7 @@ public class MethodInvokerPage extends Page {
           if (request.getParameter(counterName) != null) {
             multiplicity = Integer.parseInt(request.getParameter(counterName));
           }
-              Class<?> componentType = classTypeUtil.retrieveListType(paramClass, propertyName);
+              Class<?> componentType = ClassTypeUtil.retrieveListType(paramClass, propertyName);
           if (multiplicity == 0) {
             renderFieldInputRow(request, table, parentFieldName + propertyName
                     + "[]", counterName, null, componentType, 0);
@@ -484,7 +482,7 @@ public class MethodInvokerPage extends Page {
             Object defaultValue, final Class<?> paramType, final String propertyName)
             throws InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
-        if (classTypeUtil.isBoolType(paramType)) {
+        if (ClassTypeUtil.isBoolType(paramType)) {
             HTMLSelect select = new HTMLSelect(propertyName);
             select.addOption(new HTMLOption("TRUE", new HTMLLabel("TRUE")));
             select.addOption(new HTMLOption("FALSE", new HTMLLabel("FALSE")));
