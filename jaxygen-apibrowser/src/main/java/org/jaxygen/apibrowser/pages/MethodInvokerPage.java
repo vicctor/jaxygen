@@ -467,14 +467,16 @@ public class MethodInvokerPage extends Page {
         Class<?> valueType = keyValueTypes[1];
         HTMLTable.Row row = new HTMLTable.Row();
         table.addRow(row);
+        String keyInputName = fieldName + "<key>";
+        String valueInputName = fieldName + "<value>";
         String propertyName = fieldName;
         row.addColumn(new HTMLLabel("<" + keyType.getCanonicalName() + ", " + keyType.getCanonicalName() + ">"));
         row.addColumn(new HTMLLabel(propertyName));
         addPlusAndMinusAnchors(request, row, counterName, multiplicity, propertyName);
 
         if (multiplicity > 0 || multiplicity == -1) {
-            addSpecificInput(request, row, defaultValue, keyType, propertyName);
-            addSpecificInput(request, row, defaultValue, valueType, propertyName);
+            addSpecificInput(request, row, defaultValue, keyType, keyInputName);
+            addSpecificInput(request, row, defaultValue, valueType, valueInputName);
         }
     }
 
