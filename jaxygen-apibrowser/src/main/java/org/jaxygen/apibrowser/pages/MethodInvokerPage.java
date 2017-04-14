@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +22,7 @@ import org.jaxygen.dto.Uploadable;
 import org.jaxygen.netservice.html.*;
 import org.jaxygen.url.UrlQuery;
 import org.jaxygen.util.ClassTypeUtil;
+import org.jaxygen.util.MethodNameComparator;
 
 /**
  *
@@ -350,8 +353,10 @@ public class MethodInvokerPage extends Page {
           HTMLTable table, Class<?> paramClass, final String parentFieldName)
           throws InstantiationException, IllegalAccessException,
           InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
-    Object inputObject = paramClass.getConstructor().newInstance();
-    for (Method setter : paramClass.getMethods()) {
+      Object inputObject = paramClass.getConstructor().newInstance();
+      List<Method> methods = new ArrayList(Arrays.asList(paramClass.getMethods()));
+      Collections.sort(methods, new MethodNameComparator());
+      for (Method setter : methods) {
       String setterName = setter.getName();
       if (!"set".equals(setterName) && setter.getName().startsWith("set")) {
         final String fieldName = setter.getName().substring(3);
