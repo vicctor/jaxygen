@@ -15,11 +15,12 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
-import org.jaxygen.netserviceapisample.business.dto.maps.HashMapRequestDTO;
-import org.jaxygen.netserviceapisample.business.dto.maps.HashMapResponseDTO;
-import org.jaxygen.netserviceapisample.business.dto.lists.GenericArrayListResponseDTO;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
+import org.jaxygen.netserviceapisample.business.dto.maps.HashMapRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.maps.HashMapResponseDTO;
+import org.jaxygen.netserviceapisample.business.dto.maps.LanguageTranslationsMapRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.maps.LanguageTranslationsMapResponseDTO;
 import org.jaxygen.util.BeanUtil;
 
 /**
@@ -28,13 +29,23 @@ import org.jaxygen.util.BeanUtil;
  */
 public class MapRequestSample {
 
-  @NetAPI(description = "",
-          status = Status.GenerallyAvailable,
-          version = "1.0.6"
-  )
-  public HashMapResponseDTO simpeHashmapRequest(HashMapRequestDTO request) {
-    HashMapResponseDTO responseDTO = new HashMapResponseDTO();
-    BeanUtil.translateBean(request, responseDTO);
-    return responseDTO;
-  }
+    @NetAPI(description = "Example of HashMap<String, String>",
+            status = Status.GenerallyAvailable,
+            version = "1.0.8"
+    )
+    public HashMapResponseDTO simpeHashmapRequest(HashMapRequestDTO request) {
+        HashMapResponseDTO responseDTO = new HashMapResponseDTO();
+        BeanUtil.translateBean(request, responseDTO);
+        return responseDTO;
+    }
+
+    @NetAPI(description = "Example of more complex HashMap",
+            status = Status.GenerallyAvailable,
+            version = "1.0.8"
+    )
+    public LanguageTranslationsMapResponseDTO hashMapOfHashmapRequest(LanguageTranslationsMapRequestDTO request) {
+        LanguageTranslationsMapResponseDTO responseDTO = new LanguageTranslationsMapResponseDTO();
+        BeanUtil.translateBean(request, responseDTO);
+        return responseDTO;
+    }
 }

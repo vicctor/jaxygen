@@ -367,7 +367,7 @@ public class MethodInvokerPage extends Page {
         if (getter != null) {
           defaultValue = getter.invoke(inputObject);
         }
-          if (paramType.isAssignableFrom(HashMap.class)) {
+          if ((HashMap.class.isAssignableFrom(paramType)) || paramType.isAssignableFrom(HashMap.class)) {
             final String counterName = parentFieldName + propertyName + "Size";
             int multiplicity = 0;
             if (request.getParameter(counterName) != null) {

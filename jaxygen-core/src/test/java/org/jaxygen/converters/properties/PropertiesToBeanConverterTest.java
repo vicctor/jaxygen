@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.*;
 import org.jaxygen.collections.Pair;
@@ -146,6 +147,106 @@ public class PropertiesToBeanConverterTest {
 
         // then
         assertThat(resutl).isEqualToComparingFieldByField(expected);
+    }
+
+    @Test
+    public void shall_convertDeserializeHashMapOfHashMapRequest() throws DeserialisationError {
+        // given
+        Map<String, String> props = Maps.newHashMap();
+        props.put("languageMap[0]<key>", "AAA");
+        props.put("languageMap[0]<value>.translations[0]<key>", "aaaa");
+        props.put("languageMap[0]<value>.translations[0]<value>", "bbbb");
+        HttpRequestParams params = mock(HttpRequestParams.class);
+        when(params.getParameters()).thenReturn(props);
+
+        TranslationMap translationMap = new TranslationMap();
+        translationMap.getTranslations().put("aaaa", "bbbb");
+        LanguageTranslationsMapRequest expected = new LanguageTranslationsMapRequest();
+        expected.getLanguageMap().put("AAA", translationMap);
+
+        // when
+        LanguageTranslationsMapRequest resutl = (LanguageTranslationsMapRequest) new PropertiesToBeanConverter().deserialise(params, LanguageTranslationsMapRequest.class);
+
+        // then
+        assertThat(resutl).isEqualToComparingFieldByField(expected);
+    }
+
+    public static class LanguageTranslationsMapRequest {
+
+        private Map<String, TranslationMap> languageMap = new HashMap<>();
+
+        public Map<String, TranslationMap> getLanguageMap() {
+            return languageMap;
+        }
+
+        public void setLanguageMap(Map<String, TranslationMap> languageMap) {
+            this.languageMap = languageMap;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 47 * hash + Objects.hashCode(this.languageMap);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final LanguageTranslationsMapRequest other = (LanguageTranslationsMapRequest) obj;
+            if (!Objects.equals(this.languageMap, other.languageMap)) {
+                return false;
+            }
+            return true;
+        }
+
+    }
+
+    public static class TranslationMap {
+
+        private Map<String, String> translations = new HashMap();
+
+        public Map<String, String> getTranslations() {
+            return translations;
+        }
+
+        public void setTranslations(Map<String, String> translations) {
+            this.translations = translations;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 67 * hash + Objects.hashCode(this.translations);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final TranslationMap other = (TranslationMap) obj;
+            if (!Objects.equals(this.translations, other.translations)) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

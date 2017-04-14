@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -56,123 +58,153 @@ import org.jaxygen.util.ClassTypeUtil;
  */
 public class PropertiesToBeanConverter implements RequestConverter {
 
-  static final Map<Class<?>, Converter> converters = new HashMap<Class<?>, Converter>();
+    static final Map<Class<?>, Converter> converters = new HashMap<Class<?>, Converter>();
 
-  static {
-    converters.put(Boolean.class, new BooleanConverter());
-    converters.put(Boolean.TYPE, new BooleanConverter());
-    converters.put(Byte.class, new ByteConverter());
-    converters.put(Byte.TYPE, new ByteConverter());
-    converters.put(Character.class, new CharacterConverter());
-    converters.put(Character.TYPE, new CharacterConverter());
-    converters.put(Float.class, new FloatConverter());
-    converters.put(Float.TYPE, new FloatConverter());
-    converters.put(Double.class, new DoubleConverter());
-    converters.put(Double.TYPE, new DoubleConverter());
-    converters.put(double.class, new DoubleConverter());
-    converters.put(Integer.class, new IntegerConverter());
-    converters.put(Integer.TYPE, new IntegerConverter());
-    converters.put(Long.class, new LongConverter());
-    converters.put(Long.TYPE, new LongConverter());
-    converters.put(Short.class, new ShortConverter());
-    converters.put(Short.TYPE, new ShortConverter());
-    converters.put(Enum.class, new EnumConverter());
-    converters.put(String.class, new StringConverter());
-    for (Class<?> c : converters.keySet()) {
-      ConvertUtils.register(converters.get(c), c);
-    }
-  }
-
-  static public boolean isCovertable(Class<?> c) {
-    return converters.containsKey(c);
-  }
-  public static final String NAME = "PROPERTIES";
-
-  @Override
-  public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
-    try {
-      return convertPropertiesToBean(params.getParameters(), params.getFiles(), beanClass);
-    } catch (Exception ex) {
-      throw new DeserialisationError("Could not parse input parameters for beed class " + beanClass, ex);
-    }
-  }
-
-  /**
-   * Applies a collection of properties to a JavaBean. Converts String and String[] values to correct property types
-   *
-   * @param properties A map of the properties to set on the JavaBean
-   * @param files List of files.
-   * @param beanClass Bean class to be converted.
-   * @return A new object of beanClass.
-   * @throws InstantiationException .
-   * @throws InvocationTargetException .
-   * @throws IllegalAccessException .
-   * @throws IntrospectionException .
-   * @throws IllegalArgumentException .
-   * @throws WrongProperyIndex Exception thrown on property validation errors.
-   */
-  public static Object convertPropertiesToBean(Map<String, String> properties,
-          Map<String, Uploadable> files,
-          Class<?> beanClass) throws IllegalArgumentException,
-          IntrospectionException, IllegalAccessException,
-          InvocationTargetException, InstantiationException, WrongProperyIndex, NoSuchFieldException {
-      Object bean = beanClass.newInstance();
-      for (final String key : properties.keySet()) {
-          if (key.contains("<key>")) {
-              final String keyBase = key.replace("<key>", "");
-              final String keykey = key;
-              final String keyval = properties.get(keykey);
-              final String valkey = key.replace("<key>", "<value>");
-              final String valval = properties.get(valkey);
-              bean = fillBeanValueForMapField(keyBase, keykey, keyval, valkey, valval, beanClass, bean);
-          }else{
-              final String value = properties.get(key);
-              bean = fillBeanValueByName(key, value, beanClass, bean);
-          }
+    static {
+        converters.put(Boolean.class, new BooleanConverter());
+        converters.put(Boolean.TYPE, new BooleanConverter());
+        converters.put(Byte.class, new ByteConverter());
+        converters.put(Byte.TYPE, new ByteConverter());
+        converters.put(Character.class, new CharacterConverter());
+        converters.put(Character.TYPE, new CharacterConverter());
+        converters.put(Float.class, new FloatConverter());
+        converters.put(Float.TYPE, new FloatConverter());
+        converters.put(Double.class, new DoubleConverter());
+        converters.put(Double.TYPE, new DoubleConverter());
+        converters.put(double.class, new DoubleConverter());
+        converters.put(Integer.class, new IntegerConverter());
+        converters.put(Integer.TYPE, new IntegerConverter());
+        converters.put(Long.class, new LongConverter());
+        converters.put(Long.TYPE, new LongConverter());
+        converters.put(Short.class, new ShortConverter());
+        converters.put(Short.TYPE, new ShortConverter());
+        converters.put(Enum.class, new EnumConverter());
+        converters.put(String.class, new StringConverter());
+        for (Class<?> c : converters.keySet()) {
+            ConvertUtils.register(converters.get(c), c);
+        }
     }
 
-    for (final String key : files.keySet()) {
-      final Uploadable value = files.get(key);
-      bean = fillBeanValueByName(key, value, beanClass, bean);
+    static public boolean isCovertable(Class<?> c) {
+        return converters.containsKey(c);
+    }
+    public static final String NAME = "PROPERTIES";
+
+    @Override
+    public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
+        try {
+            return convertPropertiesToBean(params.getParameters(), params.getFiles(), beanClass);
+        } catch (Exception ex) {
+            throw new DeserialisationError("Could not parse input parameters for beed class " + beanClass, ex);
+        }
     }
 
-    return bean;
-  }
+    /**
+     * Applies a collection of properties to a JavaBean. Converts String and
+     * String[] values to correct property types
+     *
+     * @param properties A map of the properties to set on the JavaBean
+     * @param files List of files.
+     * @param beanClass Bean class to be converted.
+     * @return A new object of beanClass.
+     * @throws InstantiationException .
+     * @throws InvocationTargetException .
+     * @throws IllegalAccessException .
+     * @throws IntrospectionException .
+     * @throws IllegalArgumentException .
+     * @throws WrongProperyIndex Exception thrown on property validation errors.
+     */
+    public static Object convertPropertiesToBean(Map<String, String> properties,
+            Map<String, Uploadable> files,
+            Class<?> beanClass) throws IllegalArgumentException,
+            IntrospectionException, IllegalAccessException,
+            InvocationTargetException, InstantiationException, WrongProperyIndex, NoSuchFieldException {
+        Object bean = beanClass.newInstance();
+        final SortedSet<String> sortedKeys = new TreeSet(properties.keySet());
+        final List<String> innerMapKeysToSkip = new ArrayList<>();
+        for (final String key : sortedKeys) {
+            if (!innerMapKeysToSkip.contains(key)) {
+                if (key.contains("<key>")) {
+                    bean = deserializeMapField(key, properties, innerMapKeysToSkip, bean, beanClass);
+                } else if (key.contains("<value>")) {
+                    //this property was handled in '<key>' condition
+                } else {
+                    final String value = properties.get(key);
+                    bean = fillBeanValueByName(key, value, beanClass, bean);
+                }
+            }
+        }
 
-  public static Object convertPropertiesToBean(Map<String, String> properties,
-          Map<String, Uploadable> files,
-          Object bean) throws IllegalArgumentException,
-          IntrospectionException, IllegalAccessException,
-          InvocationTargetException, InstantiationException, WrongProperyIndex, NoSuchFieldException {
-    Object pojo = bean;
-    for (final String key : properties.keySet()) {
-      final String value = properties.get(key);
-      pojo = fillBeanValueByName(key, value, bean.getClass(), pojo);
-    }
-    for (final String key : files.keySet()) {
-      final Uploadable value = files.get(key);
-      pojo = fillBeanValueByName(key, value, bean.getClass(), pojo);
-    }
-    return bean;
-  }
+        for (final String key : files.keySet()) {
+            final Uploadable value = files.get(key);
+            bean = fillBeanValueByName(key, value, beanClass, bean);
+        }
 
-  /**
-   * Fill the field in bean by the value pointed by the name. Name format name=<(KEY([N])?)+> where KEY bean property name, N index in table (if bean field is
-   * List of java array).
-   *
-   * @param name
-   * @param value
-   * @param beanClass
-   * @param baseBean
-   * @param conversionReport
-   * @return
-   * @throws IntrospectionException
-   * @throws IllegalArgumentException
-   * @throws IllegalAccessException
-   * @throws InvocationTargetException
-   * @throws InstantiationException
-   * @throws WrongProperyIndex
-   */
+        return bean;
+    }
+
+    private static Object deserializeMapField(final String key, Map<String, String> properties, final List<String> innerMapKeysToSkip, Object bean, Class<?> beanClass) throws NoSuchFieldException, IntrospectionException, WrongProperyIndex, IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException {
+        final String keyBase = key.replace("<key>", "");
+        final String keykey = key;
+        final String keyval = properties.get(keykey);
+        final String valkey = key.replace("<key>", "<value>");
+        Object valval = properties.get(valkey);
+        if (valval == null) { // seems that value is more complex than just string
+            int bracketIndex = keyBase.indexOf("[");
+            final String fieldName = keyBase.substring(0, bracketIndex);
+
+            Map<String, String> innerProperties = new HashMap<>();
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                if (entry.getKey().startsWith(valkey)) {
+                    innerMapKeysToSkip.add(entry.getKey());
+                    final String k = entry.getKey().replace(valkey + ".", "");
+                    final String v = entry.getValue().replace(valkey + ".", "");
+                    innerProperties.put(k, v);
+                }
+            }
+            Class<?>[] keyValueTypes = ClassTypeUtil.retrieveMapTypes(bean.getClass(), fieldName);
+            Class<?> valueType = keyValueTypes[1];
+            valval = convertPropertiesToBean(innerProperties, new HashMap(), valueType);
+        }
+        bean = fillBeanValueForMapField(keyBase, keyval, valval, beanClass, bean);
+        return bean;
+    }
+
+    public static Object convertPropertiesToBean(Map<String, String> properties,
+            Map<String, Uploadable> files,
+            Object bean) throws IllegalArgumentException,
+            IntrospectionException, IllegalAccessException,
+            InvocationTargetException, InstantiationException, WrongProperyIndex, NoSuchFieldException {
+        Object pojo = bean;
+        for (final String key : properties.keySet()) {
+            final String value = properties.get(key);
+            pojo = fillBeanValueByName(key, value, bean.getClass(), pojo);
+        }
+        for (final String key : files.keySet()) {
+            final Uploadable value = files.get(key);
+            pojo = fillBeanValueByName(key, value, bean.getClass(), pojo);
+        }
+        return bean;
+    }
+
+    /**
+     * Fill the field in bean by the value pointed by the name. Name format
+     * name=<(KEY([N])?)+> where KEY bean property name, N index in table (if
+     * bean field is List of java array).
+     *
+     * @param name
+     * @param value
+     * @param beanClass
+     * @param baseBean
+     * @param conversionReport
+     * @return
+     * @throws IntrospectionException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     * @throws WrongProperyIndex
+     */
     private static Object fillBeanValueByName(final String name, Object value,
             Class<?> beanClass, Object baseBean)
             throws IntrospectionException, IllegalArgumentException,
@@ -225,8 +257,8 @@ public class PropertiesToBeanConverter implements RequestConverter {
         return bean;
     }
 
-    private static Object fillBeanValueForMapField(final String keybase, final String keykey,
-            Object keyval, final String valkey, Object valval,
+    private static Object fillBeanValueForMapField(final String keybase,
+            Object keyval, Object valval,
             Class<?> beanClass, Object baseBean)
             throws IntrospectionException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException,
@@ -236,17 +268,14 @@ public class PropertiesToBeanConverter implements RequestConverter {
         if (bean == null) {
             bean = beanClass.newInstance();
         }
-        Class<?> c = beanClass;
-        BeanInfo beanInfo = Introspector.getBeanInfo(c, Object.class);
-        String path[] = keybase.split("\\.");
 
-        final String fieldName = path[0];
+        final String fieldName = keybase;
         // parse arrays [n]
         if (fieldName.endsWith("]")) {
             int bracketStart = fieldName.indexOf("[");
             int len = fieldName.length();
             if (bracketStart > 0) {
-                fillBeanMapField(keybase, keykey, keyval, valkey, valval, bean, beanInfo, path, fieldName,
+                fillBeanMapField(keyval, valval, bean, beanClass, fieldName,
                         bracketStart, len);
             } else {
                 throw new WrongProperyIndex(keybase);
@@ -254,34 +283,33 @@ public class PropertiesToBeanConverter implements RequestConverter {
         }
         return bean;
     }
-  
-  private static Class<?> retrieveListType(Class<?> paramClass, String propertyName) { 
-    Class c = paramClass; 
-    Field listField = null; 
-    String name = c.getName(); 
-    while (listField == null || "java.lang.Object".equals(name)) { 
-      try { 
-        listField = c.getDeclaredField(propertyName); 
-      } catch (Exception e) { 
-        c = c.getSuperclass(); 
-      } 
-    } 
-    Type genericPropertyType = listField.getGenericType();
-    
-    ParameterizedType propertyType = null;
-    while (propertyType == null) {
-      if ((genericPropertyType instanceof ParameterizedType)) {
-        propertyType = (ParameterizedType) genericPropertyType;
-      } else {
-        genericPropertyType = ((Class<?>) genericPropertyType).getGenericSuperclass();
-      }
-    }
-    return (Class<?>) propertyType.getActualTypeArguments()[0];
-  } 
 
-    private static void fillBeanMapField(final String keybase, final String keykey,
-            Object keyval, final String valkey, Object valval,
-            Object bean, BeanInfo beanInfo, String[] path, final String fieldName,
+    private static Class<?> retrieveListType(Class<?> paramClass, String propertyName) {
+        Class c = paramClass;
+        Field listField = null;
+        String name = c.getName();
+        while (listField == null || "java.lang.Object".equals(name)) {
+            try {
+                listField = c.getDeclaredField(propertyName);
+            } catch (Exception e) {
+                c = c.getSuperclass();
+            }
+        }
+        Type genericPropertyType = listField.getGenericType();
+
+        ParameterizedType propertyType = null;
+        while (propertyType == null) {
+            if ((genericPropertyType instanceof ParameterizedType)) {
+                propertyType = (ParameterizedType) genericPropertyType;
+            } else {
+                genericPropertyType = ((Class<?>) genericPropertyType).getGenericSuperclass();
+            }
+        }
+        return (Class<?>) propertyType.getActualTypeArguments()[0];
+    }
+
+    private static void fillBeanMapField(Object keyval, Object valval,
+            Object bean, Class<?> beanClass, final String fieldName,
             int bracketStart, int len)
             throws IllegalAccessException, InvocationTargetException,
             IntrospectionException, InstantiationException, IllegalArgumentException,
@@ -289,12 +317,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
         final String indexStr = fieldName.substring(bracketStart + 1, len - 1);
         final String propertyName = fieldName.substring(0, bracketStart);
         int index = Integer.parseInt(indexStr);
-        String childName = "";
-        int firstDot = keybase.indexOf(".");
-        if (firstDot > 0) {
-            childName = keybase.substring(firstDot + 1);
-        }
-
+        BeanInfo beanInfo = Introspector.getBeanInfo(beanClass, Object.class);
         for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
             if (pd.getName().equals(propertyName)) {
                 Method writter = pd.getWriteMethod();
@@ -316,13 +339,6 @@ public class PropertiesToBeanConverter implements RequestConverter {
                             Object valueObject = parsePropertyToValue(valval, valueType);
                             map.put(keyObject, valueObject);
                         }
-                        /*  if (path.length == 1) {
-                            Object valueObject = parsePropertyToValue(keyval, componentType);
-                            map.set(index, valueObject);
-                        } else {
-                            Object valueObject = fillBeanValueByName(childName, keyval, componentType, list.get(index));
-                            map.set(index, valueObject);
-                        }*/
                     }
                 }
             }
@@ -409,36 +425,36 @@ public class PropertiesToBeanConverter implements RequestConverter {
         }
     }
 
-  private static Object parsePropertyToValue(Object valueObject,
-          Class<?> propertyType) {
-    Object value = null;
+    private static Object parsePropertyToValue(Object valueObject,
+            Class<?> propertyType) {
+        Object value = null;
 
-    //TODO: add cache of enum converters
-    boolean isEnum = propertyType.isEnum();
-    if (isEnum) {
-      ConvertUtils.register(new EnumConverter(), propertyType);
+        //TODO: add cache of enum converters
+        boolean isEnum = propertyType.isEnum();
+        if (isEnum) {
+            ConvertUtils.register(new EnumConverter(), propertyType);
+        }
+
+        if (valueObject != null && valueObject.getClass().equals(String.class)) {
+            value = ConvertUtils.convert((String) valueObject, propertyType);
+        } else {
+            value = valueObject;
+        }
+
+        return value;
     }
 
-    if (valueObject != null && valueObject.getClass().equals(String.class)) {
-      value = ConvertUtils.convert((String) valueObject, propertyType);
-    } else {
-      value = valueObject;
+    private static Object resizeArray(Object array, int size) {
+        Object newArray = Array.newInstance(array.getClass().getComponentType(),
+                size);
+        for (int i = 0; i < Array.getLength(array); i++) {
+            Object value = Array.get(array, i);
+            Array.set(newArray, i, value);
+        }
+        return newArray;
     }
 
-    return value;
-  }
-
-  private static Object resizeArray(Object array, int size) {
-    Object newArray = Array.newInstance(array.getClass().getComponentType(),
-            size);
-    for (int i = 0; i < Array.getLength(array); i++) {
-      Object value = Array.get(array, i);
-      Array.set(newArray, i, value);
+    public String getName() {
+        return NAME;
     }
-    return newArray;
-  }
-
-  public String getName() {
-    return NAME;
-  }
 }
