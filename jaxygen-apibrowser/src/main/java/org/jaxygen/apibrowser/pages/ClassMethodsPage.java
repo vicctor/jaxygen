@@ -17,6 +17,8 @@ package org.jaxygen.apibrowser.pages;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -25,6 +27,7 @@ import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.netservice.html.*;
 import org.jaxygen.security.basic.annotations.UserProfile;
 import org.jaxygen.url.UrlQuery;
+import org.jaxygen.util.MethodNameComparator;
 
 /**
  * Class shows methods of the class including description of each method
@@ -60,8 +63,10 @@ public class ClassMethodsPage extends Page {
   }
 
   private HTMLTable.Row[] renderMethodReferences(Class clazz) {
-    List<HTMLTable.Row> rows = new ArrayList<HTMLTable.Row>();
-    for (Method method : clazz.getMethods()) {
+      List<HTMLTable.Row> rows = new ArrayList<HTMLTable.Row>();
+      List<Method> methods = new ArrayList(Arrays.asList(clazz.getMethods()));
+      Collections.sort(methods, new MethodNameComparator());
+      for (Method method : methods) {
       NetAPI netApi = method.getAnnotation(NetAPI.class);
       UserProfile userProfile = method.getAnnotation(UserProfile.class);
       if (netApi != null) {
@@ -103,5 +108,5 @@ public class ClassMethodsPage extends Page {
       }
     }
     return rc;
-  }
+    }
 }

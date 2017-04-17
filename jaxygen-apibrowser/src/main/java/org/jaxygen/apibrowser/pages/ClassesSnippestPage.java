@@ -17,6 +17,8 @@ package org.jaxygen.apibrowser.pages;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -29,6 +31,8 @@ import org.jaxygen.netservice.html.HTMLElement;
 import org.jaxygen.netservice.html.HTMLLabel;
 import org.jaxygen.netservice.html.HTMLTable;
 import org.jaxygen.url.UrlQuery;
+import org.jaxygen.util.ClassNameComparator;
+import org.jaxygen.util.MethodNameComparator;
 
 /**
  *
@@ -61,8 +65,10 @@ public class ClassesSnippestPage extends Page {
    table.setCSSClassName("jaxygen-classes-snipest");
 
    table.getHeader().createColumns("className", "Description", "Methods");
-   boolean even = false;
-   for (Class c : getRegistry().getRegisteredClasses()) {
+      boolean even = false;
+      List<Class> registeredClasses = getRegistry().getRegisteredClasses();
+      Collections.sort(registeredClasses, new ClassNameComparator());
+      for (Class c : registeredClasses) {
     HTMLTable.Row row = new HTMLTable.Row();
     row.setCSSClassName("jaxygen-row-" + (even ? "even" : "odd"));
     even = !even;
@@ -94,8 +100,10 @@ public class ClassesSnippestPage extends Page {
  }
 
  private HTMLElement renderMethodReferences(Class clazz) {
-  List<HTMAnchor> anchors = new ArrayList<HTMAnchor>();
-  for (Method method : clazz.getMethods()) {
+     List<HTMAnchor> anchors = new ArrayList<HTMAnchor>();
+     List<Method> methods = new ArrayList(Arrays.asList(clazz.getMethods()));
+     Collections.sort(methods, new MethodNameComparator());
+     for (Method method : methods) {
    NetAPI netApi = method.getAnnotation(NetAPI.class);
    if (netApi != null) {
     final String className = clazz.getCanonicalName();
@@ -120,5 +128,5 @@ public class ClassesSnippestPage extends Page {
   }
 
   return methodsTable;
- }
+    }
 }
