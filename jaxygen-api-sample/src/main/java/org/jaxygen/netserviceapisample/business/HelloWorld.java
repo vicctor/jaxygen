@@ -22,6 +22,7 @@ import org.jaxygen.annotations.Status;
  *
  * @author artur
  */
+@NetAPI(description = "Just a simple hellow world service")
 public class HelloWorld {
 
  @NetAPI(description = "This is Hello World function. Revice output to learn about the output message structure",

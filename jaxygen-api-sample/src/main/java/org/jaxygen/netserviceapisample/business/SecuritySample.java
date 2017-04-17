@@ -37,7 +37,7 @@ import org.jaxygen.security.basic.annotations.UserProfile;
  *
  * @author artur
  */
-
+@NetAPI(description = "Simple build in security model sample")
 public class SecuritySample {
  @SessionContext
  private HttpSession session;

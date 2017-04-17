@@ -39,6 +39,13 @@
       <version>1.0.7-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
+    
+     <dependency>
+      <groupId>org.jaxygen.typeconverter</groupId>
+      <artifactId>jaxygen-typeconverter</artifactId>
+      <version>1.0.7-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
   
     <dependency>
       <groupId>org.jaxygen</groupId>

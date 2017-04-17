@@ -32,6 +32,7 @@ import org.jaxygen.util.BeanUtil;
  *
  * @author artur
  */
+@NetAPI(description = "This sample shows how to implement users repository serivce")
 public class DTOSample {
 
  @SessionContext

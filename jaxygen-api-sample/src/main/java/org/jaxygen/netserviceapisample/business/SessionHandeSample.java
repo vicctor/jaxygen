@@ -20,12 +20,13 @@ import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.netserviceapisample.business.dto.NetworkInfoDTO;
-import org.jaxygen.netserviceapisample.business.exceptions.CouldNotLeanWithoutEntering;
+import org.jaxygen.netserviceapisample.business.exceptions.CouldNotLeaveWithoutEntering;
 
 /**Class demonstrates the session handing using @SessionContext annotation
  *
  * @author artur
  */
+@NetAPI(description = "This sample shows how to keep data in the current user session")
 public class SessionHandeSample {
  @SessionContext
  private HttpSession session;
@@ -46,15 +47,15 @@ public class SessionHandeSample {
  
  /** This method demonstrates exception handling.
   * If enter has not been yet called, 
-  * @throws CouldNotLeanWithoutEntering 
+  * @throws CouldNotLeaveWithoutEntering 
   */
  @NetAPI(description="Decrement counter. Counter must be at least once <br/>incremented before calling this method",
          status= Status.ReleaseCandidate,
          version="1.0")
- public void leave() throws CouldNotLeanWithoutEntering {
+ public void leave() throws CouldNotLeaveWithoutEntering {
   Integer counter = (Integer) session.getAttribute("counter");
   if (counter == null) {
-   throw new CouldNotLeanWithoutEntering();
+   throw new CouldNotLeaveWithoutEntering();
   } else {
    counter --;
   }

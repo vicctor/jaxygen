@@ -31,6 +31,7 @@ import org.jaxygen.network.DownloadableFile;
  *
  * @author Artur Keska
  */
+@NetAPI(description = "If you ever need to upload or download files from your service, use this sample as a reference")
 public class FileTransferSample {
 
   private final static String TMP = System.getProperty("java.io.tmpdir");

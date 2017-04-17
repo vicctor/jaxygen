@@ -15,14 +15,14 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
-import org.jaxygen.netserviceapisample.business.dto.lists.GenericArrayListRequestDTO;
-import org.jaxygen.netserviceapisample.business.dto.lists.GenericArrayListResponseDTO;
-import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListExampleCreateRequestDTO;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
+import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListExampleCreateRequestDTO;
 import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListExampleResponseDTO;
-import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListWithArrayListRequestDTO;
 import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListOfObjectsRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.ArrayListWithArrayListRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.GenericArrayListRequestDTO;
+import org.jaxygen.netserviceapisample.business.dto.lists.GenericArrayListResponseDTO;
 import org.jaxygen.netserviceapisample.business.dto.lists.SimpleArrayListRequestDTO;
 import org.jaxygen.util.BeanUtil;
 
@@ -30,6 +30,7 @@ import org.jaxygen.util.BeanUtil;
  *
  * @author jknast
  */
+@NetAPI(description = "Usage of ArrayList as an input")
 public class ArrayListRequestSample {
 
   @NetAPI(description = "Very simple request contains ArrayList of strings.",

@@ -15,10 +15,8 @@
  */
 package org.jaxygen.netserviceapisample.business;
 
-import java.io.File;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
-import org.jaxygen.dto.Uploadable;
 
 
 
@@ -26,6 +24,7 @@ import org.jaxygen.dto.Uploadable;
  *
  * @author Artur Keska
  */
+@NetAPI(description = "Nothing more but the list of defined lifecycle statuses")
 public class MethodsStatusesSample {
   @NetAPI(description="Status not provided")
   void methodWithoutStatus() {}
