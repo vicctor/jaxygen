@@ -54,4 +54,9 @@ public class TestModule implements JaxygenModule {
     public String getName() {
         return "TestModule";
     }
+
+    @Override
+    public String getServicesBase() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

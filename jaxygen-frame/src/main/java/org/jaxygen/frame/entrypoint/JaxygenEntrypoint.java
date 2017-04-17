@@ -15,10 +15,11 @@
  */
 package org.jaxygen.frame.entrypoint;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Module;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -46,9 +47,11 @@ public class JaxygenEntrypoint implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         Set<Class<? extends JaxygenModule>> modules = APIScanner.findModules();
         Optional.ofNullable(modules)
-                .orElse(Lists.newArrayList())
+                .orElse(new HashSet<>())
                 .stream()
-                .forEach(JaxygenEntrypoint::register);
+                .map(clazz -> toModule(clazz))
+                .filter(Objects::nonNull)
+                .forEach(m ->register(m));
 
     }
 
@@ -82,5 +85,15 @@ public class JaxygenEntrypoint implements ServletContextListener {
                 return module.getServicesBase();
             }
         };
+    }
+
+    private JaxygenModule toModule(Class<? extends JaxygenModule> clazz) {
+        JaxygenModule result = null;
+        try {
+            result = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            LOG.log(Level.SEVERE, "Unable to initialize module with class " + clazz.getCanonicalName(), ex);
+        }
+        return result;
     }
 }
