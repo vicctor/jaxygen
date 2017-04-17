@@ -4,10 +4,10 @@
     <parent>
         <groupId>org.jaxygen</groupId>
         <artifactId>jaxygen-project</artifactId>
-        <version>1.0.7-SNAPSHOT</version>
+        <version>1.0.8-SNAPSHOT</version>
     </parent>
     <artifactId>jaxygen-frame</artifactId>
-    <version>1.21.0-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <dependencies>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.jaxygen.typeconverter</groupId>
             <artifactId>jaxygen-typeconverter</artifactId>
-            <version>1.0.7-SNAPSHOT</version>
+            <version>1.0.8-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
