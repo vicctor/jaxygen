@@ -190,12 +190,13 @@
     <modules>
         <module>jaxygen-annotations</module>
         <module>jaxygen-core</module>
+        <module>jaxygen-typeconverter</module>        
         <module>jaxygen-api-sample</module>
         <module>jaxygen-apibrowser</module>
         <module>jaxygen-apibrowser-style-simple</module>
         <module>jaxygen-client-it</module>
-        <module>jaxygen-typeconverter</module>
         <module>jaxygen-apigin</module>
+        <module>jaxygen-frame</module>
     </modules>
   
   
