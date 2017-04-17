@@ -4,9 +4,9 @@
     <parent>
         <groupId>org.jaxygen</groupId>
         <artifactId>jaxygen-project</artifactId>
-        <version>1.0.7-SNAPSHOT</version>
+        <version>1.0.8-SNAPSHOT</version>
     </parent>
     <artifactId>jaxygen-annotations</artifactId>
-    <version>1.21.0-SNAPSHOT</version>
+    <version>${project.version}</version>
     <packaging>jar</packaging>
 </project>
