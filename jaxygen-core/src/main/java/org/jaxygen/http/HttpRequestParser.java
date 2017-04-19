@@ -15,30 +15,30 @@
  */
 package org.jaxygen.http;
 
-import org.jaxygen.converters.xml.XMLDateAdapter;
-import org.jaxygen.network.UploadedFile;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.jaxygen.converters.xml.XMLDateAdapter;
 import org.jaxygen.dto.Uploadable;
 import org.jaxygen.exceptions.InvalidRequestParameter;
+import org.jaxygen.network.UploadedFile;
 
 /**
  * This class implements an interface of accessing HTTP request parameters.
@@ -53,8 +53,8 @@ public class HttpRequestParser implements HttpRequestParams {
      */
     private static final long serialVersionUID = -377032102000216172L;
     private HttpServletRequest request;
-    private Hashtable<String, Uploadable> files = new Hashtable<String, Uploadable>();
-    private Hashtable<String, String> parameters = new Hashtable<String, String>();
+    private Hashtable<String, Uploadable> files = new Hashtable<>();
+    private Hashtable<String, String> parameters = new Hashtable<>();
     private final static DateFormat dateFormater = XMLDateAdapter.dateFormater;
     private HttpFileUploadHandler uploadHandler;
 
@@ -96,15 +96,9 @@ public class HttpRequestParser implements HttpRequestParams {
         String fieldName = item.getFieldName();
         String fileName = item.getName();
         String contentType = item.getContentType();
-        // boolean isInMemory = item.isInMemory();
-        long sizeInBytes = item.getSize();
         // skipp moving files without name - assume as error
         if (fileName.length() > 0) {
-      //System.out.println("File upload: " + fieldName + " " + fileName + " "
-            //    + contentType + " " + sizeInBytes);
-
             UploadedFile upf = new UploadedFile(item);
-            //upf.setFile(uploadedFile);
             upf.setMimeType(contentType);
             upf.setOriginalName(fileName);
             files.put(fieldName, upf);
@@ -308,45 +302,28 @@ public class HttpRequestParser implements HttpRequestParams {
     @SuppressWarnings("unchecked")
     private static List<String> getIndexedList(HttpServletRequest request,
             String listName) throws InvalidRequestParameter {
-        Vector<String> rc = new Vector<String>();
-        Enumeration<String> names = request.getParameterNames();
-        Pattern p = Pattern.compile(listName + "\\[(\\d+)\\]");
+        final List<String> names = Collections.list(request.getParameterNames());
+        final Pattern p = Pattern.compile(listName + "\\[(\\d+)\\]");
 
-        int maxIndex = -1;
-        while (names.hasMoreElements()) {
-            String name = names.nextElement();
-            Matcher m = p.matcher(name);
-            if (m.matches()) {
-                int id = Integer.parseInt(m.group(1));
-                if (id != -1) {
-                    if (id > maxIndex) {
-                        maxIndex = id;
-                    }
-                }
-            }
-        }
-        if (maxIndex > -1) {
-            // rc.setSize(maxIndex+1);
-            for (int i = 0; i <= maxIndex; i++) {
-                String value = request.getParameter(listName + "[" + i + "]");
-                if (value.length() > 0) {
-                    rc.add(i, value);
-                }
-            }
-        }
+        List<String> rc = names.stream()
+                .map(name -> p.matcher(name))
+                .filter(Matcher::matches)
+                .map(matcher -> matcher.group(1))
+                .map(Integer::parseInt)
+                .map(i -> request.getParameter(listName + "[" + i + "]"))
+                .collect(Collectors.toList());
+
         return rc;
     }
 
     @Override
     public List<Integer> getAsListOfInt(String listName)
             throws InvalidRequestParameter {
-        Vector<Integer> rc = new Vector<Integer>();
-        List<String> sl = getIndexedList(request, listName);
-        for (String s : sl) {
-            if (s != null) {
-                rc.add(Integer.decode(s));
-            }
-        }
+        List<Integer> rc = getIndexedList(request, listName)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
         return rc;
     }
 
@@ -414,8 +391,9 @@ public class HttpRequestParser implements HttpRequestParams {
         }
     }
 
-    /** Add parameter to the list of request properties.
-     * 
+    /**
+     * Add parameter to the list of request properties.
+     *
      * @param name Param name.
      * @param value Param value.
      * @throws UnsupportedEncodingException .
