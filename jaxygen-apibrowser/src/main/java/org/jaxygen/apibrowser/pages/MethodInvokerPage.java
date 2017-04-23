@@ -452,7 +452,7 @@ public class MethodInvokerPage extends Page {
         HTMLTable.Row row = new HTMLTable.Row();
         table.addRow(row);
         String propertyName = fieldName;
-        row.addColumn(new HTMLLabel(paramType.getCanonicalName()));
+        row.addColumn(new HTMLLabel(paramType.getSimpleName(), paramType.getCanonicalName()));
         row.addColumn(new HTMLLabel(propertyName));
 
         addPlusAndMinusAnchors(request, row, counterName, multiplicity, propertyName);
@@ -473,7 +473,7 @@ public class MethodInvokerPage extends Page {
         String keyInputName = fieldName + "<key>";
         String valueInputName = fieldName + "<value>";
         String propertyName = fieldName;
-        row.addColumn(new HTMLLabel("<" + keyType.getCanonicalName() + ", " + keyType.getCanonicalName() + ">"));
+        row.addColumn(new HTMLLabel("<" + keyType.getSimpleName() + ", " + keyType.getSimpleName() + ">", "<" + keyType.getCanonicalName() + ", " + keyType.getCanonicalName() + ">"));
         row.addColumn(new HTMLLabel(propertyName));
         addPlusAndMinusAnchors(request, row, counterName, multiplicity, propertyName);
 

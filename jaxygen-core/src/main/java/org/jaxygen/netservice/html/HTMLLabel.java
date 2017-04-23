@@ -18,12 +18,19 @@ public class HTMLLabel extends BasicHTMLElement implements HTMLElement {
 
     public HTMLLabel(final String text) {
         super("SPAN");
-        caption = text;
+        this.caption = text;
     }
 
-    public HTMLLabel(final String id, final String text) {
+    public HTMLLabel(final String text, final String title) {
+        super("SPAN");
+        this.caption = text;
+        setLabelTooltip(title);
+    }
+
+    public HTMLLabel(final String id, final String text, final String title) {
         super("SPAN", id);
-        caption = text;
+        this.caption = text;
+        setLabelTooltip(title);
     }
 
     @Override

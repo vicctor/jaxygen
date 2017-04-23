@@ -48,6 +48,14 @@ public abstract class BasicHTMLElement implements HTMLElement {
         attributes.put("style", styleInfo);
     }
 
+    public String getLabelTooltip() {
+        return attributes.get("style").toString();
+    }
+
+    public void setLabelTooltip(String tooltip) {
+        attributes.put("title", tooltip);
+    }
+
     /**
      * Render the system attributes.
      *
