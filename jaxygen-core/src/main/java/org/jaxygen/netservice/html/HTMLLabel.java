@@ -32,9 +32,6 @@ public class HTMLLabel extends BasicHTMLElement implements HTMLElement {
             caption = StringUtils.replace(caption, "<", "&lt;");
             caption = StringUtils.replace(caption, ">", "&gt;");
             caption = StringUtils.replace(caption, " ", "&nbsp;");
-            /*  caption = caption.replace("<", "&lt;");
-            caption = caption.replace(">", "&gt;");
-            caption = caption.replace(" ", "&nbsp;");*/
         } else {
             caption = "";
         }

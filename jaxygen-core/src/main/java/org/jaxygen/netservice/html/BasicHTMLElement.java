@@ -54,27 +54,33 @@ public abstract class BasicHTMLElement implements HTMLElement {
      * @return Get the string containing tag attributes.
      */
     public String renderAttributes() {
-        String rc = "";
+        StringBuilder sb = new StringBuilder();
         for (String key : attributes.keySet()) {
 
             Object attribute = attributes.get(key);
             if (attribute != null) {
                 if (attribute.getClass().equals(Boolean.class)) {
-                    rc += " " + key + " ";
+                    sb.append(" ");
+                    sb.append(key);
+                    sb.append(" ");
                 } else {
-                    rc += " " + key + "='" + attribute + "' ";
+                    sb.append(" ");
+                    sb.append(key);
+                    sb.append("='");
+                    sb.append(attribute);
+                    sb.append("' ");
                 }
             }
         }
-        return rc;
+        return sb.toString();
     }
 
     public String renderContent() {
-        String rc = "";
+        StringBuilder sb = new StringBuilder();
         for (HTMLElement element : content) {
-            rc += element.render();
+            sb.append(element.render());
         }
-        return rc;
+        return sb.toString();
     }
 
     /**
@@ -91,14 +97,25 @@ public abstract class BasicHTMLElement implements HTMLElement {
     @Override
     public String render() {
         final String contentString = renderContent();
-        String rc = "";
+        StringBuilder sb = new StringBuilder();
         if (contentString.length() > 0 || isShortTagAlowed() == false) {
-            rc = "<" + tag + " " + renderAttributes() + ">" + renderContent() + "</"
-                    + tag + ">";
+            sb.append("<");
+            sb.append(tag);
+            sb.append(" ");
+            sb.append(renderAttributes());
+            sb.append(">");
+            sb.append(renderContent());
+            sb.append("</");
+            sb.append(tag);
+            sb.append(">");
         } else {
-            rc = "<" + tag + " " + renderAttributes() + " />";
+            sb.append("<");
+            sb.append(tag);
+            sb.append(" ");
+            sb.append(renderAttributes());
+            sb.append(" />");
         }
-        return rc;
+        return sb.toString();
     }
 
     public void setContent(List<HTMLElement> content) {
