@@ -15,6 +15,8 @@
  */
 package org.jaxygen.netservice.html;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author domanu
@@ -40,9 +42,12 @@ public class HTMLPre extends BasicHTMLElement implements HTMLElement {
     @Override
     public String renderContent() {
         if (caption != null) {
-            caption = caption.replace("<", "&lt;");
+            caption = StringUtils.replace(caption, "<", "&lt;");
+            caption = StringUtils.replace(caption, ">", "&gt;");
+            caption = StringUtils.replace(caption, " ", "&nbsp;");
+            /*    caption = caption.replace("<", "&lt;");
             caption = caption.replace(">", "&gt;");
-            caption = caption.replace(" ", "&nbsp;");
+            caption = caption.replace(" ", "&nbsp;");*/
         } else {
             caption = "";
         }
