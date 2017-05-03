@@ -57,7 +57,6 @@ public class ServiceInvokerTest {
     @Test
     public void shall_returnSimpleJSONWithIntegerValue() throws Exception {
         // given       
-
         HttpSession session = mock(HttpSession.class);
         Enumeration<?> params = Collections.emptyEnumeration();
         HttpServletRequest request = mock(HttpServletRequest.class);

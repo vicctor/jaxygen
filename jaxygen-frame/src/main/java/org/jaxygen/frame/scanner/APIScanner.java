@@ -16,7 +16,9 @@
 package org.jaxygen.frame.scanner;
 
 import com.google.inject.Module;
+import java.lang.reflect.Modifier;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.frame.config.JaxygenModule;
 import org.jaxygen.typeconverter.ConvertersRegistry;
@@ -30,7 +32,10 @@ public class APIScanner {
 
     public static Set<Class<? extends JaxygenModule>> findModules() {
         Reflections reflections = new Reflections("");
-        return reflections.getSubTypesOf(JaxygenModule.class);
+        return reflections.getSubTypesOf(JaxygenModule.class)
+                .stream()
+                .filter(c -> Modifier.isAbstract(c.getModifiers()) == false)
+                .collect(Collectors.toSet());
     }
 
     public static Set<Class<?>> findServices(Package pkg) {
