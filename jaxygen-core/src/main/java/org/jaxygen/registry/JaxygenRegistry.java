@@ -15,9 +15,14 @@
  */
 package org.jaxygen.registry;
 
+import com.google.common.collect.Lists;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.invoker.ServiceRegistry;
 
 /**
@@ -28,6 +33,7 @@ public class JaxygenRegistry {
 
     private static final JaxygenRegistry REGISTRY = new JaxygenRegistry();
 
+    private final Map<String, Optional<Class<?>>> servicesCache = new HashMap<>();
     private final Set<ServiceRegistry> classRegistries;
 
     private JaxygenRegistry() {
@@ -48,13 +54,18 @@ public class JaxygenRegistry {
 
     public Optional<Class<?>> getClassByPath(String path) {
         Optional<Class<?>> rc = Optional.empty();
-        final Optional<String> serviceName = getServicenameFromPath(path);
-        if (serviceName.isPresent()) {
-        rc = classRegistries.stream()
-                .map(reg -> pathToClass(reg, serviceName.get()))
-                .filter(Optional::isPresent)
-                .findFirst()
-                .orElse(rc);
+        if (servicesCache.containsKey(path)) {
+            rc = servicesCache.get(path);
+        } else {
+            final Optional<String> serviceName = getServicenameFromPath(path);
+            if (serviceName.isPresent()) {
+                rc = classRegistries.stream()
+                        .map(reg -> pathToClass(reg, serviceName.get()))
+                        .filter(Optional::isPresent)
+                        .findFirst()
+                        .orElse(rc);
+            }
+            servicesCache.put(path, rc);
         }
         return rc;
     }
@@ -71,17 +82,37 @@ public class JaxygenRegistry {
         return rc;
     }
 
+    public Optional<String> getMethodNameFromPath(String path) {
+        Optional<String> rc;
+        String[] chunks = path.split("/");
+        if (chunks.length >= 2) {
+            final String className = chunks[chunks.length - 1];
+            rc = Optional.of(className);
+        } else {
+            rc = Optional.empty();
+        }
+        return rc;
+    }
+
     private Optional<Class<?>> pathToClass(ServiceRegistry reg, String path) {
         return reg.getRegisteredClasses().stream()
                 .filter(clazz -> clazz.getName().equals(buildClassName(reg.getPackageBase(), path)))
                 .findFirst();
     }
+
+    public Optional<Method> getMethodByName(Class clazz, String methodName) {                        
+        return Lists.newArrayList(clazz.getMethods())
+                .stream()
+                .filter(m -> m.isAnnotationPresent(NetAPI.class))
+                .filter(m -> m.getName().equals(methodName))
+                .findFirst();
+    }
     
-     private String buildClassName(final String servicesRoot, final String className) {
-      String fullClassName = className;
-      if (!servicesRoot.isEmpty()) {
-          fullClassName = servicesRoot + "." + className;
-      }
-      return fullClassName;
-  }
+    private String buildClassName(final String servicesRoot, final String className) {
+        String fullClassName = className;
+        if (!servicesRoot.isEmpty()) {
+            fullClassName = servicesRoot + "." + className;
+        }
+        return fullClassName;
+    }
 }
