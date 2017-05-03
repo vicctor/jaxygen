@@ -28,8 +28,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.jaxygen.frame.config.JaxygenModule;
 import org.jaxygen.frame.scanner.APIScanner;
-import org.jaxygen.invoker.ClassRegistry;
 import org.jaxygen.typeconverter.ConvertersRegistry;
+import org.jaxygen.invoker.ServiceRegistry;
 
 /**
  *
@@ -39,9 +39,9 @@ public class JaxygenEntrypoint implements ServletContextListener {
 
     private final static Logger LOG = Logger.getLogger("JaxygenEntrypoint");
 
-    private final static List<ClassRegistry> SERVICES = new ArrayList<>();
-    private final static List<ConvertersRegistry> CONVERTERS = new ArrayList<>();
-    private final static List<Module> GUICE_MODULES = new ArrayList<>();
+    private final static List<ServiceRegistry> SERVICES = new ArrayList<>();
+    private final static List<Class<? extends ConvertersRegistry>> CONVERTERS = new ArrayList<>();
+    private final static List<Class<? extends Module>> GUICE_MODULES = new ArrayList<>();
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -73,16 +73,16 @@ public class JaxygenEntrypoint implements ServletContextListener {
         }
     }
 
-    private ClassRegistry toClassRegistry(JaxygenModule module) {
-        return new ClassRegistry() {
+    private ServiceRegistry toClassRegistry(JaxygenModule module) {
+        return new ServiceRegistry() {
             @Override
-            public List<Class> getRegisteredClasses() {
+            public Set<Class<?>> getRegisteredClasses() {
                 return module.getServices();
             }
 
             @Override
             public String getPackageBase() {
-                return module.getServicesBase();
+                return module.getServicesBasePath();
             }
         };
     }

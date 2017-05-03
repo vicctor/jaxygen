@@ -9,10 +9,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.jaxygen.invoker.ClassRegistry;
 import org.jaxygen.security.SecurityProfile;
 import org.jaxygen.security.SecurityProviderFactory;
 import org.jaxygen.security.basic.annotations.UserProfile;
+import org.jaxygen.invoker.ServiceRegistry;
 
 /**
  * Security provider factory. This factor creates simple security provider
@@ -48,7 +48,7 @@ public class BasicSecurityProviderFactory implements SecurityProviderFactory {
   * @param registry A class registry managed by this provider.
   * @param profiles A list of available security profiles.
   */
- public BasicSecurityProviderFactory(ClassRegistry registry, String... profiles) {
+ public BasicSecurityProviderFactory(ServiceRegistry registry, String... profiles) {
   this.profiles = profiles;
   this.alowedMethods = new HashMap<String, SecuredMethodDescriptor>();
   Set<String> profilesSet = new HashSet<String>(Arrays.asList(profiles));

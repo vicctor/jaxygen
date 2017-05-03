@@ -16,7 +16,7 @@
 package org.jaxygen.frame.config;
 
 import com.google.inject.Module;
-import java.util.List;
+import java.util.Set;
 import org.jaxygen.frame.entrypoint.JaxygenApplicationInitialsationError;
 import org.jaxygen.typeconverter.ConvertersRegistry;
 
@@ -25,11 +25,18 @@ import org.jaxygen.typeconverter.ConvertersRegistry;
  * @author Artur
  */
 public interface JaxygenModule {
+
     String getName();
-    void onInit()  throws JaxygenApplicationInitialsationError;
+
+    void onInit() throws JaxygenApplicationInitialsationError;
+
     void onClose();
-    List<Class> getServices();
-    List<ConvertersRegistry> getConverters();
-    List<Module> getGuiceModules();
-    String getServicesBase();
+
+    Set<Class<?>> getServices();
+
+    String getServicesBasePath();
+
+    Set<Class<? extends ConvertersRegistry>> getConverters();
+
+    Set<Class<? extends Module>> getGuiceModules();
 }

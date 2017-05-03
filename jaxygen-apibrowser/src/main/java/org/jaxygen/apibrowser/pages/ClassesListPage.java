@@ -12,9 +12,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.invoker.ClassRegistry;
 import org.jaxygen.security.basic.annotations.UserProfile;
 import org.jaxygen.url.UrlQuery;
+import org.jaxygen.invoker.ServiceRegistry;
 
 /**
  *
@@ -49,7 +49,7 @@ public class ClassesListPage extends Page {
       }
       rc = table;
     } else {
-      rc = new HTMLLabel("Please configure servicePath context-param in yout web.xml file. It must point to " + ClassRegistry.class.getCanonicalName() + " interface implementation");
+      rc = new HTMLLabel("Please configure servicePath context-param in yout web.xml file. It must point to " + ServiceRegistry.class.getCanonicalName() + " interface implementation");
     }
 
     return rc;

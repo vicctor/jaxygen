@@ -20,7 +20,7 @@ package org.jaxygen.frame.config;
  * @author Artur
  */
 @lombok.Data
-public class ServicesPackageDescriptor extends PackageDescriptor{
+public class ServicesPackageDescriptor extends ModuleDescriptor{
     public final static String SAME_AS_PATH = null;
 
     /** Class path base, the base will be removed from the beginning of the 

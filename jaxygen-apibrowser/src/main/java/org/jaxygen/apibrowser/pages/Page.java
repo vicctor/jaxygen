@@ -7,15 +7,15 @@ package org.jaxygen.apibrowser.pages;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import org.jaxygen.invoker.ClassRegistry;
 import org.jaxygen.netservice.html.*;
+import org.jaxygen.invoker.ServiceRegistry;
 
 /**
  *
  * @author artur
  */
 public class Page implements HTMLElement {
-  private ClassRegistry registry;
+  private ServiceRegistry registry;
     
   private final HTML html = new HTML();
   private final HTMLBody body = new HTMLBody();
@@ -83,7 +83,7 @@ public class Page implements HTMLElement {
    
     if (registryClassName != null) {
       try {
-        Class<ClassRegistry> registryClass = (Class<ClassRegistry>) Thread.currentThread().getContextClassLoader().loadClass(registryClassName);
+        Class<ServiceRegistry> registryClass = (Class<ServiceRegistry>) Thread.currentThread().getContextClassLoader().loadClass(registryClassName);
         setRegistry(registryClass.newInstance());
       } catch (InstantiationException ex) {
         throw new ServletException("Cann not instantiate class registy " + registryClassName + ". Please check classRegistry property in your web.xml <context-param> section", ex);
@@ -99,14 +99,14 @@ public class Page implements HTMLElement {
   /**
    * @return the registry
    */
-  public ClassRegistry getRegistry() {
+  public ServiceRegistry getRegistry() {
     return registry;
   }
 
   /**
    * @param registry the registry to set
    */
-  public void setRegistry(ClassRegistry registry) {
+  public void setRegistry(ServiceRegistry registry) {
     this.registry = registry;
   }
 }

@@ -15,12 +15,10 @@
  */
 package org.jaxygen.classregistryimplementation;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.invoker.ClassRegistry;
 import org.reflections.Reflections;
+import org.jaxygen.invoker.ServiceRegistry;
 
 /**
  * Utility implementation of the ClassRegistry. This class registry
@@ -34,7 +32,7 @@ import org.reflections.Reflections;
  *
  * @author Artur
  */
-public abstract class PackageBrowserClassRegistry implements ClassRegistry {
+public abstract class PackageBrowserClassRegistry implements ServiceRegistry {
 
     private final String scannedPackageName;
 
@@ -48,13 +46,11 @@ public abstract class PackageBrowserClassRegistry implements ClassRegistry {
     }
 
     @Override
-    public List<Class> getRegisteredClasses() {
-        List<Class> classes = new ArrayList<>();
+    public Set<Class<?>> getRegisteredClasses() {
         Reflections reflections = new Reflections(scannedPackageName);
         Set<Class<?>> annotated
                 = reflections.getTypesAnnotatedWith(NetAPI.class);
-        classes.addAll(annotated);
-        return classes;
+        return annotated;
     }
 
 }

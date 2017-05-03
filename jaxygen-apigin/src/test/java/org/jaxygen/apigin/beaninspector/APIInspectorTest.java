@@ -15,13 +15,13 @@
  */
 package org.jaxygen.apigin.beaninspector;
 
-import org.jaxygen.apigin.beaninspector.engine.APIInspector;
 import com.google.common.collect.Lists;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.apigin.beaninspector.data.ServiceWithPublishedMethods;
 import org.jaxygen.apigin.beaninspector.data.ServiceWithotutMethods;
+import org.jaxygen.apigin.beaninspector.engine.APIInspector;
 import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
 import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
 import org.jaxygen.apigin.beaninspector.model.ArrayField;
@@ -74,7 +74,7 @@ public class APIInspectorTest {
     public void shall_inspectServiceNetapiAnnotation() throws Exception {
         // given
         Class serviceClass = ServiceWithotutMethods.class;
-        List<Class> services = Lists.newArrayList(serviceClass);
+        List<Class<?>> services = Lists.newArrayList(serviceClass);
         String basePath = null;
 
         // when
@@ -99,7 +99,7 @@ public class APIInspectorTest {
     public void shall_pathShallBeShorten() throws Exception {
         // given
         Class serviceClass = ServiceWithotutMethods.class;
-        List<Class> services = Lists.newArrayList(serviceClass);
+        List<Class<?>> services = Lists.newArrayList(serviceClass);
         String basePath = "org/jaxygen/apigin/beaninspector/data";
 
         // when
@@ -118,7 +118,7 @@ public class APIInspectorTest {
     public void shall_throwExceptionIfNetAPIMissing() {
         // given
         final Class clazz = this.getClass();
-        final List<Class> services = Lists.newArrayList(clazz);
+        final List<Class<?>> services = Lists.newArrayList(clazz);
 
         // when
         Throwable res = catchThrowable(() -> new APIInspector().inspect(services, null));
@@ -133,7 +133,7 @@ public class APIInspectorTest {
     public void shall_inspectServiceWithPublishedMethods() throws InspectionError {
         // given
         final Class clazz = ServiceWithPublishedMethods.class;
-        final List<Class> services = Lists.newArrayList(clazz);
+        final List<Class<?>> services = Lists.newArrayList(clazz);
         String basePath = "org/jaxygen/apigin/beaninspector/data";
 
         // when

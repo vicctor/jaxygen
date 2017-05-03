@@ -15,8 +15,11 @@
  */
 package org.jaxygen.frame.scanner;
 
+import com.google.inject.Module;
 import java.util.Set;
+import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.frame.config.JaxygenModule;
+import org.jaxygen.typeconverter.ConvertersRegistry;
 import org.reflections.Reflections;
 
 /**
@@ -24,8 +27,24 @@ import org.reflections.Reflections;
  * @author Artur
  */
 public class APIScanner {
+
     public static Set<Class<? extends JaxygenModule>> findModules() {
-     Reflections reflections = new Reflections("");   
-     return reflections.getSubTypesOf(JaxygenModule.class);
+        Reflections reflections = new Reflections("");
+        return reflections.getSubTypesOf(JaxygenModule.class);
+    }
+
+    public static Set<Class<?>> findServices(Package pkg) {
+        Reflections reflections = new Reflections(pkg.getName());
+        return reflections.getTypesAnnotatedWith(NetAPI.class);
+    }
+
+    public static Set<Class<? extends ConvertersRegistry>> findConverters(Package pkg) {
+        Reflections reflections = new Reflections(pkg.getName());
+        return reflections.getSubTypesOf(ConvertersRegistry.class);
+    }
+    
+    public static Set<Class<? extends Module>> findGuiceModules(Package pkg) {
+        Reflections reflections = new Reflections(pkg.getName());
+        return reflections.getSubTypesOf(Module.class);
     }
 }

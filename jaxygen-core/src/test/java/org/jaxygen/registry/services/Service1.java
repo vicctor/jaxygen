@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.frame.config;
+package org.jaxygen.registry.services;
+
+import org.jaxygen.annotations.NetAPI;
 
 /**
  *
  * @author Artur
  */
-@lombok.Data
-public class PackageDescriptor {
-
-    /**
-     * The name of the JAVA package containing module classes.
-     */
-    private String packageName;
+@NetAPI(description = "Test service 1")
+public class Service1 {
+    
 }

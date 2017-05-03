@@ -16,7 +16,7 @@
 package org.jaxygen.frame.scanner.data;
 
 import com.google.inject.Module;
-import java.util.List;
+import java.util.Set;
 import org.jaxygen.frame.config.JaxygenModule;
 import org.jaxygen.frame.entrypoint.JaxygenApplicationInitialsationError;
 import org.jaxygen.typeconverter.ConvertersRegistry;
@@ -28,17 +28,17 @@ import org.jaxygen.typeconverter.ConvertersRegistry;
 public class TestModule implements JaxygenModule {
 
     @Override
-    public List<Class> getServices() {
+    public Set<Class<?>> getServices() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<ConvertersRegistry> getConverters() {
+    public Set<Class<? extends ConvertersRegistry>> getConverters() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Module> getGuiceModules() {
+    public Set<Class<? extends Module>> getGuiceModules() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -56,7 +56,7 @@ public class TestModule implements JaxygenModule {
     }
 
     @Override
-    public String getServicesBase() {
+    public String getServicesBasePath() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

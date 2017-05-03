@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 imfact02.
+ * Copyright 2017 Artur.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.client.it;
-
-import java.util.HashSet;
-import java.util.Set;
-import org.jaxygen.invoker.ServiceRegistry;
+package org.jaxygen.frame.config;
 
 /**
  *
- * @author imfact02
+ * @author Artur
  */
-public class Registry implements ServiceRegistry{
+@lombok.Data
+public class ModuleDescriptor {
 
-    private static Set<Class<?>> classes = new HashSet<>();
-    static {
-        classes.add(TestBean.class);
-    }
+    private Package servicesPackage;
+    private String servicesPath;
+    private Package convertersPackage;
+    private Package guiceModulesPackage;
 
-    @Override
-    public String getPackageBase() {
-        return "org.jaxygen.client.it";
-    }
-    
-    public Set<Class<?>> getRegisteredClasses() {
-        return classes;
-    }
-    
 }

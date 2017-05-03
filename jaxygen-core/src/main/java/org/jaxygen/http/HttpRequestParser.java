@@ -90,9 +90,8 @@ public class HttpRequestParser implements HttpRequestParams {
 
     /**
      * @param item File item passed in request.
-     * @throws Exception .
      */
-    private void processUploadedFile(final FileItem item) throws Exception {
+    private void processUploadedFile(final FileItem item) {
         String fieldName = item.getFieldName();
         String fileName = item.getName();
         String contentType = item.getContentType();

@@ -21,7 +21,7 @@ import java.util.Comparator;
  *
  * @author jknast
  */
-public class ClassNameComparator implements Comparator<Class> {
+public class ClassNameComparator implements Comparator<Class<?>> {
 
     @Override
     public int compare(Class o1, Class o2) {

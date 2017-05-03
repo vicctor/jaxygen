@@ -15,10 +15,10 @@
  */
 package org.jaxygen.netserviceapisample;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jaxygen.invoker.ClassRegistry;
+import java.util.HashSet;
+import java.util.Set;
 import org.jaxygen.netserviceapisample.business.*;
+import org.jaxygen.invoker.ServiceRegistry;
 
 /** This is the entry point of the application.
  * 
@@ -28,11 +28,11 @@ import org.jaxygen.netserviceapisample.business.*;
  *
  * @author Artur Keska
  */
-public class SampleClassRegistry implements ClassRegistry
+public class SampleClassRegistry implements ServiceRegistry
 {
     @Override
-    public List<Class> getRegisteredClasses() {
-        List<Class> clases = new ArrayList<Class>();
+    public Set<Class<?>> getRegisteredClasses() {
+        Set<Class<?>> clases = new HashSet<>();
         // here are added classes to the registry.
         // Go follow classes to check out the implementation details.
         clases.add(HelloWorld.class);

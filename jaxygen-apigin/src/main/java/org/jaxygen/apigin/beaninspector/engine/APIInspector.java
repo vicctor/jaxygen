@@ -56,7 +56,7 @@ public class APIInspector {
      * @return
      * @throws InspectionError
      */
-    public APIDescriptror inspect(Collection<Class> services, final String basePath) throws InspectionError {
+    public APIDescriptror inspect(Collection<Class<?>> services, final String basePath) throws InspectionError {
         APIDescriptror descriptor = new APIDescriptror();
         descriptor.setServiceBase(Strings.emptyToNull(basePath));
         try {

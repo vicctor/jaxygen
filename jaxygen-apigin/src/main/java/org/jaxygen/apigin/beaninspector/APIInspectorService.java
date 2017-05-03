@@ -16,12 +16,13 @@
 package org.jaxygen.apigin.beaninspector;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.apigin.beaninspector.engine.APIInspector;
 import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
 import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
-import org.jaxygen.invoker.ClassRegistry;
+import org.jaxygen.invoker.ServiceRegistry;
 
 /**
  *
@@ -31,7 +32,7 @@ import org.jaxygen.invoker.ClassRegistry;
         + "applicaiton.")
 public class APIInspectorService {
 
-    List<ClassRegistry> registries;
+    List<ServiceRegistry> registries;
 
     @NetAPI
     List<APIDescriptror> describe() {
@@ -40,10 +41,10 @@ public class APIInspectorService {
                 .collect(Collectors.toList());
     }
 
-    private static APIDescriptror registryToServiceDescriptors(final ClassRegistry reg) {
+    private static APIDescriptror registryToServiceDescriptors(final ServiceRegistry reg) {
         try {
             String packageBase = reg.getPackageBase();
-            List<Class> serviceClasses = reg.getRegisteredClasses();
+            Set<Class<?>> serviceClasses = reg.getRegisteredClasses();
 
             return new APIInspector().inspect(serviceClasses, packageBase);
         } catch (InspectionError ex) {

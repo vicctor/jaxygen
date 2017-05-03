@@ -24,7 +24,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.invoker.ClassRegistry;
+import org.jaxygen.invoker.ServiceRegistry;
 import org.jaxygen.netservice.html.HTMAnchor;
 import org.jaxygen.netservice.html.HTMLDiv;
 import org.jaxygen.netservice.html.HTMLElement;
@@ -66,7 +66,7 @@ public class ClassesSnippestPage extends Page {
 
    table.getHeader().createColumns("className", "Description", "Methods");
       boolean even = false;
-      List<Class> registeredClasses = getRegistry().getRegisteredClasses();
+      List<Class<?>> registeredClasses = new ArrayList<>(getRegistry().getRegisteredClasses());
       Collections.sort(registeredClasses, new ClassNameComparator());
       for (Class c : registeredClasses) {
     HTMLTable.Row row = new HTMLTable.Row();
@@ -93,7 +93,7 @@ public class ClassesSnippestPage extends Page {
    }
    rc = table;
   } else {
-   rc = new HTMLLabel("Please configure servicePath context-param in yout web.xml file. It must point to " + ClassRegistry.class.getCanonicalName() + " interface implementation");
+   rc = new HTMLLabel("Please configure servicePath context-param in yout web.xml file. It must point to " + ServiceRegistry.class.getCanonicalName() + " interface implementation");
   }
 
   return rc;
