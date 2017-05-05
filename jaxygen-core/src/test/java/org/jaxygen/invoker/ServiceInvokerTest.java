@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Properties;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,6 +76,60 @@ public class ServiceInvokerTest {
         // then
         Assertions.assertThat(new String(output.toByteArray()))
                 .isEqualTo("{\"dto\":{\"responseClass\":\"java.lang.Integer\",\"responseObject\":10}}");
+    }
+    
+    @Test
+    public void shall_returnSum_InProperties_OutJSON() throws Exception {
+        // given       
+        HttpSession session = mock(HttpSession.class);
+        Properties params = new Properties();
+        params.put("a", "11");
+        params.put("b", "12");
+        
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameterNames()).thenReturn(params.keys());
+        when(request.getParameter(any())).thenAnswer(p -> params.getProperty(p.getArgumentAt(0, String.class)));
+        when(request.getQueryString()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("ServiceA/sum");
+        when(request.getMethod()).thenReturn("get");
+        when(request.getSession(true)).thenReturn(session);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(response.getOutputStream()).thenReturn(servletOut);
+
+        // when
+        new ServiceInvoker().doGet(request, response);
+
+        // then
+        Assertions.assertThat(new String(output.toByteArray()))
+                .isEqualTo("{\"dto\":{\"responseClass\":\"java.lang.Integer\",\"responseObject\":23}}");
+    }
+    
+    @Test
+    public void shall_returnSum_InJSON_OutJSON() throws Exception {
+        // given       
+        HttpSession session = mock(HttpSession.class);
+        Properties params = new Properties();
+        params.put("inputType", "JSON");
+        params.put("org.jaxygen.invoker.dto.RequestDTO", "{a:1, b:3}");
+        
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameterNames()).thenReturn(params.keys());
+        when(request.getParameter(any())).thenAnswer(p -> params.getProperty(p.getArgumentAt(0, String.class)));
+        when(request.getQueryString()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("ServiceA/sum");
+        when(request.getMethod()).thenReturn("get");
+        when(request.getSession(true)).thenReturn(session);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(response.getOutputStream()).thenReturn(servletOut);
+
+        // when
+        new ServiceInvoker().doGet(request, response);
+
+        // then
+        Assertions.assertThat(new String(output.toByteArray()))
+                .isEqualTo("{\"dto\":{\"responseClass\":\"java.lang.Integer\",\"responseObject\":4}}");
     }
 
 }

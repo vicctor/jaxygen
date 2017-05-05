@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.invoker.services;
-
-import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.invoker.dto.RequestDTO;
+package org.jaxygen.invoker.dto;
 
 /**
  *
  * @author Artur
  */
-@NetAPI
-public class ServiceA {
-    @NetAPI(description = "This method simply returns 10")
-    public int getInt10Value() {
-        return 10;
-    }
-    
-    @NetAPI(description = "Return a sum of two values")
-    public int sum(RequestDTO request) {
-        return request.getA() + request.getB();
-    }
+@lombok.Data
+public class RequestDTO {
+    public int a;
+    public int b;
 }

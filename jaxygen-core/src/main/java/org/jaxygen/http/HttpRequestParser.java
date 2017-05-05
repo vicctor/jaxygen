@@ -147,7 +147,9 @@ public class HttpRequestParser implements HttpRequestParams {
         while (parameterNames.hasMoreElements()) {
             String name = (String) parameterNames.nextElement();
             Object value = request.getParameter(name);
-            addParameter(name, value.toString());
+            if (value != null) {
+                addParameter(name, value.toString());
+            }
         }
     }
 
