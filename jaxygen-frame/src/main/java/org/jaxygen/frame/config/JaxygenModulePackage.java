@@ -16,7 +16,9 @@
 package org.jaxygen.frame.config;
 
 import com.google.inject.Module;
+import java.util.Collections;
 import java.util.Set;
+import org.jaxygen.frame.entrypoint.JaxygenApplicationInitialsationError;
 import org.jaxygen.frame.scanner.APIScanner;
 import org.jaxygen.typeconverter.ConvertersRegistry;
 
@@ -26,30 +28,76 @@ import org.jaxygen.typeconverter.ConvertersRegistry;
  */
 public abstract class JaxygenModulePackage implements JaxygenModule {
 
-    private ModuleDescriptor descriptor;
+    private ModuleDescriptor descriptor = new ModuleDescriptor();
 
     public JaxygenModulePackage(ModuleDescriptor descriptor) {
         this.descriptor = descriptor;
     }
-    
-    
-    @Override
-    public Set<Class<?>> getServices() {
-        return APIScanner.findServices(descriptor.getServicesPackage());
+
+    public JaxygenModulePackage() {
+    }
+
+    protected final JaxygenModulePackage withServicesPackage(Package servicesPackage) {
+        descriptor.setServicesPackage(servicesPackage);
+        return this;
+    }
+
+    protected final JaxygenModulePackage withConverters(Package convertersPackage) {
+        descriptor.setConvertersPackage(convertersPackage);
+        return this;
+    }
+
+    protected final JaxygenModulePackage withGuiceModules(Package guiceModulesPackage) {
+        descriptor.setGuiceModulesPackage(guiceModulesPackage);
+        return this;
     }
 
     @Override
-    public String getServicesBasePath() {
-        return descriptor.getServicesPath();
+    public Set<Class<?>> getServices() {
+        if (descriptor.getServicesPackage() != null) {
+            System.out.println("Get services from package: " + descriptor.getServicesPackage());
+            return APIScanner.findServices(descriptor.getServicesPackage());
+        } else {
+            return Collections.EMPTY_SET;
+        }
+    }
+
+    @Override
+    public String getServicesPrefix() {
+        return descriptor.getServicesPrefix();
     }
 
     @Override
     public Set<Class<? extends ConvertersRegistry>> getConverters() {
-        return APIScanner.findConverters(descriptor.getConvertersPackage());
+        if (descriptor.getConvertersPackage() != null) {
+            return APIScanner.findConverters(descriptor.getConvertersPackage());
+        } else {
+            return Collections.EMPTY_SET;
+        }
+
     }
 
     @Override
     public Set<Class<? extends Module>> getGuiceModules() {
-        return APIScanner.findGuiceModules(descriptor.getGuiceModulesPackage());
+        if (descriptor.getGuiceModulesPackage() != null) {
+            return APIScanner.findGuiceModules(descriptor.getGuiceModulesPackage());
+        } else {
+            return Collections.EMPTY_SET;
+        }
+    }
+
+    @Override
+    public void onInit() throws JaxygenApplicationInitialsationError {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void onClose() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName();
     }
 }

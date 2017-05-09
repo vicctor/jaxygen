@@ -15,6 +15,7 @@
  */
 package org.jaxygen.apigin.servicesbrowser;
 
+import java.util.List;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
 
@@ -27,5 +28,10 @@ import org.jaxygen.annotations.Status;
         status = Status.Mockup
 )
 public class ServicesBrowser {
-    
+
+    @NetAPI
+    public List<String> a() {
+         return null;
+    }
+
 }

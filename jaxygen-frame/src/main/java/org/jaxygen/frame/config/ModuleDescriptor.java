@@ -20,11 +20,12 @@ package org.jaxygen.frame.config;
  * @author Artur
  */
 @lombok.Data
+@lombok.Builder
+@lombok.AllArgsConstructor
+@lombok.NoArgsConstructor
 public class ModuleDescriptor {
-
     private Package servicesPackage;
-    private String servicesPath;
+    private String servicesPrefix;
     private Package convertersPackage;
     private Package guiceModulesPackage;
-
 }

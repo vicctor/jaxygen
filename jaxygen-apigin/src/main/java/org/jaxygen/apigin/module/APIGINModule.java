@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.frame.config;
+package org.jaxygen.apigin.module;
+
+import org.jaxygen.apigin.servicesbrowser.APIInspectorService;
+import org.jaxygen.frame.config.JaxygenModulePackage;
 
 /**
  *
  * @author Artur
  */
-@lombok.Getter
-@lombok.Setter
-public class ServicesPackageDescriptor extends ModuleDescriptor{
-    public final static String SAME_AS_PATH = null;
+public class APIGINModule extends JaxygenModulePackage {
+    public APIGINModule() {
+        super();
+        withServicesPackage(APIInspectorService.class.getPackage());
+    }
 
-    /** Class path base, the base will be removed from the beginning of the 
-     * service entrypoint URL name.
-     * 
-     * E.g if your class name is foo.blah.C3P0
-     * and you specify the classpath base as foo, then, resulting URL will be
-     * invoker/blah/C3P0
-     * 
-     */
-    private String packageBase = SAME_AS_PATH;
+    @Override
+    public String getServicesPrefix() {
+        return "org.jaxygen.apigin.servicesbrowser";
+    }
+    
 }

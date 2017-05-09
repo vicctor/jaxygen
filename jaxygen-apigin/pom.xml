@@ -10,7 +10,7 @@
     <version>1.0.8-SNAPSHOT</version>
     <packaging>jar</packaging>
     
-     <dependencies>
+    <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -36,23 +36,28 @@
             <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
-    
+        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.9-RC1</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
-        
         <!-- https://mvnrepository.com/artifact/net.jodah/typetools -->
         <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>typetools</artifactId>
             <version>0.4.8</version>
         </dependency>
-          <dependency>
-               <groupId>org.jaxygen</groupId>
-               <artifactId>jaxygen-annotations</artifactId>
-               <version>1.0.8-SNAPSHOT</version>
-          </dependency>
-     </dependencies>
+        <dependency>
+            <groupId>org.jaxygen</groupId>
+            <artifactId>jaxygen-annotations</artifactId>
+            <version>1.0.8-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jaxygen</groupId>
+            <artifactId>jaxygen-frame</artifactId>
+            <version>1.0.8-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

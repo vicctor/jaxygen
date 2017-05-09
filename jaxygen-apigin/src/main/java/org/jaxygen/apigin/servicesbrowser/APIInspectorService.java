@@ -13,29 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apigin.beaninspector;
+package org.jaxygen.apigin.servicesbrowser;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.apigin.beaninspector.engine.APIInspector;
-import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
-import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
-import org.jaxygen.invoker.ServiceRegistry;
+import org.jaxygen.annotations.Status;
+import org.jaxygen.frame.entrypoint.JaxygenModulesRegistry;
 
 /**
  *
  * @author Artur
  */
 @NetAPI(description = "This service provides an information about all classes registered within the "
-        + "applicaiton.")
+        + "applicaiton.",
+        version = "2.0",
+        status = Status.Mockup)
 public class APIInspectorService {
 
-    List<ServiceRegistry> registries;
+    //List<ServiceRegistry> registries;
+    @NetAPI(description = "Return the list of registered module names")
+    public List<String> getModules() {
+//        List<String> result = new ArrayList<>();
+//        for (JaxygenModule m : JaxygenModulesRegistry.getInstance()) {
+//            result.add(m.getName());
+//        }
+//        return result;
+        return JaxygenModulesRegistry.getInstance().stream()
+                .map(module -> module.getName())
+                .collect(Collectors.toList());
+               
+    }
 
-    @NetAPI
-    List<APIDescriptror> describe() {
+    /*@NetAPI
+    public List<APIDescriptror> describeModule() {
         return registries.stream()
                 .map(APIInspectorService::registryToServiceDescriptors)
                 .collect(Collectors.toList());
@@ -50,5 +61,5 @@ public class APIInspectorService {
         } catch (InspectionError ex) {
             throw new RuntimeException("Could not generate API descriptr", ex);
         }
-    }
+    }*/
 }

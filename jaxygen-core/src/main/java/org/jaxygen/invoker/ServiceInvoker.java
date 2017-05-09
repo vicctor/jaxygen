@@ -148,7 +148,7 @@ public class ServiceInvoker extends HttpServlet {
                     }
                 }
             } else {
-                throwError(response, responseConverter, "InvalidRequest", "Method " + clazz.get().getCanonicalName() + "." + methodName + " not found");
+                throwError(response, responseConverter, "ServiceNotFound", "Could not find service for given resource " + resourcePath);
             }
         } catch (Exception ex) {
             throwError(response, new JsonResponseConverter(), "Could not parse properties", ex);

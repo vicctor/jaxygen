@@ -34,7 +34,7 @@ public interface JaxygenModule {
 
     Set<Class<?>> getServices();
 
-    String getServicesBasePath();
+    String getServicesPrefix();
 
     Set<Class<? extends ConvertersRegistry>> getConverters();
 

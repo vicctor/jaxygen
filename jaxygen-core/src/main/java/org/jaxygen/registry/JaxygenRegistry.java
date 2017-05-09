@@ -95,8 +95,9 @@ public class JaxygenRegistry {
     }
 
     private Optional<Class<?>> pathToClass(ServiceRegistry reg, String path) {
+        String fullPath = buildClassName(reg.getPackageBase(), path);
         return reg.getRegisteredClasses().stream()
-                .filter(clazz -> clazz.getName().equals(buildClassName(reg.getPackageBase(), path)))
+                .filter(clazz -> clazz.getName().equals(fullPath))
                 .findFirst();
     }
 
@@ -110,7 +111,7 @@ public class JaxygenRegistry {
     
     private String buildClassName(final String servicesRoot, final String className) {
         String fullClassName = className;
-        if (!servicesRoot.isEmpty()) {
+        if (servicesRoot != null && !servicesRoot.isEmpty()) {
             fullClassName = servicesRoot + "." + className;
         }
         return fullClassName;

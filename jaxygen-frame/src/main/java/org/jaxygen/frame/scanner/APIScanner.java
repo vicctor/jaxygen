@@ -17,12 +17,16 @@ package org.jaxygen.frame.scanner;
 
 import com.google.inject.Module;
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.frame.config.JaxygenModule;
 import org.jaxygen.typeconverter.ConvertersRegistry;
 import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
 
 /**
  *
@@ -31,7 +35,8 @@ import org.reflections.Reflections;
 public class APIScanner {
 
     public static Set<Class<? extends JaxygenModule>> findModules() {
-        Reflections reflections = new Reflections("");
+
+        Reflections reflections = buildReflections("");
         return reflections.getSubTypesOf(JaxygenModule.class)
                 .stream()
                 .filter(c -> Modifier.isAbstract(c.getModifiers()) == false)
@@ -39,17 +44,38 @@ public class APIScanner {
     }
 
     public static Set<Class<?>> findServices(Package pkg) {
-        Reflections reflections = new Reflections(pkg.getName());
-        return reflections.getTypesAnnotatedWith(NetAPI.class);
+        return buildReflections(pkg.getName()).getTypesAnnotatedWith(NetAPI.class);
     }
 
     public static Set<Class<? extends ConvertersRegistry>> findConverters(Package pkg) {
-        Reflections reflections = new Reflections(pkg.getName());
-        return reflections.getSubTypesOf(ConvertersRegistry.class);
+        return buildReflections(pkg.getName()).getSubTypesOf(ConvertersRegistry.class);
     }
-    
+
     public static Set<Class<? extends Module>> findGuiceModules(Package pkg) {
-        Reflections reflections = new Reflections(pkg.getName());
-        return reflections.getSubTypesOf(Module.class);
+        return buildReflections(pkg.getName()).getSubTypesOf(Module.class);
+    }
+
+    public static Collection<URL> effectiveClassPathUrls(ClassLoader... classLoaders) {
+        final Collection<URL> forClassLoader = ClasspathHelper.forClassLoader(classLoaders);
+        return ClasspathHelper.forManifest(forClassLoader);
+    }
+
+    private static Reflections buildReflections(String packageName) {
+        // good for Jetty
+        URLClassLoader loader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        URLClassLoader loader2 = (URLClassLoader) APIScanner.class.getClassLoader();
+        URLClassLoader sysCl = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Collection<URL> urls = effectiveClassPathUrls(loader, loader2, sysCl);
+        URL threadURLs[] = loader.getURLs();
+        URL packageLoader[] = loader2.getURLs();
+        URL sysURLs[] = sysCl.getURLs();
+
+        URL[] urlsArray = urls.stream()
+                .toArray(URL[]::new);
+        for (URL url : urls) {
+            System.out.println("Search for modules in: " + url);
+        }
+        Reflections reflections = new Reflections(packageName, urls, loader, loader2);
+        return reflections;
     }
 }

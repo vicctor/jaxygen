@@ -172,6 +172,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jaxygen</groupId>
+                <artifactId>tadam-maven-plugin</artifactId>
+                <version>1.1.0-SNAPSHOT</version>   
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>tadam</goal>
+                        </goals>
+                    </execution>
+                </executions>             
+            </plugin>
         </plugins>
     </build>
  
@@ -204,12 +217,12 @@
         <module>jaxygen-annotations</module>
         <module>jaxygen-core</module>
         <module>jaxygen-typeconverter</module>        
-        <module>jaxygen-api-sample</module>
         <module>jaxygen-apibrowser</module>
         <module>jaxygen-apibrowser-style-simple</module>
         <module>jaxygen-client-it</module>
-        <module>jaxygen-apigin</module>
         <module>jaxygen-frame</module>
+        <module>jaxygen-apigin</module>
+        <module>jaxygen-api-sample</module>
     </modules>
   
   

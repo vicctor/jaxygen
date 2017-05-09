@@ -22,7 +22,6 @@ import javax.servlet.http.HttpSession;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.SessionContext;
 import org.jaxygen.annotations.Status;
-import org.jaxygen.netserviceapisample.SampleClassRegistry;
 import org.jaxygen.netserviceapisample.business.dto.LoginRequestDTO;
 import org.jaxygen.security.SecurityProfile;
 import org.jaxygen.security.annotations.LoginMethod;
@@ -62,11 +61,11 @@ public class SecuritySample {
   
   // select security profiule depending on logged in user
   if ("admin".equals(request.getUserName())) {
-   profile = new BasicSecurityProviderFactory(new SampleClassRegistry(), "admin", "user").getProvider();
+   profile = new BasicSecurityProviderFactory("admin", "user").getProvider();
   } else if ("user".equals(request.getUserName())) {
-   profile = new BasicSecurityProviderFactory(new SampleClassRegistry(), "user").getProvider();
+   profile = new BasicSecurityProviderFactory("user").getProvider();
   } else {
-   profile = new BasicSecurityProviderFactory(new SampleClassRegistry(), "guest").getProvider();
+   profile = new BasicSecurityProviderFactory("guest").getProvider();
   }
   return profile;
  }

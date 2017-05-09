@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.frame.config;
+package org.jaxygen.frame.entrypoint;
+
+import java.util.HashSet;
+import org.jaxygen.frame.config.JaxygenModule;
 
 /**
  *
  * @author Artur
  */
-@lombok.Getter
-@lombok.Setter
-public class ServicesPackageDescriptor extends ModuleDescriptor{
-    public final static String SAME_AS_PATH = null;
+public class JaxygenModulesRegistry extends  HashSet<JaxygenModule> {
+    private static JaxygenModulesRegistry one = new JaxygenModulesRegistry();
 
-    /** Class path base, the base will be removed from the beginning of the 
-     * service entrypoint URL name.
-     * 
-     * E.g if your class name is foo.blah.C3P0
-     * and you specify the classpath base as foo, then, resulting URL will be
-     * invoker/blah/C3P0
-     * 
-     */
-    private String packageBase = SAME_AS_PATH;
+    private JaxygenModulesRegistry() {
+    }
+    
+    public static JaxygenModulesRegistry getInstance() {
+        return one;
+    }
 }

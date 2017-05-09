@@ -56,7 +56,7 @@ public class TestModule implements JaxygenModule {
     }
 
     @Override
-    public String getServicesBasePath() {
+    public String getServicesPrefix() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

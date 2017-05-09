@@ -24,12 +24,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.jaxygen.frame.config.JaxygenModule;
 import org.jaxygen.frame.scanner.APIScanner;
-import org.jaxygen.typeconverter.ConvertersRegistry;
 import org.jaxygen.invoker.ServiceRegistry;
+import org.jaxygen.registry.JaxygenRegistry;
+import org.jaxygen.typeconverter.ConvertersRegistry;
 
 /**
  *
@@ -39,19 +41,23 @@ public class JaxygenEntrypoint implements ServletContextListener {
 
     private final static Logger LOG = Logger.getLogger("JaxygenEntrypoint");
 
-    private final static List<ServiceRegistry> SERVICES = new ArrayList<>();
     private final static List<Class<? extends ConvertersRegistry>> CONVERTERS = new ArrayList<>();
     private final static List<Class<? extends Module>> GUICE_MODULES = new ArrayList<>();
+    //private static Set<Class<? extends JaxygenModule>> modules = new HashSet<>();
+    
 
+    
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        LOG.info("Initializing JaxyGen application");
         Set<Class<? extends JaxygenModule>> modules = APIScanner.findModules();
+        LOG.info("Found " + modules.size() + " modules");
         Optional.ofNullable(modules)
                 .orElse(new HashSet<>())
                 .stream()
                 .map(clazz -> toModule(clazz))
                 .filter(Objects::nonNull)
-                .forEach(m ->register(m));
+                .forEach(m -> register(m));
 
     }
 
@@ -62,18 +68,22 @@ public class JaxygenEntrypoint implements ServletContextListener {
 
     private void register(JaxygenModule module) {
         LOG.log(Level.INFO, "Registering module : {0}", module.getName());
+        JaxygenModulesRegistry.getInstance().add(module);
         if (module.getServices() != null) {
-            SERVICES.add(toClassRegistry(module));
+            ServiceRegistry servicesRegistry = toServicesRegistry(module);
+            JaxygenRegistry.instance().addClassRegistry(servicesRegistry);
         }
         if (module.getConverters() != null) {
             CONVERTERS.addAll(module.getConverters());
         }
-        if (module.getGuiceModules()!= null) {
+        if (module.getGuiceModules() != null) {
             GUICE_MODULES.addAll(module.getGuiceModules());
         }
     }
 
-    private ServiceRegistry toClassRegistry(JaxygenModule module) {
+    private ServiceRegistry toServicesRegistry(JaxygenModule module) {
+        LOG.log(Level.INFO, "Registering services from module {0} on removing prefix {1}", new Object[]{module.getName(), module.getServicesPrefix()});
+        dumpServices(module);
         return new ServiceRegistry() {
             @Override
             public Set<Class<?>> getRegisteredClasses() {
@@ -82,7 +92,7 @@ public class JaxygenEntrypoint implements ServletContextListener {
 
             @Override
             public String getPackageBase() {
-                return module.getServicesBasePath();
+                return module.getServicesPrefix();
             }
         };
     }
@@ -95,5 +105,16 @@ public class JaxygenEntrypoint implements ServletContextListener {
             LOG.log(Level.SEVERE, "Unable to initialize module with class " + clazz.getCanonicalName(), ex);
         }
         return result;
+    }
+
+    private void dumpServices(JaxygenModule module) {
+        String prefix = module.getServicesPrefix();
+
+        Stream<String> stream = module.getServices().stream()
+                .map(clazz -> clazz.getName());
+        if (prefix != null) {
+            stream = stream.map(name -> name.replace(prefix, ""));
+        }
+        stream.forEach(name -> LOG.log(Level.INFO, "Registered service endpoint: {0}", name));
     }
 }
