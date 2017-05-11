@@ -62,20 +62,12 @@ public class APIScanner {
 
     private static Reflections buildReflections(String packageName) {
         // good for Jetty
-        URLClassLoader loader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        URLClassLoader loader2 = (URLClassLoader) APIScanner.class.getClassLoader();
-        URLClassLoader sysCl = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Collection<URL> urls = effectiveClassPathUrls(loader, loader2, sysCl);
-        URL threadURLs[] = loader.getURLs();
-        URL packageLoader[] = loader2.getURLs();
-        URL sysURLs[] = sysCl.getURLs();
+        URLClassLoader threadLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        URLClassLoader currentLoader = (URLClassLoader) APIScanner.class.getClassLoader();
+        URLClassLoader systemLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Collection<URL> urls = effectiveClassPathUrls(threadLoader, currentLoader, systemLoader);
 
-        URL[] urlsArray = urls.stream()
-                .toArray(URL[]::new);
-        for (URL url : urls) {
-            System.out.println("Search for modules in: " + url);
-        }
-        Reflections reflections = new Reflections(packageName, urls, loader, loader2);
+        Reflections reflections = new Reflections(packageName, urls, threadLoader, currentLoader);
         return reflections;
     }
 }

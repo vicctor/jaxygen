@@ -15,7 +15,6 @@
  */
 package org.jaxygen.apigin.beaninspector;
 
-import org.jaxygen.apigin.beaninspector.engine.BeanInspector;
 import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import static org.assertj.core.api.Assertions.*;
@@ -23,6 +22,7 @@ import org.jaxygen.apigin.beaninspector.data.ClassWithArrayOfPrimitiveTypes;
 import org.jaxygen.apigin.beaninspector.data.ClassWithEnumField;
 import org.jaxygen.apigin.beaninspector.data.ClassWithListTypes;
 import org.jaxygen.apigin.beaninspector.data.SimpleClassWithSimpleFields;
+import org.jaxygen.apigin.beaninspector.engine.BeanInspector;
 import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
 import org.jaxygen.apigin.beaninspector.model.ArrayField;
 import org.jaxygen.apigin.beaninspector.model.BooleanField;
@@ -137,7 +137,7 @@ public class BeanInspectorTest {
         // then
         assertThat(rc).isFalse();
     }
-    
+
     @Test
     public void shoudl_twoComplexArrayListaBeEqual() {
         // given
@@ -152,7 +152,7 @@ public class BeanInspectorTest {
                 new IntegerField("intField"),
                 new IntegerField("integerObjectField")));
         ArrayField array1 = new ArrayField("arrayListWithoutInformation", content1);
-        
+
         ObjectDescriptor content2 = new ObjectDescriptor();
         content2.setName("SimpleClassWithSimpleFields");
         content2.setClassName("SimpleClassWithSimpleFields");
@@ -164,15 +164,15 @@ public class BeanInspectorTest {
                 new IntegerField("intField"),
                 new IntegerField("integerObjectField")));
         ArrayField array2 = new ArrayField("arrayListWithoutInformation", content2);
-        
+
         // when
         boolean expected = array1.equals(array2);
-        
+
         // then
         assertThat(expected)
                 .isTrue();
     }
-    
+
     @Test
     public void shoudl_twoComplexArrayListaNotBeEqual() {
         // given
@@ -187,7 +187,7 @@ public class BeanInspectorTest {
                 new IntegerField("intField"),
                 new IntegerField("integerObjectField")));
         ArrayField array1 = new ArrayField("a", content1);
-        
+
         ObjectDescriptor content2 = new ObjectDescriptor();
         content2.setName("SimpleClassWithSimpleFields");
         content2.setClassName("SimpleClassWithSimpleFields");
@@ -199,10 +199,10 @@ public class BeanInspectorTest {
                 new IntegerField("intField"),
                 new IntegerField("integerObjectField")));
         ArrayField array2 = new ArrayField("b", content2);
-        
+
         // when
         boolean expected = array1.equals(array2);
-        
+
         // then
         assertThat(expected)
                 .isFalse();
@@ -317,43 +317,44 @@ public class BeanInspectorTest {
         // then
         assertThat(rc).isFalse();
     }
+
     @Test
     public void should_twoEnumWithDifferentValuesNotMatch() {
         // given
         EnumField f1 = new EnumField("a", "A", "B");
         EnumField f2 = new EnumField("a", "Z", "B");
-        
+
         // when
         boolean expected = f1.equals(f2);
-        
+
         // then
         assertThat(expected)
                 .isFalse();
     }
-    
+
     @Test
     public void should_twoEnumWithDifferentNamesNotMatch() {
         // given
         EnumField f1 = new EnumField("a", "A", "B");
         EnumField f2 = new EnumField("b", "A", "B");
-        
+
         // when
         boolean expected = f1.equals(f2);
-        
+
         // then
         assertThat(expected)
                 .isFalse();
     }
-    
+
     @Test
     public void should_twoEnumIdenticalEnumsMatch() {
         // given
         EnumField f1 = new EnumField("a", "A", "B");
         EnumField f2 = new EnumField("a", "A", "B");
-        
+
         // when
         boolean expected = f1.equals(f2);
-        
+
         // then
         assertThat(expected)
                 .isTrue();
@@ -365,7 +366,7 @@ public class BeanInspectorTest {
         Class input = SimpleClassWithSimpleFields.class;
 
         // when
-        ObjectDescriptor rc = (ObjectDescriptor)BeanInspector.inspect(input);
+        ObjectDescriptor rc = (ObjectDescriptor) BeanInspector.inspect(input);
 
         // then
         assertThat(rc)
@@ -385,14 +386,14 @@ public class BeanInspectorTest {
                         new IntegerField("integerObjectField")
                 );
     }
-    
+
     @Test
     public void should_describeClassWithEnum() throws InspectionError {
         // given
         Class input = ClassWithEnumField.class;
 
         // when
-        ObjectDescriptor rc = (ObjectDescriptor)BeanInspector.inspect(input);
+        ObjectDescriptor rc = (ObjectDescriptor) BeanInspector.inspect(input);
 
         // then
         assertThat(rc)
@@ -414,7 +415,7 @@ public class BeanInspectorTest {
         Class input = ClassWithArrayOfPrimitiveTypes.class;
 
         // when
-        ObjectDescriptor rc = (ObjectDescriptor)BeanInspector.inspect(input);
+        ObjectDescriptor rc = (ObjectDescriptor) BeanInspector.inspect(input);
 
         // then
         assertThat(rc)
@@ -440,8 +441,7 @@ public class BeanInspectorTest {
         Class input = ClassWithListTypes.class;
 
         // when
-        ObjectDescriptor rc = (ObjectDescriptor)BeanInspector.inspect(input);
-        
+        ObjectDescriptor rc = (ObjectDescriptor) BeanInspector.inspect(input);
 
         // then
         ObjectDescriptor content = new ObjectDescriptor();
@@ -476,8 +476,7 @@ public class BeanInspectorTest {
         Class input = ClassWithListTypes.class;
 
         // when
-        ObjectDescriptor rc = (ObjectDescriptor)BeanInspector.inspect(input);
-        
+        ObjectDescriptor rc = (ObjectDescriptor) BeanInspector.inspect(input);
 
         // then
         ObjectDescriptor content = new ObjectDescriptor();
@@ -505,15 +504,14 @@ public class BeanInspectorTest {
         assertThat(rc.getFields())
                 .contains(expected);
     }
-    
-        @Test
+
+    @Test
     public void should_describeObjectWithListWithoutAnything() throws InspectionError {
         // given
         Class input = ClassWithListTypes.class;
 
         // when
-        ObjectDescriptor rc = (ObjectDescriptor)BeanInspector.inspect(input);
-        
+        ObjectDescriptor rc = (ObjectDescriptor) BeanInspector.inspect(input);
 
         // then
         ObjectDescriptor content = new ObjectDescriptor();
@@ -540,7 +538,7 @@ public class BeanInspectorTest {
                 .isEqualTo("OBJECT");
         assertThat(rc.getFields())
                 .contains(expected);
-            System.out.println("JSON:" + new GsonBuilder().setPrettyPrinting().create().toJson(rc));
+        System.out.println("JSON:" + new GsonBuilder().setPrettyPrinting().create().toJson(rc));
     }
 
 }

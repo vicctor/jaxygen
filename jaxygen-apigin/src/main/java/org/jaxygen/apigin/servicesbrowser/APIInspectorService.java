@@ -15,10 +15,15 @@
  */
 package org.jaxygen.apigin.servicesbrowser;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
+import org.jaxygen.apigin.beaninspector.engine.APIInspector;
+import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
+import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
+import org.jaxygen.apigin.servicesbrowser.dto.GetModuleServicesRequestDTO;
+import org.jaxygen.apigin.servicesbrowser.dto.ModulesListResponseDTO;
+import org.jaxygen.frame.config.JaxygenModule;
 import org.jaxygen.frame.entrypoint.JaxygenModulesRegistry;
 
 /**
@@ -33,33 +38,21 @@ public class APIInspectorService {
 
     //List<ServiceRegistry> registries;
     @NetAPI(description = "Return the list of registered module names")
-    public List<String> getModules() {
-//        List<String> result = new ArrayList<>();
-//        for (JaxygenModule m : JaxygenModulesRegistry.getInstance()) {
-//            result.add(m.getName());
-//        }
-//        return result;
-        return JaxygenModulesRegistry.getInstance().stream()
+    public ModulesListResponseDTO getModules() {
+        ModulesListResponseDTO rc = new ModulesListResponseDTO();
+        rc.setModuleNames(JaxygenModulesRegistry.getInstance().stream()
                 .map(module -> module.getName())
-                .collect(Collectors.toList());
-               
+                .collect(Collectors.toList()));
+        return rc;
     }
 
-    /*@NetAPI
-    public List<APIDescriptror> describeModule() {
-        return registries.stream()
-                .map(APIInspectorService::registryToServiceDescriptors)
-                .collect(Collectors.toList());
+    @NetAPI
+    public APIDescriptror getModuleServices(GetModuleServicesRequestDTO request) throws JaxygenServiceNotFound, InspectionError {
+        JaxygenModule module
+                = JaxygenModulesRegistry.getInstance().stream()
+                        .filter(m -> request.getServiceName().equals(m.getName()))
+                        .findFirst()
+                        .orElseThrow(() -> new JaxygenServiceNotFound());
+        return new APIInspector().inspect(module.getServices(), module.getServicesPrefix());
     }
-
-    private static APIDescriptror registryToServiceDescriptors(final ServiceRegistry reg) {
-        try {
-            String packageBase = reg.getPackageBase();
-            Set<Class<?>> serviceClasses = reg.getRegisteredClasses();
-
-            return new APIInspector().inspect(serviceClasses, packageBase);
-        } catch (InspectionError ex) {
-            throw new RuntimeException("Could not generate API descriptr", ex);
-        }
-    }*/
 }
