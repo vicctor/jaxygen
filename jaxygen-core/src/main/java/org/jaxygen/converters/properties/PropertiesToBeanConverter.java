@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.converters.BooleanConverter;
 import org.apache.commons.beanutils.converters.ByteConverter;
 import org.apache.commons.beanutils.converters.CharacterConverter;
+import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.beanutils.converters.DoubleConverter;
 import org.apache.commons.beanutils.converters.FloatConverter;
 import org.apache.commons.beanutils.converters.IntegerConverter;
@@ -80,6 +82,9 @@ public class PropertiesToBeanConverter implements RequestConverter {
         converters.put(Short.TYPE, new ShortConverter());
         converters.put(Enum.class, new EnumConverter());
         converters.put(String.class, new StringConverter());
+        DateConverter dateConverter = new DateConverter();
+        dateConverter.setPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        converters.put(Date.class, dateConverter);
         for (Class<?> c : converters.keySet()) {
             ConvertUtils.register(converters.get(c), c);
         }
