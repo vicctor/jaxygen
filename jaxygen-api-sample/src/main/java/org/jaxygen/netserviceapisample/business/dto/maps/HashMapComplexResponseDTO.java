@@ -15,22 +15,10 @@
  */
 package org.jaxygen.netserviceapisample.business.dto.maps;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *
  * @author jknast
  */
-public class HashMapBase{
+public class HashMapComplexResponseDTO extends HashMapComplexBase{
   
-  Map<String, String> stringsMap = new HashMap<>();
-
-  public Map<String, String> getStringsMap() {
-    return stringsMap;
-  }
-
-  public void setStringsMap(Map<String, String> stringsMap) {
-    this.stringsMap = stringsMap;
-  }  
 }
