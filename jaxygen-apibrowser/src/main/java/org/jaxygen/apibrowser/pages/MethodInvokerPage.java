@@ -23,6 +23,7 @@ import org.jaxygen.netservice.html.*;
 import org.jaxygen.url.UrlQuery;
 import org.jaxygen.util.ClassTypeUtil;
 import org.jaxygen.util.MethodNameComparator;
+import org.jaxygen.annotations.HidenField;
 
 /**
  *
@@ -358,7 +359,7 @@ public class MethodInvokerPage extends Page {
       Collections.sort(methods, new MethodNameComparator());
       for (Method setter : methods) {
       String setterName = setter.getName();
-      if (!"set".equals(setterName) && setter.getName().startsWith("set")) {
+          if (!"set".equals(setterName) && setter.getName().startsWith("set") && !setter.isAnnotationPresent(HidenField.class)) {
         final String fieldName = setter.getName().substring(3);
         Method getter = paramClass.getMethod("get" + fieldName);
         Object defaultValue = "";
