@@ -33,8 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.converters.BooleanConverter;
@@ -381,9 +380,15 @@ public class PropertiesToBeanConverter implements RequestConverter {
                         List list = (List) array;
                         while (list.size() < (index + 1)) {
                             try {
-                                list.add(componentType.getConstructor().newInstance());
+                                Object o;
+                                if(componentType.isEnum()){
+                                    o = parsePropertyToValue(value, componentType);
+                                }else{
+                                    o = componentType.getConstructor().newInstance();
+                                }
+                                list.add(o);
                             } catch (NoSuchMethodException | SecurityException ex) {
-                                Logger.getLogger(PropertiesToBeanConverter.class.getName()).log(Level.SEVERE, null, ex);
+                                throw new ConversionException(ex);
                             }
                         }
                         if (path.length == 1) {
