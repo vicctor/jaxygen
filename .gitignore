@@ -17,6 +17,8 @@
 pom.xml.versionsBackup
 /target/
 /.git-rewrite/
+/jaxygen-apibroker/target/
+/jaxygen-jpa/target/
 .DS_Store
 .vscode/
 .settings/
