@@ -223,6 +223,8 @@
         <module>jaxygen-frame</module>
         <module>jaxygen-apigin</module>
         <module>jaxygen-api-sample</module>
+        <module>jaxygen-jpa</module>
+        <module>jaxygen-apibroker</module>       
     </modules>
   
   
