@@ -15,7 +15,7 @@
  */
 package org.jaxygen.apigin.module;
 
-import org.jaxygen.apigin.servicesbrowser.APIInspectorService;
+import org.jaxygen.apigin.servicesbrowser.ServiceBrowser;
 import org.jaxygen.frame.config.JaxygenModulePackage;
 
 /**
@@ -25,7 +25,7 @@ import org.jaxygen.frame.config.JaxygenModulePackage;
 public class APIGINModule extends JaxygenModulePackage {
     public APIGINModule() {
         super();
-        withServicesPackage(APIInspectorService.class.getPackage());
+        withServicesPackage(ServiceBrowser.class.getPackage());
     }
 
     @Override

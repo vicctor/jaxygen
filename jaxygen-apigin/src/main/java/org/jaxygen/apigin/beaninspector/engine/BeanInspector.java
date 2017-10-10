@@ -40,6 +40,7 @@ import org.jaxygen.apigin.beaninspector.model.IntegerField;
 import org.jaxygen.apigin.beaninspector.model.InvalidFieldDescriptor;
 import org.jaxygen.apigin.beaninspector.model.ObjectDescriptor;
 import org.jaxygen.apigin.beaninspector.model.StringField;
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 /**
  *
@@ -198,7 +199,7 @@ public class BeanInspector {
 
     private static Class<?> resolveListTypeFromField(Field listField) {
         Type genericPropertyType = listField.getGenericType();
-
+        Class<?> rc = Object.class;
         ParameterizedType propertyType = null;
         while (propertyType == null) {
             if ((genericPropertyType instanceof ParameterizedType)) {
@@ -207,7 +208,10 @@ public class BeanInspector {
                 genericPropertyType = ((Class<?>) genericPropertyType).getGenericSuperclass();
             }
         }
-        return (Class<?>) propertyType.getActualTypeArguments()[0];
+        if (!(propertyType.getActualTypeArguments()[0] instanceof  TypeVariableImpl)) {
+            rc = (Class<?>)propertyType.getActualTypeArguments()[0];
+        }
+        return rc;
     }
 
     private static FieldDescriptor resolveListType(JXPropertyDescriptor descriptor) throws InspectionError {

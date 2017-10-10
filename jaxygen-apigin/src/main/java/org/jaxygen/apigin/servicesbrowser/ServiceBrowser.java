@@ -23,6 +23,7 @@ import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
 import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
 import org.jaxygen.apigin.servicesbrowser.dto.GetModuleServicesRequestDTO;
 import org.jaxygen.apigin.servicesbrowser.dto.ModulesListResponseDTO;
+import org.jaxygen.apigin.servicesbrowser.exceptions.JaxygenServiceNotFound;
 import org.jaxygen.frame.config.JaxygenModule;
 import org.jaxygen.frame.entrypoint.JaxygenModulesRegistry;
 
@@ -34,7 +35,7 @@ import org.jaxygen.frame.entrypoint.JaxygenModulesRegistry;
         + "applicaiton.",
         version = "2.0",
         status = Status.Mockup)
-public class APIInspectorService {
+public class ServiceBrowser {
 
     //List<ServiceRegistry> registries;
     @NetAPI(description = "Return the list of registered module names")
@@ -50,7 +51,7 @@ public class APIInspectorService {
     public APIDescriptror getModuleServices(GetModuleServicesRequestDTO request) throws JaxygenServiceNotFound, InspectionError {
         JaxygenModule module
                 = JaxygenModulesRegistry.getInstance().stream()
-                        .filter(m -> request.getServiceName().equals(m.getName()))
+                        .filter(m -> request.getModuleName().equals(m.getName()))
                         .findFirst()
                         .orElseThrow(() -> new JaxygenServiceNotFound());
         return new APIInspector().inspect(module.getServices(), module.getServicesPrefix());

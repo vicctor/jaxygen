@@ -13,31 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.frame.scanner;
+package org.jaxygen.frame.entrypoint;
 
-import java.util.Set;
 import org.assertj.core.api.Assertions;
-import org.jaxygen.frame.config.JaxygenModule;
+import org.jaxygen.typeconverter.TypeConverterFactory;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
  * @author Artur
  */
-public class APIScannerTest {
-    
-    public APIScannerTest() {
+public class JaxygenEntrypointTest {
+
+    public JaxygenEntrypointTest() {
+    }
+    @BeforeClass
+    public static void beforeClass() {
+        JaxygenEntrypoint entrypoint = new JaxygenEntrypoint();
+        entrypoint.contextInitialized(null);        
     }
 
-    @org.junit.Test
-    public void shall_findModulesFromTestPackage() {
+    @Test    
+    public void shall_findStringToIntegerConverter() {
         // given
         
         // when
-        Set<Class<? extends JaxygenModule>> modules = APIScanner.findModules();
+        Integer rc = TypeConverterFactory.instance().convert("10", Integer.class);
         
         // then
-        Assertions.assertThat(modules)
-                .hasSize(2);
+        Assertions.assertThat(rc)
+                .isEqualTo(10);
     }
-    
 }

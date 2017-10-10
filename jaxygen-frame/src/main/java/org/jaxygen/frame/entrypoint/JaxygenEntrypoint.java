@@ -17,6 +17,7 @@ package org.jaxygen.frame.entrypoint;
 
 import com.google.inject.Module;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -30,8 +31,12 @@ import javax.servlet.ServletContextListener;
 import org.jaxygen.frame.config.JaxygenModule;
 import org.jaxygen.frame.scanner.APIScanner;
 import org.jaxygen.invoker.ServiceRegistry;
+import org.jaxygen.objectsbuilder.ObjectBuilder;
+import org.jaxygen.objectsbuilder.ObjectBuilderFactory;
+import org.jaxygen.objectsbuilder.exceptions.ObjectCreateError;
 import org.jaxygen.registry.JaxygenRegistry;
 import org.jaxygen.typeconverter.ConvertersRegistry;
+import org.jaxygen.typeconverter.TypeConverterFactory;
 
 /**
  *
@@ -63,7 +68,9 @@ public class JaxygenEntrypoint implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-
+        JaxygenModulesRegistry.getInstance()
+                .stream()
+                .forEach(m -> m.onClose());
     }
 
     private void register(JaxygenModule module) {
@@ -74,7 +81,8 @@ public class JaxygenEntrypoint implements ServletContextListener {
             JaxygenRegistry.instance().addClassRegistry(servicesRegistry);
         }
         if (module.getConverters() != null) {
-            CONVERTERS.addAll(module.getConverters());
+            registerConverters(module.getConverters());
+            
         }
         if (module.getGuiceModules() != null) {
             GUICE_MODULES.addAll(module.getGuiceModules());
@@ -97,11 +105,21 @@ public class JaxygenEntrypoint implements ServletContextListener {
         };
     }
 
-    private JaxygenModule toModule(Class<? extends JaxygenModule> clazz) {
-        JaxygenModule result = null;
+    private <T> T toModule(Class<? extends T> clazz) {
+        T result = null;
         try {
             result = clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
+            LOG.log(Level.SEVERE, "Unable to initialize module with class " + clazz.getCanonicalName(), ex);
+        }
+        return result;
+    }
+    
+    private <T> T toObject(ObjectBuilder builder, Class<? extends T> clazz) {
+        T result = null;
+        try {
+            result = builder.create(clazz);
+        } catch (ObjectCreateError ex) {
             LOG.log(Level.SEVERE, "Unable to initialize module with class " + clazz.getCanonicalName(), ex);
         }
         return result;
@@ -116,5 +134,15 @@ public class JaxygenEntrypoint implements ServletContextListener {
             stream = stream.map(name -> name.replace(prefix, ""));
         }
         stream.forEach(name -> LOG.log(Level.INFO, "Registered service endpoint: {0}", name));
+    }
+
+    private void registerConverters(Set<Class<? extends ConvertersRegistry>> converters) {
+        ObjectBuilder builder = ObjectBuilderFactory.instance();
+        converters.stream()
+                .map(registryClass -> toObject(builder, registryClass))
+                .filter(Objects::nonNull)
+                .map(registry -> registry.getConverters())
+                .flatMap(Arrays::stream)
+                .forEach(converter -> TypeConverterFactory.instance().registerConverter(converter));    
     }
 }

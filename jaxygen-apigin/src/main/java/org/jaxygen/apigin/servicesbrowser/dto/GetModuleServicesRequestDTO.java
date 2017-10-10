@@ -21,5 +21,5 @@ package org.jaxygen.apigin.servicesbrowser.dto;
  */
 @lombok.Data
 public class GetModuleServicesRequestDTO {
-    private String serviceName;
+    private String moduleName;
 }

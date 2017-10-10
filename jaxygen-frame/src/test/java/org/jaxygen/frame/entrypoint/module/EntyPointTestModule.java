@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apigin.servicesbrowser;
+package org.jaxygen.frame.entrypoint.module;
 
-import java.util.List;
-import org.jaxygen.annotations.NetAPI;
-import org.jaxygen.annotations.Status;
+import org.jaxygen.frame.config.JaxygenModulePackage;
+import org.jaxygen.frame.entrypoint.converters.FrameConverters;
 
 /**
  *
  * @author Artur
  */
-@NetAPI(description = "This service provides information about all resrvices publised by Jaxygen from this interface",
-        version = "1.21",
-        status = Status.Mockup
-)
-public class ServicesBrowser {
+public class EntyPointTestModule extends JaxygenModulePackage{
 
-    @NetAPI
-    public List<String> a() {
-         return null;
+    public EntyPointTestModule() {
+        withConverters(FrameConverters.class.getPackage());
     }
-
+    
 }

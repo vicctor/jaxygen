@@ -19,8 +19,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import org.assertj.core.api.Assertions;
-import org.jaxygen.apigin.servicesbrowser.APIInspectorService;
-import org.jaxygen.apigin.servicesbrowser.ServicesBrowser;
+import org.jaxygen.apigin.servicesbrowser.ServiceBrowser;
 import org.jaxygen.frame.entrypoint.JaxygenEntrypoint;
 import org.jaxygen.registry.JaxygenRegistry;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class APIGINModuleTest {
         
         // then
         Assertions.assertThat(services)
-                .contains(APIInspectorService.class);
+                .contains(ServiceBrowser.class);
     }
     
      @Test
@@ -54,12 +53,12 @@ public class APIGINModuleTest {
          entrypoint.contextInitialized(null);
         
         // when
-         Optional<Class<?>> clazz = JaxygenRegistry.instance().getClassByPath("/ServicesBrowser/getModules");
+         Optional<Class<?>> clazz = JaxygenRegistry.instance().getClassByPath("/ServiceBrowser/getModules");
         
         // then
         Assertions.assertThat(clazz)
                 .isPresent()
-                .contains(ServicesBrowser.class);
+                .contains(ServiceBrowser.class);
     }
     
 }
