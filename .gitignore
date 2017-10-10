@@ -24,3 +24,5 @@
 /jaxygen-frame/target/
 /jaxygen-frame/nbproject/
 pom.xml.versionsBackup
+/jaxygen-apibroker/target/
+/jaxygen-jpa/target/
