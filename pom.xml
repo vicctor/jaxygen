@@ -218,12 +218,12 @@
         <module>jaxygen-core</module>
         <module>jaxygen-typeconverter</module>        
         <module>jaxygen-apibrowser</module>
-        <module>jaxygen-apibrowser-style-simple</module>
         <module>jaxygen-client-it</module>
         <module>jaxygen-frame</module>
         <module>jaxygen-apigin</module>
         <module>jaxygen-api-sample</module>
-    </modules>
+        <module>jaxygen-apibrowser2</module>
+  </modules>
   
   
     <reporting>
