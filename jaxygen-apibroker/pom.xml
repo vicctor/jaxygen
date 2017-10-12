@@ -53,6 +53,13 @@
             <version>2.0.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jaxygen</groupId>
+            <artifactId>jaxygen-jpa</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
 
     
         <dependency>

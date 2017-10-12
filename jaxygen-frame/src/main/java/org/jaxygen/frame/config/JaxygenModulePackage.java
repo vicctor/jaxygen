@@ -29,26 +29,33 @@ import org.jaxygen.typeconverter.ConvertersRegistry;
 public abstract class JaxygenModulePackage implements JaxygenModule {
 
     private ModuleDescriptor descriptor = new ModuleDescriptor();
+    private String moduleName;
 
-    public JaxygenModulePackage(ModuleDescriptor descriptor) {
+    protected JaxygenModulePackage(ModuleDescriptor descriptor) {
         this.descriptor = descriptor;
+        moduleName = this.getClass().getSimpleName();
     }
 
-    public JaxygenModulePackage() {
+    protected JaxygenModulePackage() {
+        moduleName = this.getClass().getSimpleName();
     }
 
-    protected final JaxygenModulePackage withServicesPackage(Package servicesPackage) {
+    public final JaxygenModulePackage withServicesPackage(Package servicesPackage) {
         descriptor.setServicesPackage(servicesPackage);
         return this;
     }
 
-    protected final JaxygenModulePackage withConverters(Package convertersPackage) {
+    public final JaxygenModulePackage withConverters(Package convertersPackage) {
         descriptor.setConvertersPackage(convertersPackage);
         return this;
     }
 
-    protected final JaxygenModulePackage withGuiceModules(Package guiceModulesPackage) {
+    public final JaxygenModulePackage withGuiceModules(Package guiceModulesPackage) {
         descriptor.setGuiceModulesPackage(guiceModulesPackage);
+        return this;
+    }
+    public final JaxygenModulePackage withName(String moduleName) {
+        this.moduleName = moduleName;
         return this;
     }
 
@@ -98,6 +105,6 @@ public abstract class JaxygenModulePackage implements JaxygenModule {
 
     @Override
     public String getName() {
-        return this.getClass().getSimpleName();
+        return moduleName;
     }
 }
