@@ -18,9 +18,8 @@ import { MockBackend } from '@angular/http/testing';
  */
 import { AppState } from '../app.service';
 import { HomeComponent } from './home.component';
-import { Title } from './title';
 
-describe(`Home`, () => {
+describe(`HomeComponent -`, () => {
   let comp: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
 
@@ -41,8 +40,6 @@ describe(`Home`, () => {
           },
           deps: [MockBackend, BaseRequestOptions]
         },
-        AppState,
-        Title,
       ]
     })
     /**
@@ -62,22 +59,6 @@ describe(`Home`, () => {
      * Trigger initial data binding.
      */
     fixture.detectChanges();
-  });
-
-  it('should have default data', () => {
-    expect(comp.localState).toEqual({ value: '' });
-  });
-
-  it('should have a title', () => {
-    expect(!!comp.title).toEqual(true);
-  });
-
-  it('should log ngOnInit', () => {
-    spyOn(console, 'log');
-    expect(console.log).not.toHaveBeenCalled();
-
-    comp.ngOnInit();
-    expect(console.log).toHaveBeenCalled();
   });
 
 });

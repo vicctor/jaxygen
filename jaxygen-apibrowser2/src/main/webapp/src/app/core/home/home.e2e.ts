@@ -1,10 +1,10 @@
 import { browser, by, element } from 'protractor';
 import 'tslib';
 
-describe('AppComponent - ', () => {
+describe('HomeComponent - ', () => {
 
   beforeEach(async () => {
-    await browser.get('/');
+    await browser.get('/#/home');
   });
 
 

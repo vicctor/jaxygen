@@ -154,8 +154,6 @@
         <configuration>
             <webAppSourceDirectory>${project.basedir}/src/main/webapp/dist</webAppSourceDirectory>
             <webXml>${project.basedir}/src/main/webapp/WEB-INF/web.xml</webXml>  
-
-      
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <stopPort>8005</stopPort>
           <stopKey>STOP</stopKey>
