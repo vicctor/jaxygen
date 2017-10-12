@@ -102,7 +102,7 @@ public class ServiceInvoker extends HttpServlet {
                 query = URLDecoder.decode(queryString, "UTF-8");
             }
 
-            log.log(Level.INFO, "Requesting resource{0}", resourcePath);
+            log.log(Level.INFO, "Requesting resource: '{0}'", resourcePath);
 
             validateRequestPath(resourcePath);
 
