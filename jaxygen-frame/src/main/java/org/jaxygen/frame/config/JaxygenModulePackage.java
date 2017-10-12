@@ -94,13 +94,11 @@ public abstract class JaxygenModulePackage implements JaxygenModule {
     }
 
     @Override
-    public void onInit() throws JaxygenApplicationInitialsationError {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void onInit() throws JaxygenApplicationInitialsationError {        
     }
 
     @Override
     public void onClose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
