@@ -20,7 +20,8 @@ import java.util.Set;
 import org.jaxygen.frame.entrypoint.JaxygenApplicationInitialsationError;
 import org.jaxygen.typeconverter.ConvertersRegistry;
 
-/**
+/** Entry point for the Jaxygen module. Every module should implement one
+ * instance of this interface in order to the 
  *
  * @author Artur
  */

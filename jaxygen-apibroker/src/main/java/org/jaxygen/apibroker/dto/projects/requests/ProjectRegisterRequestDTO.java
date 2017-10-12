@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apibroker.model;
+package org.jaxygen.apibroker.dto.projects.requests;
+
+import org.jaxygen.apibroker.model.Project;
 
 /**
  *
  * @author Artur
  */
 @lombok.Data
-public class Project {
-    private String name;
-    private String description;
+public class ProjectRegisterRequestDTO extends Project {
 }

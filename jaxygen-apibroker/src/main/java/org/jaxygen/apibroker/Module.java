@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apibroker.model;
+package org.jaxygen.apibroker;
+
+import org.jaxygen.apibroker.services.AuthorizatonService;
+import org.jaxygen.frame.config.JaxygenModulePackage;
 
 /**
  *
  * @author Artur
  */
-@lombok.Data
-public class Project {
-    private String name;
-    private String description;
+public class Module extends JaxygenModulePackage{
+
+    public Module() {
+        super
+                .withServicesPackage(AuthorizatonService.class.getPackage())
+                .withName("JaxygenAPIBroker");
+    }
+    
 }

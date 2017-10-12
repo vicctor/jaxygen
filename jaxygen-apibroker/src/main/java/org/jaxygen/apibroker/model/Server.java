@@ -19,6 +19,10 @@ package org.jaxygen.apibroker.model;
  *
  * @author Artur
  */
-public class Server {
-    
+@lombok.Data
+@lombok.NoArgsConstructor
+public abstract class Server {
+    private String apiGinUrl;
+    private String name;
+    private String description;
 }

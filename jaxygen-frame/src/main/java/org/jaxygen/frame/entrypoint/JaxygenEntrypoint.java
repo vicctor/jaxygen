@@ -48,9 +48,6 @@ public class JaxygenEntrypoint implements ServletContextListener {
 
     private final static List<Class<? extends ConvertersRegistry>> CONVERTERS = new ArrayList<>();
     private final static List<Class<? extends Module>> GUICE_MODULES = new ArrayList<>();
-    //private static Set<Class<? extends JaxygenModule>> modules = new HashSet<>();
-    
-
     
     @Override
     public void contextInitialized(ServletContextEvent sce) {

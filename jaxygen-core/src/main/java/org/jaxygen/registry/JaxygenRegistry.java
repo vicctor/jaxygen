@@ -110,9 +110,9 @@ public class JaxygenRegistry {
     }
     
     private String buildClassName(final String servicesRoot, final String className) {
-        String fullClassName = className;
+        String fullClassName = className.replace("/", ".");
         if (servicesRoot != null && !servicesRoot.isEmpty()) {
-            fullClassName = servicesRoot + "." + className;
+            fullClassName = servicesRoot + "." + fullClassName;
         }
         return fullClassName;
     }
