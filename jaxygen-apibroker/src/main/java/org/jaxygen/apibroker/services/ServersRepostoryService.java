@@ -19,8 +19,9 @@ import com.google.common.collect.Lists;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.apibroker.dto.common.DelteEntityRequestDTO;
-import org.jaxygen.apibroker.dto.servers.ServerDTO;
+import org.jaxygen.apibroker.dto.servers.ProjectDTO;
 import org.jaxygen.apibroker.dto.servers.requests.ServerRegisterRequestDTO;
+import org.jaxygen.apibroker.dto.servers.requests.ServerUpdateRequestDTO;
 import org.jaxygen.apibroker.dto.servers.requests.ServersListRequestDTO;
 import org.jaxygen.apibroker.dto.servers.responses.ServersListDTO;
 
@@ -31,7 +32,7 @@ import org.jaxygen.apibroker.dto.servers.responses.ServersListDTO;
 @NetAPI(description = "This service keeps track on the services managed by the APIBrowser2")
 public class ServersRepostoryService {
 
-    ServerDTO mockServer = new ServerDTO();
+    ProjectDTO mockServer = new ProjectDTO();
 
     public ServersRepostoryService() {
         mockServer.setId(1);
@@ -41,7 +42,7 @@ public class ServersRepostoryService {
     }
 
     @NetAPI(description = "Get list os servers registered to the current user", status = Status.Mockup)
-    public ServersListDTO getMyServices(ServersListRequestDTO request) {
+    public ServersListDTO getServices(ServersListRequestDTO request) {
         ServersListDTO list = new ServersListDTO();
         if (request.getProjectId() != null) {
             list.setSize(request.getProjectId());    
@@ -53,17 +54,17 @@ public class ServersRepostoryService {
     }
 
     @NetAPI(description = "Add new server to my servers repository", status = Status.Mockup)
-    public ServerDTO registerServer(ServerRegisterRequestDTO request) {
+    public ProjectDTO registerServer(ServerRegisterRequestDTO request) {
         return mockServer;
     }
     
     @NetAPI(description = "Update existing service", status = Status.Mockup)
-    public ServerDTO updateServer(ServerUpdateRequestDTO request) {
+    public ProjectDTO updateServer(ServerUpdateRequestDTO request) {
         return mockServer;
     }
     
     @NetAPI(description = "Remove server from repository", status = Status.Mockup)
-    public ServerDTO removeServer(DelteEntityRequestDTO request) {
+    public ProjectDTO removeServer(DelteEntityRequestDTO request) {
         return mockServer;
     }
 }

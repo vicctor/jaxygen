@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apibroker.dto.servers;
+package org.jaxygen.apibroker.dto.projects;
 
-import org.jaxygen.apibroker.model.Server;
+import org.jaxygen.apibroker.model.Project;
 
 /**
  *
  * @author Artur
  */
 @lombok.Data
-public class ServerDTO extends Server {
+public class ProjectDTO extends Project {
     private long id;
-    private long projectId;
 }

@@ -15,13 +15,13 @@
  */
 package org.jaxygen.apibroker.dto.servers.responses;
 
-import org.jaxygen.apibroker.dto.servers.ServerDTO;
+import org.jaxygen.apibroker.dto.servers.ProjectDTO;
 import org.jaxygen.dto.collections.PaginableListResponseBaseDTO;
 
 /**
  *
  * @author Artur
  */
-public class ServersListDTO extends PaginableListResponseBaseDTO<ServerDTO>{
+public class ServersListDTO extends PaginableListResponseBaseDTO<ProjectDTO>{
     
 }
