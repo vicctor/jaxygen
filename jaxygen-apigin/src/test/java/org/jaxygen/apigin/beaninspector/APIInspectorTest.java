@@ -23,7 +23,7 @@ import org.jaxygen.apigin.beaninspector.data.ServiceWithPublishedMethods;
 import org.jaxygen.apigin.beaninspector.data.ServiceWithotutMethods;
 import org.jaxygen.apigin.beaninspector.engine.APIInspector;
 import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
-import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
+import org.jaxygen.apigin.beaninspector.model.APIDescriptor;
 import org.jaxygen.apigin.beaninspector.model.ArrayField;
 import org.jaxygen.apigin.beaninspector.model.IntegerField;
 import org.jaxygen.apigin.beaninspector.model.MethodDescriptor;
@@ -78,7 +78,7 @@ public class APIInspectorTest {
         String basePath = null;
 
         // when
-        APIDescriptror apiDescrptor = new APIInspector().inspect(services, basePath);
+        APIDescriptor apiDescrptor = new APIInspector().inspect(services, basePath);
 
         // then
         assertThat(apiDescrptor)
@@ -103,7 +103,7 @@ public class APIInspectorTest {
         String basePath = "org/jaxygen/apigin/beaninspector/data";
 
         // when
-        APIDescriptror apiDescrptor = new APIInspector().inspect(services, basePath);
+        APIDescriptor apiDescrptor = new APIInspector().inspect(services, basePath);
 
         // then
         assertThat(apiDescrptor)
@@ -137,7 +137,7 @@ public class APIInspectorTest {
         String basePath = "org/jaxygen/apigin/beaninspector/data";
 
         // when
-        APIDescriptror res = new APIInspector().inspect(services, basePath);
+        APIDescriptor res = new APIInspector().inspect(services, basePath);
 
         // then
         assertThat(res)

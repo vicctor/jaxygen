@@ -20,7 +20,7 @@ import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.apigin.beaninspector.engine.APIInspector;
 import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
-import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
+import org.jaxygen.apigin.beaninspector.model.APIDescriptor;
 import org.jaxygen.apigin.servicesbrowser.dto.GetModuleServicesRequestDTO;
 import org.jaxygen.apigin.servicesbrowser.dto.ModulesListResponseDTO;
 import org.jaxygen.apigin.servicesbrowser.exceptions.JaxygenServiceNotFound;
@@ -48,7 +48,7 @@ public class ServiceBrowser {
     }
 
     @NetAPI
-    public APIDescriptror getModuleServices(GetModuleServicesRequestDTO request) throws JaxygenServiceNotFound, InspectionError {
+    public APIDescriptor getModuleServices(GetModuleServicesRequestDTO request) throws JaxygenServiceNotFound, InspectionError {
         JaxygenModule module
                 = JaxygenModulesRegistry.getInstance().stream()
                         .filter(m -> request.getModuleName().equals(m.getName()))

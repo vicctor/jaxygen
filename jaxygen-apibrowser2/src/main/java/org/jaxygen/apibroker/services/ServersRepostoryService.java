@@ -16,6 +16,8 @@
 package org.jaxygen.apibroker.services;
 
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.List;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.apibroker.dto.common.DelteEntityRequestDTO;
@@ -42,14 +44,20 @@ public class ServersRepostoryService {
     }
 
     @NetAPI(description = "Get list os servers registered to the current user", status = Status.Mockup)
-    public ServersListDTO getServices(ServersListRequestDTO request) {
+    public ServersListDTO getServers(ServersListRequestDTO request) {
         ServersListDTO list = new ServersListDTO();
         if (request.getProjectId() != null) {
+            List<ServerDTO> mockedList = new ArrayList<>();
+            for (int i = 0; i < request.getProjectId(); i++) {
+                mockedList.add(mockServer);
+            }
+            list.setElements(mockedList);
             list.setSize(request.getProjectId());    
         } else {
+            list.setElements(Lists.newArrayList(mockServer));
             list.setSize(1);
         }
-        list.setElements(Lists.newArrayList(mockServer));
+        
         return list;
     }
 

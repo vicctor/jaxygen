@@ -21,8 +21,9 @@ import java.util.List;
  *
  * @author Artur
  */
-@lombok.Data
-public class APIDescriptror {
+@lombok.Getter
+@lombok.Setter
+public class APIDescriptor {
     private String serviceBase;
     private List<ServiceDescriptor> services;
 }

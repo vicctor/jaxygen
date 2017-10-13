@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.apigin.beaninspector.exceptions.InspectionError;
-import org.jaxygen.apigin.beaninspector.model.APIDescriptror;
+import org.jaxygen.apigin.beaninspector.model.APIDescriptor;
 import org.jaxygen.apigin.beaninspector.model.FieldDescriptor;
 import org.jaxygen.apigin.beaninspector.model.MethodDescriptor;
 import org.jaxygen.apigin.beaninspector.model.ServiceDescriptor;
@@ -56,8 +56,8 @@ public class APIInspector {
      * @return
      * @throws InspectionError
      */
-    public APIDescriptror inspect(Collection<Class<?>> services, final String basePath) throws InspectionError {
-        APIDescriptror descriptor = new APIDescriptror();
+    public APIDescriptor inspect(Collection<Class<?>> services, final String basePath) throws InspectionError {
+        APIDescriptor descriptor = new APIDescriptor();
         descriptor.setServiceBase(Strings.emptyToNull(basePath));
         try {
             List<ServiceDescriptor> serviceDescriptors = services.stream()
