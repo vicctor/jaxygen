@@ -43,7 +43,13 @@ module.exports = {
     /**
      * <link> tags for a Web App Manifest
      */
-    { rel: 'manifest', href: '/assets/manifest.json' }
+    { rel: 'manifest', href: '/assets/manifest.json' },
+
+    /** <link> tags for a PrimeNG **/
+    { rel: "stylesheet", type: "text/css", href: "./assets/css/font-awesome.min.css" },
+    { rel: "stylesheet", type: "text/css", href: "./assets/primeng/primeng.min.css" },
+    { rel: "stylesheet", type: "text/css", href: "./assets/primeng/resources/themes/omega/theme.css" },
+    { rel: "stylesheet", type: "text/css", href: "./assets/fullcalendar/fullcalendar.min.css" }
   ],
   meta: [
     { name: 'msapplication-TileColor', content: '#00bcd4' },

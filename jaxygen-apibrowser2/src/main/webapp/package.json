@@ -91,7 +91,12 @@
     "ie-shim": "^0.1.0",
     "reflect-metadata": "^0.1.10",
     "rxjs": "^5.4.3",
-    "zone.js": "~0.8.18"
+    "zone.js": "~0.8.18",
+    "primeng": "4.2.2",
+    "font-awesome": "^4.7.0",
+    "fullcalendar": "3.4.0",
+    "moment":"2.18.1",
+    "chart.js":"2.7.0"
   },
   "devDependencies": {
     "@angular/compiler-cli": "~4.4.4",

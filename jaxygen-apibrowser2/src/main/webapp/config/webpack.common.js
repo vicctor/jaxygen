@@ -31,7 +31,7 @@ const ngcWebpack = require('ngc-webpack');
 const HMR = helpers.hasProcessFlag('hot');
 const AOT = process.env.BUILD_AOT || helpers.hasNpmFlag('aot');
 const METADATA = {
-  title: 'Angular2 Webpack Starter by @gdi2290 from @AngularClass',
+  title: 'Jaxygen ApiBrowser2',
   baseUrl: '/',
   isDevServer: helpers.isWebpackDevServer(),
   HMR: HMR,
@@ -65,8 +65,8 @@ module.exports = function (options) {
     entry: {
 
       'polyfills': './src/polyfills.browser.ts',
-      'main':      AOT ? './src/main.browser.aot.ts' :
-                  './src/main.browser.ts'
+      'main': AOT ? './src/main.browser.aot.ts' :
+        './src/main.browser.ts'
 
     },
 
@@ -208,7 +208,7 @@ module.exports = function (options) {
     plugins: [
       // Remove all locale files in moment with the IgnorePlugin if you don't need them
       // new IgnorePlugin(/^\.\/locale$/, /moment$/),
-      
+
       // Use for DLLs
       // new AssetsPlugin({
       //   path: helpers.root('dist'),
@@ -284,9 +284,37 @@ module.exports = function (options) {
        */
       new CopyWebpackPlugin([
         { from: 'src/assets', to: 'assets' },
-        { from: 'src/meta'}
+        { from: 'src/meta' },
+        {
+          from: 'node_modules/primeng/resources/themes/omega/theme.css',
+          to: 'assets/primeng/resources/themes/omega/theme.css'
+        },
+        {
+          from: 'node_modules/primeng/resources/themes/omega/images/',
+          to: 'assets/primeng/resources/themes/omega/images'
+        },
+        {
+          from: 'node_modules/primeng/resources/themes/omega/fonts/',
+          to: 'assets/primeng/resources/themes/omega/fonts'
+        },
+        {
+          from: 'node_modules/primeng/resources/primeng.min.css',
+          to: 'assets/primeng/primeng.min.css'
+        },
+        {
+          from: 'node_modules/fullcalendar/dist/fullcalendar.min.css',
+          to: 'assets/fullcalendar/fullcalendar.min.css'
+        },
+        {
+          from: 'node_modules/primeng/resources/images',
+          to: 'assets/primeng/resources/images'
+        },
+        {
+          from: 'node_modules/font-awesome/css/font-awesome.min.css',
+          to: 'assets/css/font-awesome.min.css'
+        }
       ],
-        isProd ? { ignore: [ 'mock-data/**/*' ] } : undefined
+        isProd ? { ignore: ['mock-data/**/*'] } : undefined
       ),
 
       /*
@@ -320,20 +348,20 @@ module.exports = function (options) {
         template: 'src/index.html',
         title: METADATA.title,
         chunksSortMode: function (a, b) {
-          const entryPoints = ["inline","polyfills","sw-register","styles","vendor","main"];
+          const entryPoints = ["inline", "polyfills", "sw-register", "styles", "vendor", "main"];
           return entryPoints.indexOf(a.names[0]) - entryPoints.indexOf(b.names[0]);
         },
         metadata: METADATA,
         inject: 'body'
       }),
 
-       /**
-       * Plugin: ScriptExtHtmlWebpackPlugin
-       * Description: Enhances html-webpack-plugin functionality
-       * with different deployment options for your scripts including:
-       *
-       * See: https://github.com/numical/script-ext-html-webpack-plugin
-       */
+      /**
+      * Plugin: ScriptExtHtmlWebpackPlugin
+      * Description: Enhances html-webpack-plugin functionality
+      * with different deployment options for your scripts including:
+      *
+      * See: https://github.com/numical/script-ext-html-webpack-plugin
+      */
       new ScriptExtHtmlWebpackPlugin({
         sync: /polyfills|vendor/,
         defaultAttribute: 'async',
