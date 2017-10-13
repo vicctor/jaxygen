@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.jap;
+package org.jaxygen.apibroker.dao.filters;
 
 /**
  *
  * @author Artur
  */
-public class JaxygenJPA {
+public class ProjectsFilter extends DataFilter {
     
 }

@@ -13,28 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.jap;
-
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import javax.persistence.EntityManager;
-import org.jaxygen.frame.config.JaxygenModulePackage;
+package org.jaxygen.apibroker.dao.filters;
 
 /**
  *
  * @author Artur
  */
-public class JaxygenJpaModule extends JaxygenModulePackage implements Module{
-
-    public JaxygenJpaModule() {
-        super.withGuiceModules(JxEntityManager.class.getPackage());
-    }
-
-    @Override
-    public void configure(Binder binder) {
-        binder.bind(EntityManager.class).to(JxEntityManager.class);
-    }
-
-    
-    
+@lombok.Data
+public class DataFilter {
+    private int page;
+    private int pageSize;
 }

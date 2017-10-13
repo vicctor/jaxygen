@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.jap;
+package org.jaxygen.apibroker.dao;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import com.google.inject.Inject;
 import javax.persistence.EntityManager;
-import org.jaxygen.frame.config.JaxygenModulePackage;
+import org.jaxygen.apibroker.dao.filters.ProjectsFilter;
+import org.jaxygen.apibroker.entities.ProjectEntity;
+import org.jaxygen.apibroker.model.Project;
+import org.jaxygen.collections.PartialList;
 
 /**
  *
  * @author Artur
  */
-public class JaxygenJpaModule extends JaxygenModulePackage implements Module{
+public class ProjectsDAO {
 
-    public JaxygenJpaModule() {
-        super.withGuiceModules(JxEntityManager.class.getPackage());
+    @Inject
+    private EntityManager em;
+
+    ProjectEntity createProject(Project project) {
+        em.persist(project);
+        return null;
     }
-
-    @Override
-    public void configure(Binder binder) {
-        binder.bind(EntityManager.class).to(JxEntityManager.class);
+    
+    PartialList<ProjectEntity> getProjects(ProjectsFilter filter) {
+        return null;
     }
-
-    
-    
 }

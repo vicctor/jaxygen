@@ -25,3 +25,4 @@ pom.xml.versionsBackup
 .settings/
 *.iml
 .idea
+/jaxygen-jpa/nbproject/
