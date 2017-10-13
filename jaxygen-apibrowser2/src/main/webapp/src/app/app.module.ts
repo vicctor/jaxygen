@@ -20,6 +20,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { PrimeNGModule } from './primeng.module';
 
+
 /*
  * Platform and Environment providers/directives/pipes
  */
