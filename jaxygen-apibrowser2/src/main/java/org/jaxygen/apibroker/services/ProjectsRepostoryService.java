@@ -16,6 +16,7 @@
 package org.jaxygen.apibroker.services;
 
 import com.google.common.collect.Lists;
+import java.util.List;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.apibroker.dto.common.DelteEntityRequestDTO;
@@ -42,9 +43,10 @@ public class ProjectsRepostoryService {
 
     @NetAPI(description = "Get list os projects registered to the current user", status = Status.Mockup)
     public ProjectsListDTO getMyProjects(ProjectsListRequestDTO request) {
-        ProjectsListDTO list = new ProjectsListDTO();
-        list.setElements(Lists.newArrayList(mockProject));
-        return list;
+        ProjectsListDTO projects = new ProjectsListDTO();
+        List<ProjectDTO> elements = Lists.newArrayList(mockProject);
+        projects.setElements(elements);
+        return projects;
     }
 
     @NetAPI(description = "Add new server to my projects repository", status = Status.Mockup)

@@ -19,7 +19,7 @@ import com.google.common.collect.Lists;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.apibroker.dto.common.DelteEntityRequestDTO;
-import org.jaxygen.apibroker.dto.servers.ProjectDTO;
+import org.jaxygen.apibroker.dto.servers.ServerDTO;
 import org.jaxygen.apibroker.dto.servers.requests.ServerRegisterRequestDTO;
 import org.jaxygen.apibroker.dto.servers.requests.ServerUpdateRequestDTO;
 import org.jaxygen.apibroker.dto.servers.requests.ServersListRequestDTO;
@@ -32,7 +32,7 @@ import org.jaxygen.apibroker.dto.servers.responses.ServersListDTO;
 @NetAPI(description = "This service keeps track on the services managed by the APIBrowser2")
 public class ServersRepostoryService {
 
-    ProjectDTO mockServer = new ProjectDTO();
+    ServerDTO mockServer = new ServerDTO();
 
     public ServersRepostoryService() {
         mockServer.setId(1);
@@ -54,17 +54,17 @@ public class ServersRepostoryService {
     }
 
     @NetAPI(description = "Add new server to my servers repository", status = Status.Mockup)
-    public ProjectDTO registerServer(ServerRegisterRequestDTO request) {
+    public ServerDTO registerServer(ServerRegisterRequestDTO request) {
         return mockServer;
     }
     
     @NetAPI(description = "Update existing service", status = Status.Mockup)
-    public ProjectDTO updateServer(ServerUpdateRequestDTO request) {
+    public ServerDTO updateServer(ServerUpdateRequestDTO request) {
         return mockServer;
     }
     
     @NetAPI(description = "Remove server from repository", status = Status.Mockup)
-    public ProjectDTO removeServer(DelteEntityRequestDTO request) {
+    public ServerDTO removeServer(DelteEntityRequestDTO request) {
         return mockServer;
     }
 }

@@ -217,13 +217,11 @@
         <module>jaxygen-annotations</module>
         <module>jaxygen-core</module>
         <module>jaxygen-typeconverter</module>        
-        <module>jaxygen-apibrowser</module>
         <module>jaxygen-client-it</module>
         <module>jaxygen-frame</module>
         <module>jaxygen-apigin</module>
         <module>jaxygen-api-sample</module>
-        <module>jaxygen-jpa</module>
-        <module>jaxygen-apibroker</module>       
+        <module>jaxygen-jpa</module>   
         <module>jaxygen-apibrowser2</module>
   </modules>
   

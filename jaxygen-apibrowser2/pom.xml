@@ -1,22 +1,43 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jaxygen</groupId>
+        <artifactId>jaxygen-project</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
     <groupId>org.jaxygen</groupId>
-    <artifactId>jaxygen-project</artifactId>
+    <artifactId>jaxygen-apibrowser2</artifactId>
     <version>2.0.0-SNAPSHOT</version>
-  </parent>
-
-  <groupId>org.jaxygen</groupId>
-  <artifactId>jaxygen-apibrowser2</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
-  <packaging>war</packaging>
+    <packaging>war</packaging>
   
-  <name>jaxygen-apibrowser2 Maven Webapp</name>
-  <url>http://maven.apache.org</url>
+    <name>jaxygen-apibrowser2 Maven Webapp</name>
+    <url>http://maven.apache.org</url>
 
- <profiles>
+    <dependencies>
+        <dependency>
+            <groupId>org.jaxygen</groupId>
+            <artifactId>jaxygen-apigin</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.jaxygen</groupId>
+            <artifactId>jaxygen-jpa</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+  
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.16</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
         <profile>
             <id>BUILD</id>
             <activation>
@@ -146,23 +167,23 @@
 
 
     <build>
-    <plugins>
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.16</version>
-        <configuration>
-            <webAppSourceDirectory>${project.basedir}/src/main/webapp/dist</webAppSourceDirectory>
-            <webXml>${project.basedir}/src/main/webapp/WEB-INF/web.xml</webXml>  
+        <plugins>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.16</version>
+                <configuration>
+                    <webAppSourceDirectory>${project.basedir}/src/main/webapp/dist</webAppSourceDirectory>
+                    <webXml>${project.basedir}/src/main/webapp/WEB-INF/web.xml</webXml>  
 
       
-          <scanIntervalSeconds>10</scanIntervalSeconds>
-          <stopPort>8005</stopPort>
-          <stopKey>STOP</stopKey>
-          <contextPath>/</contextPath>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <stopPort>8005</stopPort>
+                    <stopKey>STOP</stopKey>
+                    <contextPath>/</contextPath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

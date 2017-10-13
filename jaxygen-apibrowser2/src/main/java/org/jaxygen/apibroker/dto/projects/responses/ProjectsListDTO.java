@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apibroker.dto.servers.responses;
+package org.jaxygen.apibroker.dto.projects.responses;
 
-import org.jaxygen.apibroker.dto.servers.ProjectDTO;
+import org.jaxygen.apibroker.dto.projects.ProjectDTO;
 import org.jaxygen.dto.collections.PaginableListResponseBaseDTO;
 
 /**
  *
  * @author Artur
  */
-public class ServersListDTO extends PaginableListResponseBaseDTO<ProjectDTO>{
+public class ProjectsListDTO extends PaginableListResponseBaseDTO<ProjectDTO>{
     
 }
