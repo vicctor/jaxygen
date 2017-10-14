@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jaxygen.frame.config.JaxygenModule;
+import org.jaxygen.frame.converters.BaseConversionHandler;
 import org.jaxygen.frame.entrypoint.JaxygenModulesRegistry;
 import org.jaxygen.frame.scanner.APIScanner;
 import org.jaxygen.invoker.ServiceRegistry;
@@ -51,12 +52,17 @@ public class JaxygenApplication {
     private final List<Class<? extends Module>> GUICE_MODULES = new ArrayList<>();
     private Injector injector;
 
-    private final ObjectBuilder builder = new ObjectBuilder() {
+    private final ObjectBuilder objectBuilder = new ObjectBuilder() {
         @Override
         public <T> T create(Class<T> clazz) throws ObjectCreateError {
             return injector.getInstance(clazz);
         }
     };
+
+    private void registerDefaultConvertersHandler() {
+        BaseConversionHandler handler = new BaseConversionHandler();
+        TypeConverterFactory.instance().registerHandler(handler);
+    }
 
     class CoreModule extends AbstractModule {
 
@@ -72,7 +78,7 @@ public class JaxygenApplication {
     public void start() {
         LOG.info("Initializing JaxyGen application");
         Set<Class<? extends JaxygenModule>> modules = APIScanner.findModules();
-        LOG.info("Found " + modules.size() + " modules");
+        LOG.log(Level.INFO, "Found {0} modules", modules.size());
         Optional.ofNullable(modules)
                 .orElse(new HashSet<>())
                 .stream()
@@ -81,8 +87,8 @@ public class JaxygenApplication {
                 .forEach(m -> register(m));
 
         registerInjectors();
-        
-        ObjectBuilderFactory.configure(builder);
+        registerDefaultConvertersHandler();
+        ObjectBuilderFactory.configure(objectBuilder);
     }
 
     public void stop() {

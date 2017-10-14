@@ -15,8 +15,11 @@
  */
 package org.jaxygen.typeconverter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.jaxygen.typeconverter.exceptions.ConversionError;
 
 /**
@@ -34,6 +37,7 @@ public class TypeConverterFactory {
     public final static String DEFAULT_FACTORY = ".default_TypeConverterFactory";
     private final Map<Class, Map<Class, TypeConverter>> converters = new HashMap<Class, Map<Class, TypeConverter>>();
     private final static Map<String, TypeConverterFactory> factories = new HashMap<String, TypeConverterFactory>();
+    private final List<ConversionHandler> handlers = new ArrayList<>();
 
     static {
         factories.put(DEFAULT_FACTORY, new TypeConverterFactory());
@@ -61,6 +65,26 @@ public class TypeConverterFactory {
             factories.put(name, rc);
         }
         return rc;
+    }
+
+    /**
+     * Register type converter handler. Handler should be used for cases when
+     * the ClassToClass converter could not be generated to given kind of
+     * conversion. In general this style of conversion is slower and should be
+     * used for special cases only. Note that handlers are used only in case if
+     * it was not possible to find suitable TypeConvrter class instance.
+     *
+     * @param handler
+     * @return
+     */
+    public TypeConverterFactory registerHandler(ConversionHandler handler) {
+        handlers.add(handler);
+        return this;
+    }
+
+    public TypeConverterFactory removeHandler(ConversionHandler handler) {
+        handlers.remove(handler);
+        return this;
     }
 
     /**
@@ -141,10 +165,13 @@ public class TypeConverterFactory {
   public <FROM, TO> TO convert(final FROM from, final Class<TO> toClass) throws ConversionError {
         @SuppressWarnings("unchecked")
         TypeConverter<FROM, TO> converter = get((Class<FROM>) from.getClass(), toClass);
+        TO rc;
         if (converter == null) {
-            throw new ConversionError("Could not find converter from class " + from.getClass() + " to class " + toClass);
+            rc = tryHandler(from, (Class<FROM>)from.getClass(), toClass);
+        } else {
+            rc = converter.convert(from);
         }
-        return (TO) converter.convert(from);
+        return rc;
     }
 
     /**
@@ -161,9 +188,25 @@ public class TypeConverterFactory {
     public <FROM, TO> TO convert(final FROM from, final Class<FROM> fromClass, final Class<TO> toClass) throws ConversionError {
         @SuppressWarnings("unchecked")
         TypeConverter<FROM, TO> converter = get(fromClass, toClass);
+        TO rc;
         if (converter == null) {
+            rc = tryHandler(from, fromClass, toClass);
+        } else {
+            rc = converter.convert(from);
+        }
+        return (TO) rc;
+    }
+
+    private <FROM, TO> TO tryHandler(FROM from, Class<FROM> fromClass, Class<TO> toClass) {
+        TO rc = null;
+        Optional<ConversionHandler> handlerOp = handlers.stream()
+                .filter(handler -> handler.canConvert(fromClass, toClass))
+                .findFirst();
+        if (handlerOp.isPresent()) {
+            rc = (TO)handlerOp.get().convert(from, fromClass, toClass);
+        } else {
             throw new ConversionError("Could not find converter from class " + fromClass + " to class " + toClass);
         }
-        return (TO) converter.convert(from);
+        return rc;
     }
 }

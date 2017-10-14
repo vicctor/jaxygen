@@ -15,14 +15,28 @@
  */
 package org.jaxygen.apibroker.entities;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import org.jaxygen.apibroker.model.Project;
 
 /**
  *
  * @author Artur
  */
-@Entity
-public class ProjectEntity extends Project{
-    
+@Entity(name = "project")
+@NamedQueries( {
+    @NamedQuery(name = "projects.list.all", query = "select p from ProjectEntity p"),
+    @NamedQuery(name = "projects.list.all.count", query = "select count(*) from ProjectEntity p")
+})
+@lombok.Data
+public class ProjectEntity extends Project implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private long id;
 }

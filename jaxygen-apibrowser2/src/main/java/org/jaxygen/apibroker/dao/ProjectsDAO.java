@@ -16,11 +16,14 @@
 package org.jaxygen.apibroker.dao;
 
 import com.google.inject.Inject;
+import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import org.jaxygen.apibroker.dao.filters.ProjectsFilter;
 import org.jaxygen.apibroker.entities.ProjectEntity;
+import org.jaxygen.apibroker.entities.collections.ProjectEntityList;
 import org.jaxygen.apibroker.model.Project;
-import org.jaxygen.collections.PartialList;
+import org.jaxygen.frame.Converters;
 
 /**
  *
@@ -31,12 +34,24 @@ public class ProjectsDAO {
     @Inject
     private EntityManager em;
 
-    ProjectEntity createProject(Project project) {
-        em.persist(project);
-        return null;
+    public ProjectEntity createProject(Project project) {
+        ProjectEntity projectEntity = Converters.convert(project, ProjectEntity.class);
+        em.persist(projectEntity);
+        return projectEntity;
     }
     
-    PartialList<ProjectEntity> getProjects(ProjectsFilter filter) {
-        return null;
+    public ProjectEntityList getProjects(ProjectsFilter filter) {
+        TypedQuery<ProjectEntity> query = em.createNamedQuery("projects.list.all", ProjectEntity.class);
+        
+        query.setFirstResult(filter.getPage() * filter.getPageSize());
+        query.setMaxResults(filter.getPageSize());
+        List<ProjectEntity> list = query.getResultList();
+        
+        TypedQuery<Long> countQuery = em.createNamedQuery("projects.list.all.count", Long.class);
+        Long countResult = countQuery.getSingleResult();
+        
+        ProjectEntityList result = new ProjectEntityList(list, countResult.intValue());
+        
+        return result;
     }
 }
