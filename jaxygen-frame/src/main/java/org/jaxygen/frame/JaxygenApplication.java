@@ -48,8 +48,7 @@ import org.jaxygen.typeconverter.TypeConverterFactory;
 public class JaxygenApplication {
 
     private final static Logger LOG = Logger.getLogger("JaxygenEntrypoint");
-    private final static List<Class<? extends ConvertersRegistry>> CONVERTERS = new ArrayList<>();
-    private final static List<Class<? extends Module>> GUICE_MODULES = new ArrayList<>();
+    private final List<Class<? extends Module>> GUICE_MODULES = new ArrayList<>();
     private Injector injector;
 
     private final ObjectBuilder builder = new ObjectBuilder() {

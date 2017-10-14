@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.jap;
+package org.jaxygen.jaxygen.jpa;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import javax.persistence.EntityManager;
 import org.jaxygen.frame.config.JaxygenModulePackage;
 
-/**
+/** The Jaxygen JPA module brings the standard JPA powered by Hibernate to the Jaxygen application.
+ * Once the module added to the project, one can add the EntityManager class to 
+ * any Jaxygen managed class (converters and services) aby adding private field like this:
+ * 
+ * \@Inject EntityManager em;
+ * 
+ * or providing EntityManager as a constructor parameter:
+ * 
+ * \@Inject
+ * public MyServiceConstructor(EntityManager em)
  *
  * @author Artur
  */
@@ -33,8 +42,5 @@ public class JaxygenJpaModule extends JaxygenModulePackage implements Module{
     @Override
     public void configure(Binder binder) {
         binder.bind(EntityManager.class).to(JxEntityManager.class);
-    }
-
-    
-    
+    }    
 }

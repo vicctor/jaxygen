@@ -3,11 +3,7 @@ package org.jaxygen.client.it;
 //import junit.framework.Test;
 //import junit.framework.TestCase;
 //import junit.framework.TestSuite;
-import org.jaxygen.client.it.TestBeanInterface;
-import org.jaxygen.client.it.TestBeanInterface;
-import org.jaxygen.client.it.TestBeanInterface;
 import org.jaxygen.client.jaxygenclient.JaxygenClient;
-//import org.jaxygen.client.jaxygenclient.JaxygenClient;
 
 /**
  * Unit test for simple App.
@@ -39,7 +35,7 @@ public class JaxygenClientIT //   extends TestCase
     {
         System.out.println("Test is running");
         JaxygenClient factory = new JaxygenClient("http://localhost:8080/");
-        TestBeanInterface bean = (TestBeanInterface)factory.lookup("invoker/TestBean", TestBeanInterface.class);
+        TestBeanInterface bean = (TestBeanInterface)factory.lookup("invoker/business.HelloWorld", TestBeanInterface.class);
         //assertEquals("Hello World", bean.sayHello());
         
         System.out.println(bean.sayHello());

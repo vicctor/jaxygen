@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.jap;
+package org.jaxygen.jaxygen.jpa;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -38,14 +38,16 @@ import javax.persistence.metamodel.Metamodel;
 public class JxEntityManager implements EntityManager {
 
     private final EntityManagerFactory emFactory;
+    private final EntityManager enitytManager;
 
     @Inject
     private JxEntityManager(JxJPASetup setup) {
         emFactory = Persistence.createEntityManagerFactory(setup.getFactoryName());
+        enitytManager = emFactory.createEntityManager();
     }
 
     public EntityManager getEntityManager() {
-        return emFactory.createEntityManager();
+        return enitytManager;
     }
 
     @Override
@@ -215,37 +217,37 @@ public class JxEntityManager implements EntityManager {
 
     @Override
     public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEntityManager().createQuery(criteriaQuery);
     }
 
     @Override
     public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEntityManager().createQuery(qlString, resultClass);
     }
 
     @Override
     public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEntityManager().createNamedQuery(name, resultClass);
     }
 
     @Override
     public <T> T unwrap(Class<T> cls) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEntityManager().unwrap(cls);
     }
 
     @Override
     public EntityManagerFactory getEntityManagerFactory() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEntityManager().getEntityManagerFactory();
     }
 
     @Override
     public CriteriaBuilder getCriteriaBuilder() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEntityManager().getCriteriaBuilder();
     }
 
     @Override
     public Metamodel getMetamodel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEntityManager().getMetamodel();
     }
 
 }

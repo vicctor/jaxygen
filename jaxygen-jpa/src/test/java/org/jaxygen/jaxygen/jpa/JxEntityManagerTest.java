@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.jaxygen.jap;
+package org.jaxygen.jaxygen.jpa;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.jaxygen.frame.JaxygenApplication;
+import org.jaxygen.jaxygen.jpa.entities.MyEntity;
 import org.jaxygen.objectsbuilder.ObjectBuilderFactory;
 import org.jaxygen.objectsbuilder.exceptions.ObjectCreateError;
 import org.junit.After;
@@ -69,6 +70,23 @@ public class JxEntityManagerTest implements Module {
         
         // then
         Assertions.assertThat(em).isNotNull();
+        
+        javax.persistence.NamedStoredProcedureQuery n;
+    }
+    
+    
+    @Test
+    public void shall_saveEntityInStorage() throws ObjectCreateError {
+        // given
+        EntityManager em = ObjectBuilderFactory.instance().create(EntityManager.class);
+        
+        // when
+        MyEntity e = new MyEntity();
+        e.setValue("My entity value");
+        em.persist(e);
+        
+        // then
+        Assertions.assertThat(e.getId()).isPositive();
         
         javax.persistence.NamedStoredProcedureQuery n;
     }
