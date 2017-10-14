@@ -312,6 +312,10 @@ module.exports = function (options) {
         {
           from: 'node_modules/font-awesome/css/font-awesome.min.css',
           to: 'assets/css/font-awesome.min.css'
+        },
+        {
+          from: 'node_modules/font-awesome/fonts',
+          to: 'assets/fonts'
         }
       ],
         isProd ? { ignore: ['mock-data/**/*'] } : undefined

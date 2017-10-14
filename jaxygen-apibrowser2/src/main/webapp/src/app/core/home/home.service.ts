@@ -6,8 +6,8 @@ export class HomeService {
     constructor(private requestHandler: RequestHandler) { 
     }
 
-    getTileOperators() {
-        return this.requestHandler.sendRequest('/api-broker/org.jaxygen.apibroker.services.ServersRepostoryService/getServers', {projectId:3});
+    getModuleServices(moduleName) {
+        return this.requestHandler.sendRequest('/api-broker/ServiceBrowser/getModuleServices', {moduleName:moduleName});
     }
    
 }
