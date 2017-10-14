@@ -16,6 +16,9 @@
 package org.jaxygen.apibroker.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import org.jaxygen.apibroker.model.User;
 
 /**
@@ -24,5 +27,7 @@ import org.jaxygen.apibroker.model.User;
  */
 @Entity
 public class UserEntity extends User {
-    
+ @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private long id;    
 }

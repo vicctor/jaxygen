@@ -23,6 +23,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import org.jaxygen.apibroker.model.Project;
+import org.jaxygen.frame.entity.base.EntityObject;
 
 /**
  *
@@ -30,11 +31,11 @@ import org.jaxygen.apibroker.model.Project;
  */
 @Entity(name = "project")
 @NamedQueries( {
-    @NamedQuery(name = "projects.list.all", query = "select p from ProjectEntity p"),
-    @NamedQuery(name = "projects.list.all.count", query = "select count(*) from ProjectEntity p")
+    @NamedQuery(name = "projects.list.all", query = "select p from project p"),
+    @NamedQuery(name = "projects.list.all.count", query = "select count(*) from project p")
 })
 @lombok.Data
-public class ProjectEntity extends Project implements Serializable {
+public class ProjectEntity extends Project implements Serializable, EntityObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

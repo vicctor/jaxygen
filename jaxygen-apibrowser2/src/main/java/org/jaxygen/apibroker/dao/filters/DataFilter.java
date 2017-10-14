@@ -15,12 +15,14 @@
  */
 package org.jaxygen.apibroker.dao.filters;
 
+import org.jaxygen.frame.entity.base.EntityObject;
+
 /**
  *
  * @author Artur
  */
 @lombok.Data
-public class DataFilter {
-    private int page;
-    private int pageSize;
+public class DataFilter implements EntityObject {
+    private long page;
+    private long pageSize;
 }

@@ -26,3 +26,4 @@ pom.xml.versionsBackup
 *.iml
 .idea
 /jaxygen-jpa/nbproject/
+/jaxygen-apibrowser2/nbproject/

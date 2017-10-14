@@ -16,6 +16,9 @@
 package org.jaxygen.apibroker.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import org.jaxygen.apibroker.model.Server;
 
 /**
@@ -23,6 +26,10 @@ import org.jaxygen.apibroker.model.Server;
  * @author Artur
  */
 @Entity
+@lombok.Data
 public class ServerEntity extends Server {
-    
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private long id;
 }

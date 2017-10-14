@@ -36,15 +36,17 @@ public class ProjectsDAO {
 
     public ProjectEntity createProject(Project project) {
         ProjectEntity projectEntity = Converters.convert(project, ProjectEntity.class);
+        em.getTransaction().begin();
         em.persist(projectEntity);
+        em.getTransaction().commit();        
         return projectEntity;
     }
     
     public ProjectEntityList getProjects(ProjectsFilter filter) {
         TypedQuery<ProjectEntity> query = em.createNamedQuery("projects.list.all", ProjectEntity.class);
         
-        query.setFirstResult(filter.getPage() * filter.getPageSize());
-        query.setMaxResults(filter.getPageSize());
+        query.setFirstResult((int)(filter.getPage() * filter.getPageSize()));
+        query.setMaxResults((int)filter.getPageSize());        
         List<ProjectEntity> list = query.getResultList();
         
         TypedQuery<Long> countQuery = em.createNamedQuery("projects.list.all.count", Long.class);

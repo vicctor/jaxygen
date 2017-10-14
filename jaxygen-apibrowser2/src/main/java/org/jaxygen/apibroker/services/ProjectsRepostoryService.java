@@ -15,18 +15,20 @@
  */
 package org.jaxygen.apibroker.services;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import java.util.List;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.Status;
 import org.jaxygen.apibroker.dao.ProjectsDAO;
+import org.jaxygen.apibroker.dao.filters.ProjectsFilter;
 import org.jaxygen.apibroker.dto.common.DelteEntityRequestDTO;
 import org.jaxygen.apibroker.dto.projects.ProjectDTO;
 import org.jaxygen.apibroker.dto.projects.requests.ProjectRegisterRequestDTO;
 import org.jaxygen.apibroker.dto.projects.requests.ProjectUpdateRequestDTO;
 import org.jaxygen.apibroker.dto.projects.requests.ProjectsListRequestDTO;
 import org.jaxygen.apibroker.dto.projects.responses.ProjectsListDTO;
+import org.jaxygen.apibroker.entities.ProjectEntity;
+import org.jaxygen.apibroker.entities.collections.ProjectEntityList;
+import org.jaxygen.frame.Converters;
 
 /**
  *
@@ -48,16 +50,15 @@ public class ProjectsRepostoryService {
 
     @NetAPI(description = "Get list os projects registered to the current user", status = Status.Mockup)
     public ProjectsListDTO getMyProjects(ProjectsListRequestDTO request) {
-        projects = projectsDAO.
-        ProjectsListDTO projects = new ProjectsListDTO();
-        List<ProjectDTO> elements = Lists.newArrayList(mockProject);
-        projects.setElements(elements);
-        return projects;
+        ProjectsFilter filter = Converters.convert(request, ProjectsFilter.class);
+        ProjectEntityList projects = projectsDAO.getProjects(filter);
+        return Converters.convert(projects, ProjectsListDTO.class);
     }
 
     @NetAPI(description = "Add new server to my projects repository", status = Status.Mockup)
     public ProjectDTO registerProject(ProjectRegisterRequestDTO request) {
-        return mockProject;
+        ProjectEntity projectEntity = projectsDAO.createProject(request);
+        return Converters.convert(projectEntity, ProjectDTO.class);
     }
 
     @NetAPI(description = "Update existing service", status = Status.Mockup)

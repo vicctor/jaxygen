@@ -15,13 +15,13 @@
  */
 package org.jaxygen.apibroker.dto.projects.requests;
 
-import org.jaxygen.apibroker.dto.projects.ProjectDTO;
-import org.jaxygen.dto.collections.PaginableListResponseBaseDTO;
+import org.jaxygen.dto.collections.PaginableBaseRequestDTO;
+import org.jaxygen.frame.dto.base.DTOObject;
 
 /**
  *
  * @author Artur
  */
 @lombok.Data
-public class ProjectsListRequestDTO extends PaginableListResponseBaseDTO<ProjectDTO>{
+public class ProjectsListRequestDTO extends PaginableBaseRequestDTO implements DTOObject {
 }

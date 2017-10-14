@@ -16,11 +16,12 @@
 package org.jaxygen.apibroker.dto.projects.requests;
 
 import org.jaxygen.apibroker.model.Project;
+import org.jaxygen.frame.dto.base.DTOObject;
 
 /**
  *
  * @author Artur
  */
 @lombok.Data
-public class ProjectRegisterRequestDTO extends Project {
+public class ProjectRegisterRequestDTO extends Project implements DTOObject {
 }
