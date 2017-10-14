@@ -79,16 +79,17 @@ public class JxEntityManagerTest implements Module {
     public void shall_saveEntityInStorage() throws ObjectCreateError {
         // given
         EntityManager em = ObjectBuilderFactory.instance().create(EntityManager.class);
-        
-        // when
         MyEntity e = new MyEntity();
         e.setValue("My entity value");
         em.persist(e);
         
-        // then
-        Assertions.assertThat(e.getId()).isPositive();
+        // when
+        MyEntity e2 = new MyEntity();
+        e2.setValue("My entity value");
+        em.persist(e2);
         
-        javax.persistence.NamedStoredProcedureQuery n;
+        // then
+        Assertions.assertThat(e2.getId()).isPositive();       
     }
 
     
