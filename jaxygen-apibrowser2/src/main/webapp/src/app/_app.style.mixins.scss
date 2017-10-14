@@ -1,0 +1,5 @@
+@mixin set-image($image, $ext: 'png') {  
+    $img:'~/assets/img/'+$image;
+    background-image: url($img+'.'+$ext);
+    background-repeat:no-repeat;
+}

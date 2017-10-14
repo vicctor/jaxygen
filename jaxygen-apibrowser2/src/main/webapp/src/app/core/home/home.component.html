@@ -1,1 +1,23 @@
-{{data | json}}
+<div class="ui-g-2 ui-g-nopad sidebar">
+
+        <div class="logo"> </div>
+        <div class="project-list">
+            <p-panelMenu [model]="items"></p-panelMenu>
+        </div>
+
+
+
+
+</div>
+<div class="ui-g-10">
+    <p-panel styleClass="services" [header]="selectedServer?.name">
+        <p-dataTable [value]="selectedServer" styleClass="services-table" sortField="serviceClassName" rowGroupMode="rowspan">
+            <p-column styleClass="service" field="serviceClassName"></p-column>
+            <p-column styleClass="method" field="methods">
+                <ng-template let-row="rowData" let-ri="rowIndex" pTemplate="body">
+                    <span *ngFor="let method of row.methods">{{method.name}} </span>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </p-panel>
+</div>
