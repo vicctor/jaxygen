@@ -15,18 +15,33 @@
  */
 package org.jaxygen.apibroker;
 
+import com.google.inject.Binder;
 import org.jaxygen.apibroker.services.AuthorizatonService;
 import org.jaxygen.frame.config.JaxygenModulePackage;
+import org.jaxygen.jaxygen.jpa.JxJPASetup;
 
 /**
  *
  * @author Artur
  */
-public class Module extends JaxygenModulePackage{
+public class Module extends JaxygenModulePackage implements com.google.inject.Module{
 
+     static class JPAConfig implements JxJPASetup {
+        @Override
+        public String getFactoryName() {
+            return "test-persistence-unit";
+        }
+     
+    }
+    
+     @Override
+    public void configure(Binder binder) {
+        binder.bind(JxJPASetup.class).toInstance(new JPAConfig());
+    }
     public Module() {
         super
                 .withServicesPackage(AuthorizatonService.class.getPackage())
+                .withGuiceModules(Module.class.getPackage())
                 .withName("JaxygenAPIBroker");
     }
     
