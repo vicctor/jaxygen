@@ -28,6 +28,7 @@ import org.jaxygen.apigin.beaninspector.model.ArrayField;
 import org.jaxygen.apigin.beaninspector.model.BooleanField;
 import org.jaxygen.apigin.beaninspector.model.EnumField;
 import org.jaxygen.apigin.beaninspector.model.IntegerField;
+import org.jaxygen.apigin.beaninspector.model.LongField;
 import org.jaxygen.apigin.beaninspector.model.ObjectDescriptor;
 import org.jaxygen.apigin.beaninspector.model.StringField;
 import org.junit.Test;
@@ -383,7 +384,9 @@ public class BeanInspectorTest {
                         new BooleanField("booleanField"),
                         new BooleanField("booleanObjectField"),
                         new IntegerField("intField"),
-                        new IntegerField("integerObjectField")
+                        new IntegerField("integerObjectField"),
+                        new LongField("longField"),
+                        new LongField("longObjectField")
                 );
     }
 

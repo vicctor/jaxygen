@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.apigin.beaninspector.data;
+package org.jaxygen.apigin.beaninspector.model;
 
 /**
  *
  * @author Artur
  */
-@lombok.Getter
-@lombok.Setter
-public class SimpleClassWithSimpleFields {
-    private String stringField;
-    private boolean  booleanField;
-    private Boolean booleanObjectField;
-    private int intField;
-    private Integer integerObjectField;
-    private long longField;
-    private Long longObjectField;
+public class LongField extends FieldBase {
+    public static String TYPE = "LONG";
+
+    public LongField() {
+        super(TYPE);
+    }
+    
+    public LongField(final String name) {
+        super(TYPE,name);
+    }
 }

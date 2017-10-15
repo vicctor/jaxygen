@@ -38,6 +38,7 @@ import org.jaxygen.apigin.beaninspector.model.EnumField;
 import org.jaxygen.apigin.beaninspector.model.FieldDescriptor;
 import org.jaxygen.apigin.beaninspector.model.IntegerField;
 import org.jaxygen.apigin.beaninspector.model.InvalidFieldDescriptor;
+import org.jaxygen.apigin.beaninspector.model.LongField;
 import org.jaxygen.apigin.beaninspector.model.ObjectDescriptor;
 import org.jaxygen.apigin.beaninspector.model.StringField;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
@@ -60,6 +61,8 @@ public class BeanInspector {
         BUILDERS.put(String.class,  () -> new StringField());
         BUILDERS.put(Integer.TYPE,  () -> new IntegerField());
         BUILDERS.put(Integer.class, () -> new IntegerField());
+        BUILDERS.put(Long.TYPE,     () -> new LongField());
+        BUILDERS.put(Long.class,    () -> new LongField());
         BUILDERS.put(Boolean.TYPE,  () -> new BooleanField());
         BUILDERS.put(Boolean.class, () -> new BooleanField());
     }
