@@ -255,8 +255,6 @@ public class BeanInspector {
         if (descriptor.isWrittable() || descriptor.isReadable()) {
             rc = createFieldDescrioptor(descriptor);
             rc.setName(descriptor.getPropertyName());
-            rc.setReadable(descriptor.isReadable());
-            rc.setWritable(descriptor.isWrittable());
         }
         return rc;
     }

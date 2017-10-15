@@ -23,8 +23,6 @@ package org.jaxygen.apigin.beaninspector.model;
 @lombok.Setter
 public abstract class FieldDescriptor {
     private String type;
-    private boolean writable;
-    private boolean readable;
     public final String getType() {return type;}
     public final void setType(String name) {type = name;}
     public abstract String getName();
