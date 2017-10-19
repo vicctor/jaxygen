@@ -15,11 +15,6 @@
  */
 package org.jaxygen.netserviceapisample;
 
-import org.jaxygen.netserviceapisample.business.HelloWorld;
-import org.jaxygen.netserviceapisample.business.ValidatorsSample;
-import org.jaxygen.netserviceapisample.business.SecuritySample;
-import org.jaxygen.netserviceapisample.business.DTOSample;
-import org.jaxygen.netserviceapisample.business.SessionHandeSample;
 import java.util.ArrayList;
 import java.util.List;
 import org.jaxygen.invoker.ClassRegistry;
@@ -50,6 +45,7 @@ public class SampleClassRegistry implements ClassRegistry
         clases.add(MethodsStatusesSample.class);
         clases.add(ArrayListRequestSample.class);
         clases.add(MapRequestSample.class);
+        clases.add(DefaultImplementationSample.class);
         return clases;
     }
 }
