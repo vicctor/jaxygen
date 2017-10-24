@@ -15,16 +15,13 @@
  */
 package org.jaxygen.netserviceapisample.business.dto.default_impl;
 
-import org.jaxygen.annotations.DefaultImplementation;
+import org.jaxygen.annotations.HasImplementation;
 
 /**
  *
  * @author xnet
  */
-@DefaultImplementation(clazz = FooInterfaceImpl.class)
+@HasImplementation
 public interface FooInterface {
 
-    String getBar();
-
-    void setBar(String bar);
 }

@@ -19,7 +19,7 @@ package org.jaxygen.netserviceapisample.business.dto.default_impl;
  *
  * @author xnet
  */
-public class TestInterface {
+public class TestInterfaceRequest extends TestInterfaceBase {
 
     private FooInterface foo;
 

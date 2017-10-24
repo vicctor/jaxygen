@@ -15,13 +15,13 @@
  */
 package org.jaxygen.netserviceapisample.business.dto.default_impl;
 
-import org.jaxygen.annotations.DefaultImplementation;
+import org.jaxygen.annotations.HasImplementation;
 
 /**
  *
  * @author xnet
  */
-@DefaultImplementation(clazz = FooAbstractImpl.class)
+@HasImplementation
 public abstract class FooAbstract {
 
     abstract String getBar();

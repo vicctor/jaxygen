@@ -19,23 +19,16 @@ package org.jaxygen.netserviceapisample.business.dto.default_impl;
  *
  * @author xnet
  */
-public class FooInterfaceImpl implements FooInterface {
+public class TestInterfaceBase {
 
-    private String bar;
+    private String baseStringField;
 
-    public FooInterfaceImpl() {
+    public String getBaseStringField() {
+        return baseStringField;
     }
 
-    public FooInterfaceImpl(String bar) {
-        this.bar = bar;
-    }
-
-    public String getBar() {
-        return bar;
-    }
-
-    public void setBar(String bar) {
-        this.bar = bar;
+    public void setBaseStringField(String baseStringField) {
+        this.baseStringField = baseStringField;
     }
 
 }

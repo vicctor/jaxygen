@@ -21,6 +21,13 @@ package org.jaxygen.netserviceapisample.business.dto.default_impl;
  */
 public class FooAbstractImpl extends FooAbstract {
 
+    public FooAbstractImpl() {
+    }
+
+    public FooAbstractImpl(String bar) {
+        this.bar = bar;
+    }
+
     private String bar;
 
     @Override

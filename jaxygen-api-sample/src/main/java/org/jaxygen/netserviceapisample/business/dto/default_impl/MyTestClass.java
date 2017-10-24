@@ -15,27 +15,32 @@
  */
 package org.jaxygen.netserviceapisample.business.dto.default_impl;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author xnet
  */
-public class FooInterfaceImpl implements FooInterface {
+public class MyTestClass {
 
-    private String bar;
+    private List<FooInterface> foos;
+    private Map<String, FooAbstract> fooMap;
 
-    public FooInterfaceImpl() {
+    public List<FooInterface> getFoos() {
+        return foos;
     }
 
-    public FooInterfaceImpl(String bar) {
-        this.bar = bar;
+    public void setFoos(List<FooInterface> foos) {
+        this.foos = foos;
     }
 
-    public String getBar() {
-        return bar;
+    public Map<String, FooAbstract> getFooMap() {
+        return fooMap;
     }
 
-    public void setBar(String bar) {
-        this.bar = bar;
+    public void setFooMap(Map<String, FooAbstract> fooMap) {
+        this.fooMap = fooMap;
     }
 
 }

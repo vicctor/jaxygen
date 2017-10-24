@@ -17,7 +17,9 @@ package org.jaxygen.netserviceapisample.business;
 
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.netserviceapisample.business.dto.default_impl.TestAbstract;
-import org.jaxygen.netserviceapisample.business.dto.default_impl.TestInterface;
+import org.jaxygen.netserviceapisample.business.dto.default_impl.TestInterfaceRequest;
+import org.jaxygen.netserviceapisample.business.dto.default_impl.TestInterfaceResponse;
+import org.jaxygen.util.BeanUtil;
 
 /**
  *
@@ -26,8 +28,10 @@ import org.jaxygen.netserviceapisample.business.dto.default_impl.TestInterface;
 public class DefaultImplementationSample {
 
     @NetAPI
-    public TestInterface testDefaultInterfaceImplementation(TestInterface sampleBase) {
-        return sampleBase;
+    public TestInterfaceResponse testDefaultInterfaceImplementation(TestInterfaceRequest request) {
+        TestInterfaceResponse resp = new TestInterfaceResponse();
+        BeanUtil.translateBean(request, resp);
+        return resp;
     }
 
     @NetAPI

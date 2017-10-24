@@ -13,29 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto.default_impl;
+package org.jaxygen.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author xnet
  */
-public class FooInterfaceImpl implements FooInterface {
-
-    private String bar;
-
-    public FooInterfaceImpl() {
-    }
-
-    public FooInterfaceImpl(String bar) {
-        this.bar = bar;
-    }
-
-    public String getBar() {
-        return bar;
-    }
-
-    public void setBar(String bar) {
-        this.bar = bar;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface HasImplementation {
 
 }

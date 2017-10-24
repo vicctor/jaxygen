@@ -19,14 +19,14 @@ package org.jaxygen.netserviceapisample.business.dto.default_impl;
  *
  * @author xnet
  */
-public class FooInterfaceImpl implements FooInterface {
+public class FooInterfaceImpl2 implements FooInterface {
 
     private String bar;
 
-    public FooInterfaceImpl() {
+    public FooInterfaceImpl2() {
     }
 
-    public FooInterfaceImpl(String bar) {
+    public FooInterfaceImpl2(String bar) {
         this.bar = bar;
     }
 
