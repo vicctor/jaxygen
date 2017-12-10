@@ -14,6 +14,7 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import org.jaxygen.annotations.HidenField;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.converters.json.JsonHRResponseConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
@@ -23,7 +24,6 @@ import org.jaxygen.netservice.html.*;
 import org.jaxygen.url.UrlQuery;
 import org.jaxygen.util.ClassTypeUtil;
 import org.jaxygen.util.MethodNameComparator;
-import org.jaxygen.annotations.HidenField;
 
 /**
  *
@@ -454,8 +454,8 @@ public class MethodInvokerPage extends Page {
         table.addRow(row);
         String propertyName = fieldName;
         row.addColumn(new HTMLLabel(paramType.getSimpleName(), paramType.getCanonicalName()));
-        row.addColumn(new HTMLLabel(propertyName));
-
+        String[] splited = propertyName.split("\\.");
+        row.addColumn(new HTMLLabel(splited[splited.length -1], propertyName));
         addPlusAndMinusAnchors(request, row, counterName, multiplicity, propertyName);
 
         if (multiplicity > 0 || multiplicity == -1) {
