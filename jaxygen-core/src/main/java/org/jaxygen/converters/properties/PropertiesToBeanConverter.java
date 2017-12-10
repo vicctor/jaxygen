@@ -25,6 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +38,8 @@ import java.util.TreeSet;
 import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
+import org.apache.commons.beanutils.converters.BigIntegerConverter;
 import org.apache.commons.beanutils.converters.BooleanConverter;
 import org.apache.commons.beanutils.converters.ByteConverter;
 import org.apache.commons.beanutils.converters.CharacterConverter;
@@ -84,6 +88,8 @@ public class PropertiesToBeanConverter implements RequestConverter {
         DateConverter dateConverter = new DateConverter();
         dateConverter.setPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         converters.put(Date.class, dateConverter);
+        converters.put(BigInteger.class, new BigIntegerConverter());
+        converters.put(BigDecimal.class, new BigDecimalConverter());
         for (Class<?> c : converters.keySet()) {
             ConvertUtils.register(converters.get(c), c);
         }
@@ -377,7 +383,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
                             writter.invoke(bean, array);
                         }
                         Class<?> componentType = retrieveListType(bean.getClass(), propertyName);
-                        List list = (List) array;
+                        List list = (List) array;                        
                         while (list.size() < (index + 1)) {
                             try {
                                 Object o;
