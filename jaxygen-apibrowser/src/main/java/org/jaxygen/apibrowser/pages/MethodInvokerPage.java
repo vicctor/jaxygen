@@ -82,9 +82,19 @@ public class MethodInvokerPage extends Page {
 
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "className", classFilter);
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "methodName", methodFilter);
-        propertiesInputForm.appendInput(HTMLInput.Type.hidden, "inputType", "PROPERTIES");
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "outputType", JsonHRResponseConverter.NAME);
-
+        
+//        propertiesInputForm.appendInput(HTMLInput.Type.hidden, "inputType", "PROPERTIES");
+        
+        HTMLSelect inputTypeSelect = new HTMLSelect("inputType");
+        HTMLOption prop2jsonsOption = new HTMLOption("PROP2JSON", new HTMLLabel("PROP2JSON"));
+        prop2jsonsOption.setSelected(false);
+        inputTypeSelect.addOption(prop2jsonsOption);
+        HTMLOption propertiesOption = new HTMLOption("PROPERTIES", new HTMLLabel("PROPERTIES"));
+        propertiesOption.setSelected(true);
+        inputTypeSelect.addOption(propertiesOption);
+        propertiesInputForm.append(inputTypeSelect);
+        
         Class handerClass = Thread.currentThread().getContextClassLoader().loadClass(classFilter);
         Class resultType = null;
 
@@ -420,15 +430,8 @@ public class MethodInvokerPage extends Page {
                         }
                     }
                 } else {
-                    if (paramType.isAnnotationPresent(HasImplementation.class)) {
-                        HasImplementation annot = paramType.getAnnotation(HasImplementation.class);
-                        Class[] implementations = annot.implementations();
-                        renderHasImplementationInputRow(request, table, fieldName, counterName, defaultValue, paramType, -1, implementations);
-
-                    } else {
-                        renderFieldInputRow(request, table, parentFieldName + propertyName,
-                                parentFieldName + propertyName, defaultValue, paramType, -1);
-                    }
+                    renderFieldInputRow(request, table, parentFieldName + propertyName,
+                            parentFieldName + propertyName, defaultValue, paramType, -1);//
                 }
             }
         }
@@ -456,61 +459,11 @@ public class MethodInvokerPage extends Page {
         row.addColumn(new HTMLLabel(paramType.getSimpleName(), paramType.getCanonicalName()));
         row.addColumn(new HTMLLabel(propertyName));
 
-        //TODO: probably unused because multiplicity is always < 0
         addPlusAndMinusAnchors(request, row, counterName, multiplicity, propertyName);
 
         if (multiplicity > 0 || multiplicity == -1) {
             addSpecificInput(request, row, defaultValue, paramType, propertyName);
         }
-    }
-
-    private void renderHasImplementationInputRow(HttpServletRequest request, HTMLTable table,
-            final String fieldName, final String counterName, Object defaultValue, Class<?> paramType, int multiplicity, Class<?>[] implementations) {
-
-        HTMLTable.Row row = new HTMLTable.Row();
-        table.addRow(row);
-        HTMLTable implTable = new HTMLTable();
-
-        String propertyName = fieldName;
-        row.addColumn(new HTMLLabel(paramType.getSimpleName(), paramType.getCanonicalName()));
-        row.addColumn(new HTMLLabel(propertyName));
-        row.addColumn(implTable);
-
-        for (Class im : implementations) {
-//            li.add(im.getSimpleName());
-            String implName = im.getSimpleName();
-            String anchorId = fieldName + "<impl>" + implName;
-            UrlQuery okQuery = new UrlQuery();
-            request.getParameterMap().keySet().stream().forEach((key) -> {
-                if (!key.startsWith(fieldName + "<impl>")) {
-                    okQuery.add(key, request.getParameter(key));
-                }
-            });
-            okQuery.add(anchorId, implName);
-            HTMLTable.Row r = new HTMLTable.Row();
-            r.addColumn(new HTMAnchor(anchorId, "anchor", "" + browserPath + "?" + okQuery.toString(),
-                    new HTMLLabel(implName)));
-            implTable.addRow(r);
-
-            // add input
-            if (request.getParameterMap().keySet().contains(anchorId)) {
-//                String selectedImpl = request.getParameter(anchorId);
-                Class<?> selectedClass = im;
-                HTMLTable beanTable = new HTMLTable();
-                r.addColumn(beanTable);
-                try {
-                    addInputClassParameters(request, beanTable, selectedClass, anchorId);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException ex) {
-                    throw new APIBrowserException(ex);
-                }
-
-            }
-        }
-
-        for (Class im : implementations) {
-
-        }
-
     }
 
     private void renderMapFieldInputRow(HttpServletRequest request, HTMLTable table,
@@ -553,6 +506,43 @@ public class MethodInvokerPage extends Page {
             row.addColumn(new HTMLInput(propertyName, propertyName, "INPUT_FIELD", v));
         } else if (paramType.isAssignableFrom(Uploadable.class)) {
             row.addColumn(new HTMLInput(HTMLInput.Type.file, propertyName));
+        } else if (paramType.isAnnotationPresent(HasImplementation.class)) {
+            HasImplementation annot = paramType.getAnnotation(HasImplementation.class);
+            Class[] implementations = annot.implementations();
+
+            HTMLTable implTable = new HTMLTable();
+            row.addColumn(implTable);
+
+            for (Class im : implementations) {
+                String implName = im.getSimpleName();
+                String anchorId = propertyName + "<impl>" + im.getSimpleName();
+                String canonicalAnchorId = propertyName + "<impl>" + im.getCanonicalName();
+                UrlQuery okQuery = new UrlQuery();
+                request.getParameterMap().keySet().stream().forEach((key) -> {
+                    // we filter properties from other implementations of this field
+                    // so we can switch between implementations
+                    if (!key.startsWith(propertyName + "<impl>")) {
+                        okQuery.add(key, request.getParameter(key));
+                    }
+                });
+                okQuery.add(anchorId, implName);
+                HTMLTable.Row r = new HTMLTable.Row();
+                r.addColumn(new HTMAnchor(anchorId, "anchor", "" + browserPath + "?" + okQuery.toString(),
+                        new HTMLLabel(implName)));
+                implTable.addRow(r);
+
+                // if in parameters is implementation key, we add input for that
+                if (request.getParameterMap().keySet().contains(anchorId)) {
+                    Class<?> selectedClass = im;
+                    HTMLTable beanTable = new HTMLTable();
+                    r.addColumn(beanTable);
+                    try {
+                        addInputClassParameters(request, beanTable, selectedClass, canonicalAnchorId + ".");
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException ex) {
+                        throw new APIBrowserException(ex);
+                    }
+                }
+            }
         } else {
             HTMLTable beanTable = new HTMLTable();
             row.addColumn(beanTable);
