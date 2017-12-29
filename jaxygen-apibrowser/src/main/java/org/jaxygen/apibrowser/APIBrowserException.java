@@ -13,18 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jaxygen.netserviceapisample.business.dto.default_impl;
-
-import org.jaxygen.annotations.HasImplementation;
+package org.jaxygen.apibrowser;
 
 /**
  *
  * @author xnet
  */
-@HasImplementation(implementations = {FooAbstractImpl.class})
-public abstract class FooAbstract {
+public class APIBrowserException extends RuntimeException {
 
-    abstract String getBar();
+    public APIBrowserException() {
+    }
 
-    abstract void setBar(String bar);
+    public APIBrowserException(String message) {
+        super(message);
+    }
+
+    public APIBrowserException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public APIBrowserException(Throwable cause) {
+        super(cause);
+    }
+
+    public APIBrowserException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
 }

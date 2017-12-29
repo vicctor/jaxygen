@@ -21,7 +21,7 @@ import org.jaxygen.annotations.HasImplementation;
  *
  * @author xnet
  */
-@HasImplementation
+@HasImplementation(implementations = {FooInterfaceImpl.class, FooInterfaceImpl2.class})
 public interface FooInterface {
 
 }
