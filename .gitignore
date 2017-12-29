@@ -18,3 +18,8 @@
 *.iml
 /jaxygent-fluenconverters/jaxygen-fluentconverters/target/
 /jaxygen-core/nbproject/
+*rebel\.xml
+
+jaxygen-api-sample/src/main/webapp/WEB-INF/glassfish-web\.xml
+
+jaxygen-api-sample/nb-configuration\.xml
