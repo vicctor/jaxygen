@@ -10,10 +10,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import org.jaxygen.annotations.APIBrowserIgnoreSetter;
 import org.jaxygen.annotations.HasImplementation;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.apibrowser.APIBrowserException;
@@ -83,9 +85,8 @@ public class MethodInvokerPage extends Page {
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "className", classFilter);
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "methodName", methodFilter);
         propertiesInputForm.appendInput(HTMLInput.Type.hidden, "outputType", JsonHRResponseConverter.NAME);
-        
+
 //        propertiesInputForm.appendInput(HTMLInput.Type.hidden, "inputType", "PROPERTIES");
-        
         HTMLSelect inputTypeSelect = new HTMLSelect("inputType");
         HTMLOption prop2jsonsOption = new HTMLOption("PROP2JSON", new HTMLLabel("PROP2JSON"));
         prop2jsonsOption.setSelected(false);
@@ -367,73 +368,76 @@ public class MethodInvokerPage extends Page {
             InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
         Object inputObject = ClassInstanceCreator.createObject(paramClass).getObject();
         List<Method> methods = new ArrayList(Arrays.asList(paramClass.getMethods()));
-        Collections.sort(methods, new MethodNameComparator());
-        for (Method setter : methods) {
-            String setterName = setter.getName();
-            if (!"set".equals(setterName) && setter.getName().startsWith("set")) {
-                final String fieldName = setter.getName().substring(3);
-                Method getter = paramClass.getMethod("get" + fieldName);
-                Object defaultValue = "";
-                Class<?> paramTypes[] = setter.getParameterTypes();
-                Class<?> paramType = null;
-                String propertyName = fieldName.substring(0, 1).toLowerCase()
-                        + fieldName.substring(1);
-                if (paramTypes.length > 0) {
-                    paramType = paramTypes[0];
-                } else {
-                    throw new APIBrowserException("There is no type for class: " + paramClass.getCanonicalName());
-                }
-                if (getter != null) {
-                    defaultValue = getter.invoke(inputObject);
-                }
-                final String counterName = parentFieldName + propertyName + "Size";
-                int multiplicity = 0;
-                if (request.getParameter(counterName) != null) {
-                    multiplicity = Integer.parseInt(request.getParameter(counterName));
-                }
-                if ((HashMap.class.isAssignableFrom(paramType)) || paramType.isAssignableFrom(HashMap.class)) {
-                    Class<?>[] componentsTypes = ClassTypeUtil.retrieveMapTypes(paramClass, propertyName);
-                    if (multiplicity == 0) {
-                        renderMapFieldInputRow(request, table, parentFieldName + propertyName
-                                + "[]", counterName, null, componentsTypes, 0);
-                    } else {
-                        for (int i = 0; i < multiplicity; i++) {
-                            String newKeyFieldName = parentFieldName + propertyName + "[" + i + "]";
-                            renderMapFieldInputRow(request, table, newKeyFieldName, counterName, null, componentsTypes, multiplicity); //TODO: add heredefault value object
-                        }
-                    }
-
-                } else if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
-                    Class<?> componentType = ClassTypeUtil.retrieveListType(paramClass, propertyName);
-                    if (multiplicity == 0) {
-                        String newFieldName = parentFieldName + propertyName + "[]";
-                        renderFieldInputRow(request, table, newFieldName, counterName, null, componentType, 0);
-                    } else {
-                        for (int i = 0; i < multiplicity; i++) {
-                            String newFieldName = parentFieldName + propertyName + "[" + i + "]";
-                            renderFieldInputRow(request, table, newFieldName, counterName, null, componentType, multiplicity); //TODO: add heredefault value object
-                        }
-                    }
-                } else if (paramType.isArray()) {
-                    Class<?> componentType = paramType.getComponentType();
-                    if (paramType.equals(List.class)) {
-                        Type t = paramType.getTypeParameters()[0];
-                        componentType = (Class<?>) t;
-                    }
-                    if (multiplicity == 0) {
-                        renderFieldInputRow(request, table, parentFieldName + propertyName
-                                + "[]", counterName, null, componentType, 0);
-                    } else {
-                        for (int i = 0; i < multiplicity; i++) {
-                            renderFieldInputRow(request, table, parentFieldName + propertyName
-                                    + "[" + i + "]", counterName, null, componentType, multiplicity);
-                        }
-                    }
-                } else {
-                    renderFieldInputRow(request, table, parentFieldName + propertyName,
-                            parentFieldName + propertyName, defaultValue, paramType, -1);//
-                }
+        List<Method> setters = methods.stream()
+                .filter(m -> !"set".equals(m.getName()))
+                .filter(m -> m.getName().startsWith("set"))
+                .filter(m -> !m.isAnnotationPresent(APIBrowserIgnoreSetter.class))
+                .collect(Collectors.toList());
+        Collections.sort(setters, new MethodNameComparator());
+        for (Method setter : setters) {
+            final String fieldName = setter.getName().substring(3);
+            Method getter = paramClass.getMethod("get" + fieldName);
+            Object defaultValue = "";
+            Class<?> paramTypes[] = setter.getParameterTypes();
+            Class<?> paramType = null;
+            String propertyName = fieldName.substring(0, 1).toLowerCase()
+                    + fieldName.substring(1);
+            if (paramTypes.length > 0) {
+                paramType = paramTypes[0];
+            } else {
+                throw new APIBrowserException("There is no type for class: " + paramClass.getCanonicalName());
             }
+            if (getter != null) {
+                defaultValue = getter.invoke(inputObject);
+            }
+            final String counterName = parentFieldName + propertyName + "Size";
+            int multiplicity = 0;
+            if (request.getParameter(counterName) != null) {
+                multiplicity = Integer.parseInt(request.getParameter(counterName));
+            }
+            if ((HashMap.class.isAssignableFrom(paramType)) || paramType.isAssignableFrom(HashMap.class)) {
+                Class<?>[] componentsTypes = ClassTypeUtil.retrieveMapTypes(paramClass, propertyName);
+                if (multiplicity == 0) {
+                    renderMapFieldInputRow(request, table, parentFieldName + propertyName
+                            + "[]", counterName, null, componentsTypes, 0);
+                } else {
+                    for (int i = 0; i < multiplicity; i++) {
+                        String newKeyFieldName = parentFieldName + propertyName + "[" + i + "]";
+                        renderMapFieldInputRow(request, table, newKeyFieldName, counterName, null, componentsTypes, multiplicity); //TODO: add heredefault value object
+                    }
+                }
+
+            } else if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
+                Class<?> componentType = ClassTypeUtil.retrieveListType(paramClass, propertyName);
+                if (multiplicity == 0) {
+                    String newFieldName = parentFieldName + propertyName + "[]";
+                    renderFieldInputRow(request, table, newFieldName, counterName, null, componentType, 0);
+                } else {
+                    for (int i = 0; i < multiplicity; i++) {
+                        String newFieldName = parentFieldName + propertyName + "[" + i + "]";
+                        renderFieldInputRow(request, table, newFieldName, counterName, null, componentType, multiplicity); //TODO: add heredefault value object
+                    }
+                }
+            } else if (paramType.isArray()) {
+                Class<?> componentType = paramType.getComponentType();
+                if (paramType.equals(List.class)) {
+                    Type t = paramType.getTypeParameters()[0];
+                    componentType = (Class<?>) t;
+                }
+                if (multiplicity == 0) {
+                    renderFieldInputRow(request, table, parentFieldName + propertyName
+                            + "[]", counterName, null, componentType, 0);
+                } else {
+                    for (int i = 0; i < multiplicity; i++) {
+                        renderFieldInputRow(request, table, parentFieldName + propertyName
+                                + "[" + i + "]", counterName, null, componentType, multiplicity);
+                    }
+                }
+            } else {
+                renderFieldInputRow(request, table, parentFieldName + propertyName,
+                        parentFieldName + propertyName, defaultValue, paramType, -1);//
+            }
+            
         }
     }
 
