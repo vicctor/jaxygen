@@ -537,7 +537,7 @@ public class MethodInvokerPage extends Page {
                     HTMLTable beanTable = new HTMLTable();
                     r.addColumn(beanTable);
                     try {
-                        addInputClassParameters(request, beanTable, selectedClass, canonicalAnchorId + ".");
+                        addInputClassParameters(request, beanTable, selectedClass, canonicalAnchorId + "#");
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException ex) {
                         throw new APIBrowserException(ex);
                     }

@@ -15,6 +15,9 @@
  */
 package org.jaxygen.netserviceapisample.business.dto.default_impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author xnet
@@ -22,6 +25,7 @@ package org.jaxygen.netserviceapisample.business.dto.default_impl;
 public class TestInterfaceResponse extends TestInterfaceBase {
 
     private FooInterface foo;
+    private List<FooInterface> fooList = new ArrayList();
 
     public FooInterface getFoo() {
         return foo;
@@ -30,5 +34,14 @@ public class TestInterfaceResponse extends TestInterfaceBase {
     public void setFoo(FooInterface foo) {
         this.foo = foo;
     }
+
+    public List<FooInterface> getFooList() {
+        return fooList;
+    }
+
+    public void setFooList(List<FooInterface> fooList) {
+        this.fooList = fooList;
+    }
+
 
 }

@@ -15,15 +15,21 @@
  */
 package org.jaxygen.converters.prop2Json;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
+import org.jaxygen.converters.json.GSONBuilderFactory;
+import org.jaxygen.converters.json.JSONBuilderRegistry;
 import org.jaxygen.converters.prop2Json.pojos.ArrayListTestPojo;
 import org.jaxygen.converters.prop2Json.pojos.ImplTestPojo;
 import org.jaxygen.converters.prop2Json.pojos.Sex;
 import org.jaxygen.converters.prop2Json.pojos.TestInterfaceRequest;
 import org.jaxygen.converters.prop2Json.pojos.UserTestPojo;
+import org.jaxygen.customimplementation.CustomTypeAdapterFactory;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -31,6 +37,34 @@ import org.junit.Test;
  * @author jknast
  */
 public class Prop2JSONConverterTest {
+
+    public static void setupGsonBuilder() {
+        JSONBuilderRegistry.setGSONBuilder(new GSONBuilderFactory() {
+            GsonBuilder builder = null;
+
+            @Override
+            public GsonBuilder createBuilder() {
+                if (builder == null) {
+                    builder = new GsonBuilder()
+                            .registerTypeAdapterFactory(new CustomTypeAdapterFactory());
+                }
+                return builder;
+            }
+
+            @Override
+            public Gson build() {
+
+                createBuilder = createBuilder();
+                return createBuilder.create();
+            }
+            private GsonBuilder createBuilder;
+        });
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+        setupGsonBuilder();
+    }
 
     @Before
     public void setUp() {
@@ -91,20 +125,21 @@ public class Prop2JSONConverterTest {
         Assertions.assertThat(resultPojo).isEqualToComparingFieldByFieldRecursively(expected);
     }
 
-//    @Test
+    @Test
     public void testConvertPropertiesToObj3() {
         //given
 
         Map<String, String> properties = new HashMap();
         properties.put("intField", "12");
         properties.put("stringField", "sialala");
-        properties.put("interfaceField<impl>org.jaxygen.converters.prop2Json.pojos.ImplTestPojo.bar1", "pole z klasy implementującej");
-//        properties.put("sex", "female");
+        properties.put("interfaceField<impl>org.jaxygen.converters.prop2Json.pojos.ImplTestPojo#bar1", "pole z klasy implementującej");
+        properties.put("interfacesListField[0]<impl>org.jaxygen.converters.prop2Json.pojos.ImplTestPojo#bar1", "pole w liscie");
 
         TestInterfaceRequest expected = new TestInterfaceRequest();
         expected.setIntField(12);
         expected.setStringField("sialala");
         expected.setInterfaceField(new ImplTestPojo("pole z klasy implementującej"));
+        expected.getInterfacesListField().add(new ImplTestPojo("pole w liscie"));
 
         //when
         String resultJson = Prop2JSONConverter.convertPropertiesToJSON(properties, null);

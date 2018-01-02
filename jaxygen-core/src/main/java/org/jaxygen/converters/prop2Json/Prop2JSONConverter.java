@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.exceptions.DeserialisationError;
@@ -60,7 +59,7 @@ public class Prop2JSONConverter implements RequestConverter {
         JsonObject root = new JsonObject();
         return addPropertiesToObject(root, properties);
     }
-    
+
     private static String addPropertiesToObject(JsonObject root, Map<String, String> properties) {
 
         Map<String, String> primitives = new HashMap();
@@ -78,37 +77,48 @@ public class Prop2JSONConverter implements RequestConverter {
         }
 
         //sort complex to buckets
-        Iterator<String> iterator = complex.keySet().iterator();
-        String nextKey = null;
-        if (iterator.hasNext()) {
-            nextKey = iterator.next();
-        }
-        if (nextKey != null) {
-            String[] split = nextKey.split("\\.", 2);
-            String fieldName = split[0];
-            Map<String, String> map = new HashMap();
-            Iterator<Map.Entry<String, String>> iter = complex.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<String, String> entry = iter.next();
-                if (entry.getKey().startsWith(fieldName)) {
-                    String innerName = entry.getKey().substring(fieldName.length() + 1);
-                    map.put(innerName, entry.getValue());
-                    iter.remove();
-                }
-            }
-            addComplex(root, fieldName, map);
-        }
+        Map<String, Map<String, String>> bucket = sortToBucket(complex);
 
+        // add all complex fields family
+        for (Map.Entry<String, Map<String, String>> e : bucket.entrySet()) {
+            addComplex(root, e.getKey(), e.getValue());
+        }
 
         return root.toString();
     }
-    
-    private static void addComplex(JsonObject root, String fieldName, Map<String, String> properties) {
-         if (fieldName.contains("[")) {
-             addArr(root, fieldName, properties);
+
+    private static Map<String, Map<String, String>> sortToBucket(Map<String, String> complex) {
+        Map<String, Map<String, String>> bucket = new HashMap();
+
+        for (Map.Entry<String, String> e : complex.entrySet()) {
+            String nextKey = e.getKey();
+            String splitter;
+            if (nextKey.contains("<impl>")) {
+                splitter = "#";
+            } else {
+                splitter = "\\.";
             }
+            String[] split = nextKey.split(splitter, 2);
+            String fieldName = split[0];
+            String innerName = split[1];
+            Map<String, String> fieldMap = bucket.get(fieldName);
+            if (fieldMap == null) {
+                fieldMap = new HashMap();
+                bucket.put(fieldName, fieldMap);
+            }
+
+            fieldMap.put(innerName, e.getValue());
+        }
+        return bucket;
     }
 
+    private static void addComplex(JsonObject root, String fieldName, Map<String, String> properties) {
+        if (fieldName.contains("[")) {
+            addArr(root, fieldName, properties);
+        } else {
+            addObj(root, fieldName, properties);
+        }
+    }
 
     private static void addArr(JsonObject root, String fieldNameBracket, Map<String, String> properties) {
 
@@ -117,10 +127,39 @@ public class Prop2JSONConverter implements RequestConverter {
         if (!root.has(arrayName)) {
             root.add(arrayName, new JsonArray());
         }
-        JsonArray jsonArr = root.getAsJsonArray(arrayName);        
-        JsonObject obj = new JsonObject();
-        jsonArr.add(obj);
-        addPropertiesToObject(obj, properties);
+        JsonArray jsonArr = root.getAsJsonArray(arrayName);
+        if (fieldNameBracket.contains("<impl>")) {
+            String implClassName = fieldNameBracket.substring(fieldNameBracket.indexOf("<impl>") + 6);
+            JsonObject wrapper = new JsonObject();
+            JsonObject dtoObj = new JsonObject();
+            wrapper.addProperty("implementationClass", implClassName);
+            wrapper.add("dto", dtoObj);
+            jsonArr.add(wrapper);
+            addPropertiesToObject(dtoObj, properties);
+        } else {
+            JsonObject obj = new JsonObject();
+            jsonArr.add(obj);
+            addPropertiesToObject(obj, properties);
+        }
+    }
+
+    private static void addObj(JsonObject root, String fieldName, Map<String, String> properties) {
+
+        if (fieldName.contains("<impl>")) {
+            String[] splited = fieldName.split("<impl>");
+            String fName = splited[0];
+            String implClassName = fieldName.substring(fieldName.indexOf("<impl>") + 6);
+            JsonObject wrapper = new JsonObject();
+            JsonObject dtoObj = new JsonObject();
+            wrapper.addProperty("implementationClass", implClassName);
+            wrapper.add("dto", dtoObj);
+            root.add(fName, wrapper);
+            addPropertiesToObject(dtoObj, properties);
+        } else {
+            JsonObject obj = new JsonObject();
+            root.add(fieldName, obj);
+            addPropertiesToObject(obj, properties);
+        }
     }
 
     public Prop2JSONConverter() {
