@@ -71,9 +71,11 @@ public class Prop2JSONConverter implements RequestConverter {
                 primitives.put(e.getKey(), e.getValue());
             }
         }
-        //add primitives
+        //add primitives if not empty
         for (Map.Entry<String, String> e : primitives.entrySet()) {
-            root.addProperty(e.getKey(), e.getValue());
+            if (!e.getValue().isEmpty()) {
+                root.addProperty(e.getKey(), e.getValue());
+            }
         }
 
         //sort complex to buckets
