@@ -112,7 +112,7 @@ public abstract class BasicHTMLElement implements HTMLElement {
             sb.append(" ");
             sb.append(renderAttributes());
             sb.append(">");
-            sb.append(renderContent());
+            sb.append(contentString);
             sb.append("</");
             sb.append(tag);
             sb.append(">");
