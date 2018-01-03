@@ -461,12 +461,17 @@ public class MethodInvokerPage extends Page {
         table.addRow(row);
         String propertyName = fieldName;
         row.addColumn(new HTMLLabel(paramType.getSimpleName(), paramType.getCanonicalName()));
-        row.addColumn(new HTMLLabel(propertyName));
+        if (propertyName.contains("<impl>")) {
+            propertyName = propertyName.substring(propertyName.indexOf("#") + 1);
+        }
 
-        addPlusAndMinusAnchors(request, row, counterName, multiplicity, propertyName);
+        String[] splited = propertyName.split("\\.");
+        row.addColumn(new HTMLLabel(splited[splited.length - 1], propertyName));
+
+        addPlusAndMinusAnchors(request, row, counterName, multiplicity, fieldName);
 
         if (multiplicity > 0 || multiplicity == -1) {
-            addSpecificInput(request, row, defaultValue, paramType, propertyName);
+            addSpecificInput(request, row, defaultValue, paramType, fieldName);
         }
     }
 
