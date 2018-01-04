@@ -17,6 +17,8 @@ package org.jaxygen.converters.prop2Json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
@@ -85,6 +87,68 @@ public class Prop2JSONConverterTest {
     }
 
     @Test
+    public void testConvertPropertiesToJSON2() {
+        //given
+        Map<String, String> properties = new HashMap();
+        properties.put("outher.stringField", "foo");
+        properties.put("interfaceField<impl>org.ImplTestPojo#bar1", "pole z klasy implementującej");
+        properties.put("outher.interfacesListField[0]<impl>org.ImplTestPojo#bar1", "pole w liscie");
+        String expected = ""
+                + "{"
+                + "\"interfaceField\":{"
+                + "\"implementationClass\":\"org.ImplTestPojo\","
+                + "\"dto\":{"
+                + "\"bar1\":\"pole z klasy implementującej\""
+                + "}"
+                + "},"
+                + "\"outher\":{"
+                + "\"stringField\":\"foo\","
+                + "\"interfacesListField\":[{"
+                + "\"implementationClass\":\"org.ImplTestPojo\","
+                + "\"dto\":{"
+                + "\"bar1\":\"pole w liscie\""
+                + "}"
+                + "}]}"
+                + "}";
+        //when
+        String result = Prop2JSONConverter.convertPropertiesToJSON(properties, null);
+
+        //then
+//        System.out.println("exp " + expected);
+//        System.out.println("res " + result);
+        Assertions.assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    public void test_sortToBucket() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        //given
+        Map<String, String> complex = new HashMap();
+        complex.put("outher.stringField", "foo");
+        complex.put("otherOuther.interfaceField<impl>org.ImplTestPojo#bar1", "pole z klasy implementującej");
+        complex.put("outher.interfacesListField[0]<impl>org.ImplTestPojo#bar1", "pole w liscie");
+        complex.put("superOuther.outher.interfacesListField[0]<impl>org.ImplTestPojo#barrrrrrr", "rrrr");
+
+        Map<String, Map<String, String>> expected = new HashMap();
+        expected.put("outher", new HashMap());
+        expected.get("outher").put("interfacesListField[0]<impl>org.ImplTestPojo#bar1", "pole w liscie");
+        expected.get("outher").put("stringField", "foo");
+        expected.put("otherOuther", new HashMap());
+        expected.get("otherOuther").put("interfaceField<impl>org.ImplTestPojo#bar1", "pole z klasy implementującej");
+        expected.put("superOuther", new HashMap());
+        expected.get("superOuther").put("outher.interfacesListField[0]<impl>org.ImplTestPojo#barrrrrrr", "rrrr");
+
+        //when
+        Method method = Prop2JSONConverter.class.getDeclaredMethod("sortToBucket", Map.class);
+        method.setAccessible(true);
+        Map<String, Map<String, String>> result = (Map<String, Map<String, String>>) method.invoke(null, complex);
+
+        //then
+//        System.out.println("exp " + expected);
+//        System.out.println("res " + result);
+        Assertions.assertThat(result).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
     public void testConvertPropertiesToObj() {
         //given
         Map<String, String> properties = new HashMap();
@@ -148,6 +212,5 @@ public class Prop2JSONConverterTest {
         //then
         Assertions.assertThat(resultPojo).isEqualToComparingFieldByFieldRecursively(expected);
     }
-
 
 }

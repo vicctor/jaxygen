@@ -96,7 +96,13 @@ public class Prop2JSONConverter implements RequestConverter {
             String nextKey = e.getKey();
             String splitter;
             if (nextKey.contains("<impl>")) {
-                splitter = "#";
+                int dotIndex = nextKey.indexOf(".");
+                int implIndex = nextKey.indexOf("<impl>");
+                if (dotIndex > 0 && dotIndex < implIndex) {
+                    splitter = "\\.";
+                } else {
+                    splitter = "#";
+                }
             } else {
                 splitter = "\\.";
             }
