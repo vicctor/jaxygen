@@ -24,6 +24,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import org.jaxygen.exceptions.NoDefinitionOfImplementationException;
 
 /**
  *
@@ -42,7 +43,7 @@ public class CustomImplementationTypeAdapter extends TypeAdapter<Object> {
         this.elementAdapter = gson.getAdapter(JsonElement.class);
     }
 
-    //serialize
+    //serialize function
     @Override
     public void write(JsonWriter out, Object value) throws IOException {
         TypeAdapter adapter = gson.getAdapter(value.getClass());
@@ -50,12 +51,15 @@ public class CustomImplementationTypeAdapter extends TypeAdapter<Object> {
         elementAdapter.write(out, ret);
     }
 
-    //deserialize
+    //deserialize function
     @Override
     public Object read(JsonReader in) throws IOException {
         JsonElement element = elementAdapter.read(in);
         final JsonObject convertable = element.getAsJsonObject();
         final JsonPrimitive jsonClassName = (JsonPrimitive) convertable.get(IMPLEMENTATION_CLASS);
+        if (jsonClassName == null) {
+            throw new NoDefinitionOfImplementationException("There is no definition of class that will implement interface with annotation 'HasImplementation'");
+        }
         final JsonObject jsonDto = convertable.getAsJsonObject(DTO);
 
         final String implClassName = jsonClassName.getAsString();
