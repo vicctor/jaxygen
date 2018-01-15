@@ -15,25 +15,33 @@
  */
 package org.jaxygen.converters.json;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringWriter;
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.BeforeClass;
 
 /**
  *
  * @author Artur
  */
 public class JsonResponseConverterTest {
-    
-    public JsonResponseConverterTest() {
-    }
+
+    public final static String DATE_FORMAT_STRING = "dd-MM-yyyy HH:mm:ss";
+    public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_STRING);
 
     public static class DateContainer {
+
         private Date date;
 
         public Date getDate() {
@@ -44,6 +52,61 @@ public class JsonResponseConverterTest {
             this.date = date;
         }
     }
+
+    private final static TypeAdapter<Date> DATE_ADAPTER = new TypeAdapter<Date>() {
+        @Override
+        public void write(JsonWriter writer, Date t) throws IOException {
+            if (t != null) {
+                writer.value(DATE_FORMAT.format(t));
+            } else {
+                writer.nullValue();
+            }
+        }
+
+        @Override
+        public Date read(JsonReader reader) throws IOException {
+            if (reader.peek() == JsonToken.NULL) {
+                reader.nextNull();
+                return null;
+            }
+
+            String dateAsString = reader.nextString();
+            try {
+                return DATE_FORMAT.parse(dateAsString);
+            } catch (ParseException ex) {
+                throw new IOException("Could not parse Date", ex);
+            }
+        }
+    };
+
+    public static void setupGsonBuilder() {
+        JSONBuilderRegistry.setGSONBuilder(new GSONBuilderFactory() {
+            GsonBuilder builder = null;
+
+            @Override
+            public GsonBuilder createBuilder() {
+                if (builder == null) {
+                    builder = new GsonBuilder()
+                            .registerTypeAdapter(Date.class, DATE_ADAPTER);
+                }
+                return builder;
+            }
+
+            @Override
+            public Gson build() {
+
+                createBuilder = createBuilder();
+                return createBuilder.create();
+            }
+            private GsonBuilder createBuilder;
+        });
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+        setupGsonBuilder();
+    }
+
     @Test
     public void shall_serializeTimeToDefaultFormat() throws Exception {
         // given
