@@ -13,14 +13,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.jaxygen.annotations.ClientIp;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.annotations.RequestURL;
 import org.jaxygen.annotations.SessionContext;
 import org.jaxygen.annotations.Validable;
-import org.jaxygen.objectsbuilder.ObjectBuilder;
-import org.jaxygen.objectsbuilder.ObjectBuilderFactory;
 import org.jaxygen.converters.ConvertersFactory;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.ResponseConverter;
@@ -29,6 +26,7 @@ import org.jaxygen.converters.json.JsonHRResponseConverter;
 import org.jaxygen.converters.json.JsonMultipartRequestConverter;
 import org.jaxygen.converters.json.JsonRequestConverter;
 import org.jaxygen.converters.json.JsonResponseConverter;
+import org.jaxygen.converters.prop2Json.Prop2JSONConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.converters.sjo.SJORRequestConverter;
 import org.jaxygen.converters.sjo.SJOResponseConverter;
@@ -41,6 +39,8 @@ import org.jaxygen.exceptions.InvalidPropertyFormat;
 import org.jaxygen.exceptions.ParametersError;
 import org.jaxygen.http.HttpRequestParams;
 import org.jaxygen.http.HttpRequestParser;
+import org.jaxygen.objectsbuilder.ObjectBuilder;
+import org.jaxygen.objectsbuilder.ObjectBuilderFactory;
 import org.jaxygen.propertyinjector.PropertyInjector;
 import org.jaxygen.propertyinjector.ValueProvider;
 import org.jaxygen.propertyinjector.exceptions.PropertyEnhancementException;
@@ -60,8 +60,9 @@ public class ServiceInvoker extends HttpServlet {
   private String beensPath = null;
   
   static {
-    // Register default converters
-    ConvertersFactory.registerRequestConverter(new PropertiesToBeanConverter());
+      // Register default converters
+      ConvertersFactory.registerRequestConverter(new Prop2JSONConverter());
+      ConvertersFactory.registerRequestConverter(new PropertiesToBeanConverter());
     ConvertersFactory.registerResponseConverter(new JsonResponseConverter());
     ConvertersFactory.registerRequestConverter(new JsonMultipartRequestConverter());
     ConvertersFactory.registerRequestConverter(new JsonRequestConverter());

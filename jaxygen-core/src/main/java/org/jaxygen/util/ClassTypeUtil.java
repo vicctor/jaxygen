@@ -18,6 +18,7 @@ package org.jaxygen.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import org.jaxygen.exceptions.InstantiateClassException;
 
 /**
  *
@@ -28,13 +29,15 @@ public class ClassTypeUtil {
     private static Type obtainGenericPropertyType(final Class<?> paramClass, String propertyName) {
         Class c = paramClass;
         Field listField = null;
-        final String name = c.getName();
-        while (listField == null || "java.lang.Object".equals(name)) {
+        while (listField == null && !c.equals(Object.class)) {
             try {
                 listField = c.getDeclaredField(propertyName);
             } catch (Exception e) {
                 c = c.getSuperclass();
             }
+        }
+        if (listField == null) {
+            throw new InstantiateClassException("Cannot obtain type for field: " + propertyName + ", from class " + paramClass.getCanonicalName());
         }
         final Type genericPropertyType = listField.getGenericType();
         return genericPropertyType;

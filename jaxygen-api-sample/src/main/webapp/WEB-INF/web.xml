@@ -26,6 +26,9 @@
         <servlet-name>APIBrowser</servlet-name>
         <url-pattern>/APIBrowser</url-pattern>
     </servlet-mapping>
+    <listener>
+        <listener-class>org.jaxygen.netserviceapisample.ServletListenerContext</listener-class>
+    </listener>
     <welcome-file-list>
         <welcome-file>index</welcome-file>
     </welcome-file-list>
