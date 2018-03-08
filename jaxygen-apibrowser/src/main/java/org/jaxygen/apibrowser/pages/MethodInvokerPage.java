@@ -10,18 +10,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import org.jaxygen.annotations.HidenField;
+import org.jaxygen.annotations.APIBrowserIgnoreSetter;
+import org.jaxygen.annotations.HasImplementation;
 import org.jaxygen.annotations.NetAPI;
+import org.jaxygen.apibrowser.APIBrowserException;
 import org.jaxygen.converters.json.JsonHRResponseConverter;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.dto.Downloadable;
 import org.jaxygen.dto.Uploadable;
 import org.jaxygen.netservice.html.*;
 import org.jaxygen.url.UrlQuery;
+import org.jaxygen.util.ClassInstanceCreator;
 import org.jaxygen.util.ClassTypeUtil;
 import org.jaxygen.util.MethodNameComparator;
 
@@ -83,6 +87,16 @@ public class MethodInvokerPage extends Page {
     propertiesInputForm.appendInput(HTMLInput.Type.hidden, "inputType", "PROPERTIES");
     propertiesInputForm.appendInput(HTMLInput.Type.hidden, "outputType", JsonHRResponseConverter.NAME);
 
+//        propertiesInputForm.appendInput(HTMLInput.Type.hidden, "inputType", "PROPERTIES");
+        HTMLSelect inputTypeSelect = new HTMLSelect("inputType");
+        HTMLOption prop2jsonsOption = new HTMLOption("PROP2JSON", new HTMLLabel("PROP2JSON"));
+        prop2jsonsOption.setSelected(false);
+        inputTypeSelect.addOption(prop2jsonsOption);
+        HTMLOption propertiesOption = new HTMLOption("PROPERTIES", new HTMLLabel("PROPERTIES"));
+        propertiesOption.setSelected(true);
+        inputTypeSelect.addOption(propertiesOption);
+        propertiesInputForm.append(inputTypeSelect);
+        																						
     Class handerClass = Thread.currentThread().getContextClassLoader().loadClass(classFilter);
     Class resultType = null;
 
@@ -337,7 +351,6 @@ public class MethodInvokerPage extends Page {
     return table;
   }
 
-
   /**
    * Add list of parameters from bean class passed in the parameter paramClass
    * as a list of rows to the table.
@@ -354,12 +367,15 @@ public class MethodInvokerPage extends Page {
           HTMLTable table, Class<?> paramClass, final String parentFieldName)
           throws InstantiationException, IllegalAccessException,
           InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
-      Object inputObject = paramClass.getConstructor().newInstance();
+      Object inputObject = ClassInstanceCreator.createObject(paramClass).getObject();
       List<Method> methods = new ArrayList(Arrays.asList(paramClass.getMethods()));
-      Collections.sort(methods, new MethodNameComparator());
-      for (Method setter : methods) {
-      String setterName = setter.getName();
-          if (!"set".equals(setterName) && setter.getName().startsWith("set") && !setter.isAnnotationPresent(HidenField.class)) {
+	  List<Method> setters = methods.stream()
+                .filter(m -> !"set".equals(m.getName()))
+                .filter(m -> m.getName().startsWith("set"))
+                .filter(m -> !m.isAnnotationPresent(APIBrowserIgnoreSetter.class))
+                .collect(Collectors.toList());
+      Collections.sort(setters, new MethodNameComparator());
+      for (Method setter : setters) {		  
         final String fieldName = setter.getName().substring(3);
         Method getter = paramClass.getMethod("get" + fieldName);
         Object defaultValue = "";
@@ -368,17 +384,19 @@ public class MethodInvokerPage extends Page {
         String propertyName = fieldName.substring(0, 1).toLowerCase()
                 + fieldName.substring(1);
         if (paramTypes.length > 0) {
-          paramType = paramTypes[0];
+          paramType = paramTypes[0];	
+		} else {		  
+             throw new APIBrowserException("There is no type for class: " + paramClass.getCanonicalName());	
         }
         if (getter != null) {
           defaultValue = getter.invoke(inputObject);
         }
+          final String counterName = parentFieldName + propertyName + "Size";
+          int multiplicity = 0;
+          if (request.getParameter(counterName) != null) {
+              multiplicity = Integer.parseInt(request.getParameter(counterName));
+          }
           if ((HashMap.class.isAssignableFrom(paramType)) || paramType.isAssignableFrom(HashMap.class)) {
-            final String counterName = parentFieldName + propertyName + "Size";
-            int multiplicity = 0;
-            if (request.getParameter(counterName) != null) {
-                multiplicity = Integer.parseInt(request.getParameter(counterName));
-            }
               Class<?>[] componentsTypes = ClassTypeUtil.retrieveMapTypes(paramClass, propertyName);
             if (multiplicity == 0) {
                 renderMapFieldInputRow(request, table, parentFieldName + propertyName
@@ -391,15 +409,10 @@ public class MethodInvokerPage extends Page {
             }
 
         } else if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
-          final String counterName = parentFieldName + propertyName + "Size";
-          int multiplicity = 0;
-          if (request.getParameter(counterName) != null) {
-            multiplicity = Integer.parseInt(request.getParameter(counterName));
-          }
               Class<?> componentType = ClassTypeUtil.retrieveListType(paramClass, propertyName);
           if (multiplicity == 0) {
-            renderFieldInputRow(request, table, parentFieldName + propertyName
-                    + "[]", counterName, null, componentType, 0);
+			   String newFieldName = parentFieldName + propertyName + "[]";
+            renderFieldInputRow(request, table, newFieldName, counterName, null, componentType, 0);
           } else {
             for (int i = 0; i < multiplicity; i++) {
               String newFieldName = parentFieldName + propertyName + "[" + i + "]";
@@ -407,11 +420,6 @@ public class MethodInvokerPage extends Page {
             }
           }
         } else if (paramType.isArray()) {
-          final String counterName = parentFieldName + propertyName + "Size";
-          int multiplicity = 0;
-          if (request.getParameter(counterName) != null) {
-            multiplicity = Integer.parseInt(request.getParameter(counterName));
-          }
           Class<?> componentType = paramType.getComponentType();
           if (paramType.equals(List.class)) {
             Type t = paramType.getTypeParameters()[0];
@@ -428,12 +436,11 @@ public class MethodInvokerPage extends Page {
           }
         } else {
           renderFieldInputRow(request, table, parentFieldName + propertyName,
-                  parentFieldName + propertyName, defaultValue, paramType, -1);
-        }
-      }
+                  parentFieldName + propertyName, defaultValue, paramType, -1);//
+        }		
+      }			
     }
-  }
-
+  
   /**
    * Generate row with the parameter input and fill it with the default value
    *
@@ -454,12 +461,17 @@ public class MethodInvokerPage extends Page {
         table.addRow(row);
         String propertyName = fieldName;
         row.addColumn(new HTMLLabel(paramType.getSimpleName(), paramType.getCanonicalName()));
+		 if (propertyName.contains("<impl>")) {
+            propertyName = propertyName.substring(propertyName.indexOf("#") + 1);
+        }
+		
         String[] splited = propertyName.split("\\.");
         row.addColumn(new HTMLLabel(splited[splited.length -1], propertyName));
-        addPlusAndMinusAnchors(request, row, counterName, multiplicity, propertyName);
+		
+        addPlusAndMinusAnchors(request, row, counterName, multiplicity, fieldName);
 
         if (multiplicity > 0 || multiplicity == -1) {
-            addSpecificInput(request, row, defaultValue, paramType, propertyName);
+            addSpecificInput(request, row, defaultValue, paramType, fieldName);
         }
     }
 
@@ -494,17 +506,8 @@ public class MethodInvokerPage extends Page {
             select.addOption(new HTMLOption("FALSE", new HTMLLabel("FALSE")));
             row.addColumn(select);
         } else if (paramType.isEnum()) {
-            HTMLSelect select = new HTMLSelect(propertyName);
-            String parameterName = propertyName + "_Value";
-            Object value = request.getParameter(parameterName);
-            for (Object obj : paramType.getEnumConstants()) {
-                String name = obj.toString();
-                HTMLOption htmlOptions = new HTMLOption(name, new HTMLLabel(name));
-                boolean isSelected = value != null && name.equals(value.toString());
-                htmlOptions.setSelected(isSelected);
-                select.addOption(htmlOptions);
-            }
-            row.addColumn(select);
+			Object[] values = paramType.getEnumConstants();
+            renderSelectHTML(request, propertyName, row, values);
         } else if (PropertiesToBeanConverter.isCovertable(paramType)) {
             String parameterName = propertyName + "_Value";
             Object value = request.getParameter(parameterName);
@@ -512,11 +515,62 @@ public class MethodInvokerPage extends Page {
             row.addColumn(new HTMLInput(propertyName, propertyName, "INPUT_FIELD", v));
         } else if (paramType.isAssignableFrom(Uploadable.class)) {
             row.addColumn(new HTMLInput(HTMLInput.Type.file, propertyName));
+        } else if (paramType.isAnnotationPresent(HasImplementation.class)) {
+            HasImplementation annot = paramType.getAnnotation(HasImplementation.class);
+            Class[] implementations = annot.implementations();
+
+            HTMLTable implTable = new HTMLTable();
+            row.addColumn(implTable);
+
+            for (Class im : implementations) {
+                String implName = im.getSimpleName();
+                String anchorId = propertyName + "<impl>" + im.getSimpleName();
+                String canonicalAnchorId = propertyName + "<impl>" + im.getCanonicalName();
+                UrlQuery okQuery = new UrlQuery();
+                request.getParameterMap().keySet().stream().forEach((key) -> {
+                    // we filter properties from other implementations of this field
+                    // so we can switch between implementations
+                    if (!key.startsWith(propertyName + "<impl>")) {
+                        okQuery.add(key, request.getParameter(key));
+                    }
+                });
+                okQuery.add(anchorId, implName);
+                HTMLTable.Row r = new HTMLTable.Row();
+                r.addColumn(new HTMAnchor(anchorId, "anchor", "" + browserPath + "?" + okQuery.toString(),
+                        new HTMLLabel(implName)));
+                implTable.addRow(r);
+
+                // if in parameters is implementation key, we add input for that
+                if (request.getParameterMap().keySet().contains(anchorId)) {
+                    Class<?> selectedClass = im;
+                    HTMLTable beanTable = new HTMLTable();
+                    r.addColumn(beanTable);
+                    try {
+                        addInputClassParameters(request, beanTable, selectedClass, canonicalAnchorId + "#");
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException ex) {
+                        throw new APIBrowserException(ex);
+                    }
+                }
+            }
         } else {
             HTMLTable beanTable = new HTMLTable();
             row.addColumn(beanTable);
             addInputClassParameters(request, beanTable, paramType, propertyName + ".");
         }
+    }
+
+    private void renderSelectHTML(HttpServletRequest request, final String propertyName, HTMLTable.Row row, Object[] values) {
+        HTMLSelect select = new HTMLSelect(propertyName);
+        String parameterName = propertyName + "_Value";
+        Object value = request.getParameter(parameterName);
+        for (Object obj : values) {
+            String name = obj.toString();
+            HTMLOption htmlOptions = new HTMLOption(name, new HTMLLabel(name));
+            boolean isSelected = value != null && name.equals(value.toString());
+            htmlOptions.setSelected(isSelected);
+            select.addOption(htmlOptions);
+        }
+        row.addColumn(select);
     }
 
   private void addExceptionHelp(Type exceptionType, HTMLTable table) {
@@ -530,38 +584,40 @@ public class MethodInvokerPage extends Page {
   }
 
     private void addPlusAndMinusAnchors(HttpServletRequest request, HTMLTable.Row row, final String counterName, int multiplicity, final String propertyName) {
+		
+		if (multiplicity >= 0) {
         /*
         * Build the query which adds more inputs to the rendered array
          */
         UrlQuery queryMultiplicityUp = new UrlQuery();
         request.getParameterMap().keySet().stream().forEach((key) -> {
-            if (key.toString().equals(counterName)) {
+            if (key.equals(counterName)) {
                 queryMultiplicityUp.add(counterName, "" + (multiplicity + 1));
             } else {
-                queryMultiplicityUp.add(key.toString(), request.getParameter(key.toString()));
+                queryMultiplicityUp.add(key, request.getParameter(key));
             }
         });
-        /*
-        * Build the query which removes one input from the rendered array
-         */
-        UrlQuery queryMultiplicityDown = new UrlQuery();
-        request.getParameterMap().keySet().stream().forEach((key) -> {
-            if (key.toString().equals(counterName)) {
-                queryMultiplicityDown.add(counterName, "" + (multiplicity - 1));
-            } else {
-                queryMultiplicityDown.add(key.toString(), request.getParameter(key.toString()));
+            if (queryMultiplicityUp.getParameters().containsKey(counterName) == false) {
+                queryMultiplicityUp.add(counterName, "" + (multiplicity + 1));
             }
-        });
-        if (queryMultiplicityUp.getParameters().containsKey(counterName) == false) {
-            queryMultiplicityUp.add(counterName, "" + (multiplicity + 1));
-        }
-        if (multiplicity >= 0) {
             row.addColumn(new HTMAnchor("P" + propertyName, "anchor", "" + browserPath + "?" + queryMultiplicityUp.toString(),
                     new HTMLLabel("+")));
         } else {
             row.addColumn(new HTMLLabel(""));
         }
         if (multiplicity >= 1) {
+        /*
+        * Build the query which removes one input from the rendered array
+         */
+        UrlQuery queryMultiplicityDown = new UrlQuery();
+        request.getParameterMap().keySet().stream().forEach((key) -> {
+            if (key.equals(counterName)) {
+                queryMultiplicityDown.add(counterName, "" + (multiplicity - 1));
+            } else {
+                queryMultiplicityDown.add(key, request.getParameter(key));
+            }
+        });
+		
             row.addColumn(new HTMAnchor("M" + propertyName, "anchor", "" + browserPath + "?" + queryMultiplicityDown.toString(),
                     new HTMLLabel("-")));
         } else {
