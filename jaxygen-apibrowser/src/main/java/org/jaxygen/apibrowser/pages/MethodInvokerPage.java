@@ -1,11 +1,11 @@
 package org.jaxygen.apibrowser.pages;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,8 +15,8 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import org.jaxygen.annotations.APIBrowserIgnoreSetter;
 import org.jaxygen.annotations.HasImplementation;
+import org.jaxygen.annotations.HiddenField;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.apibrowser.APIBrowserException;
 import org.jaxygen.converters.json.JsonHRResponseConverter;
@@ -27,7 +27,7 @@ import org.jaxygen.netservice.html.*;
 import org.jaxygen.url.UrlQuery;
 import org.jaxygen.util.ClassInstanceCreator;
 import org.jaxygen.util.ClassTypeUtil;
-import org.jaxygen.util.MethodNameComparator;
+import org.jaxygen.util.FieldNameComparator;
 
 /**
  *
@@ -392,6 +392,10 @@ public class MethodInvokerPage extends Page {
 
         return table;
     }
+    
+    private String capitalise(String str){
+        return str.substring(0, 1).toUpperCase()+ str.substring(1);
+    }
 
     /**
      * Add list of parameters from bean class passed in the parameter paramClass
@@ -410,26 +414,18 @@ public class MethodInvokerPage extends Page {
             throws InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
         Object inputObject = ClassInstanceCreator.createObject(paramClass).getObject();
-        List<Method> methods = new ArrayList(Arrays.asList(paramClass.getMethods()));
-        List<Method> setters = methods.stream()
-                .filter(m -> !"set".equals(m.getName()))
-                .filter(m -> m.getName().startsWith("set"))
-                .filter(m -> !m.isAnnotationPresent(APIBrowserIgnoreSetter.class))
+                
+        List<Field> filteredFields = ClassTypeUtil.getFields(paramClass).stream()
+                .filter(m -> !m.isAnnotationPresent(HiddenField.class))
                 .collect(Collectors.toList());
-        Collections.sort(setters, new MethodNameComparator());
-        for (Method setter : setters) {
-            final String fieldName = setter.getName().substring(3);
-            Method getter = paramClass.getMethod("get" + fieldName);
+        Collections.sort(filteredFields, new FieldNameComparator());        
+        
+        for (Field field : filteredFields) {
+            final String propertyName = field.getName();
+            Class<?> paramType = field.getType();
+            Method getter = paramClass.getMethod("get" + capitalise(propertyName));
             Object defaultValue = "";
-            Class<?> paramTypes[] = setter.getParameterTypes();
-            Class<?> paramType = null;
-            String propertyName = fieldName.substring(0, 1).toLowerCase()
-                    + fieldName.substring(1);
-            if (paramTypes.length > 0) {
-                paramType = paramTypes[0];
-            } else {
-                throw new APIBrowserException("There is no type for class: " + paramClass.getCanonicalName());
-            }
+                       
             if (getter != null) {
                 defaultValue = getter.invoke(inputObject);
             }
