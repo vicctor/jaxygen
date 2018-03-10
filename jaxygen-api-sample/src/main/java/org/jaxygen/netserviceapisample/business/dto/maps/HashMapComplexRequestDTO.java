@@ -19,6 +19,6 @@ package org.jaxygen.netserviceapisample.business.dto.maps;
  *
  * @author jknast
  */
-public class HashMapResponseDTO extends HashMapBase{
+public class HashMapComplexRequestDTO extends HashMapComplexBase{
   
 }

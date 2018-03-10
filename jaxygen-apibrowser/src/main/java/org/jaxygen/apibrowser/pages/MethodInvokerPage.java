@@ -95,7 +95,7 @@ public class MethodInvokerPage extends Page {
         propertiesOption.setSelected(true);
         inputTypeSelect.addOption(propertiesOption);
         propertiesInputForm.append(inputTypeSelect);
-        
+
         Class handerClass = Thread.currentThread().getContextClassLoader().loadClass(classFilter);
         Class resultType = null;
 
@@ -130,11 +130,11 @@ public class MethodInvokerPage extends Page {
         mainDiv.append(pointer);
         mainDiv.append(propertiesInputForm);
         mainDiv.append((HTMLElement) () -> {
-            StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
-            sb.append("window.addEventListener(\"load\", function () {\n")
-                    .append("  var form = document.getElementById(\"submitForm\");\n")
+            StringBuilder sb = new StringBuilder("<script type='text/javascript'>");
+            sb.append("window.addEventListener('load', function () {\n")
+                    .append("  var form = document.getElementById('submitForm');\n")
                     .append("\n")
-                    .append("  form.addEventListener(\"submit\", function (event) {\n")
+                    .append("  form.addEventListener('submit', function (event) {\n")
                     .append("    event.preventDefault();\n")
                     .append("    sendData();\n")
                     .append("  });\n")
@@ -155,37 +155,55 @@ public class MethodInvokerPage extends Page {
 
         Page page = this;
         // append script responsible for saving files
-        page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/FileSaver.js\"></script>");
-        page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/AnchorUpdater.js\"></script>");
-        page.append((HTMLElement) () -> "<script type=\"application/ecmascript\" async src=\"js/shareThisPage.js\"></script>");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/FileSaver.js'></script>");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/AnchorUpdater.js'></script>");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/shareThisPage.js'></script>");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/jquery.min.js'></script>");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/formArrayToJSON.js'></script>");
         // append script responsible for sending data to service
+
+        mainDiv.append(new HTMLInput(HTMLInput.Type.button, "copyButton", "copyButton", "copyButton", "Copy"));
+
         page.append((HTMLElement) () -> {
-            StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
-            sb.append("  function sendData() {\n")
-                    .append("  document.getElementById(\"queryResult\").innerHTML='Wait...';\n")
-                    .append("  document.getElementById(\"responseDiv\").style.display='block'\n")
-                    .append("  document.getElementById(\"mainDiv\").style.display='none';\n")
-                    .append("  var form = document.getElementById(\"submitForm\");\n")
+            StringBuilder sb = new StringBuilder()
+                    .append("<script type='text/javascript'>\n")
+                    .append("function show_hideRequestJSON() {\n")
+                    .append("   var requestJSONParagraph = document.getElementById('requestJSON');\n")
+                    .append("   if(requestJSONParagraph.innerHTML==='{ ... }'){\n")
+                    .append("     var requestJSONArray = $('#submitForm').serializeArray();")
+                    .append("     var requestJSON = str(toJSONRequest(requestJSONArray));")
+                    .append("     requestJSONParagraph.innerHTML=requestJSON;\n")
+                    //                    .append("     console.log('request ' + requestJSON);")
+                    .append("   }else{\n")
+                    .append("	  requestJSONParagraph.innerHTML='{ ... }';\n")
+                    .append("   }\n")
+                    .append("}\n")
+                    .append("  function sendData() {\n")
+                    .append("    document.getElementById('requestJSON').innerHTML='{ ... }';\n")
+                    .append("    document.getElementById('queryResult').innerHTML='Wait...';\n")
+                    .append("    document.getElementById('responseDiv').style.display='block'\n")
+                    .append("    document.getElementById('mainDiv').style.display='none';\n")
+                    .append("    var form = document.getElementById('submitForm');\n")
                     .append("    var XHR = new XMLHttpRequest();\n")
                     .append("    var FD  = new FormData(form);\n")
                     .append("\n")
-                    .append("    XHR.addEventListener(\"load\", function(event) {\n")
+                    .append("    XHR.addEventListener('load', function(event) {\n")
                     .append("      if (event.target.getResponseHeader('tabid')) {\n")
                     .append("       sessionStorage.setItem('tabid', event.target.getResponseHeader('tabid'));\n")
                     .append("      }\n");
             if (resultClass.isAssignableFrom(Downloadable.class)) {
                 sb.append("      var blob=new Blob([event.target.response], {type:event.target.getResponseHeader('Content-Type')});\n")
-                        .append("      var regex = /.*filename=\"(.*)\".*/g;\n")
+                        .append("      var regex = /.*filename='(.*)'.*/g;\n")
                         .append("      saveAs(blob, regex.exec(event.target.getResponseHeader('Content-Disposition'))[1]);\n");
             } else {
-                sb.append("      document.getElementById(\"queryResult\").innerHTML=JSON.stringify(event.target.response, null, 2);\n");
+                sb.append("      document.getElementById('queryResult').innerHTML=JSON.stringify(event.target.response, null, 2);\n");
             }
             sb.append("    });\n");
             if (resultClass.isAssignableFrom(Downloadable.class)) {
-                sb.append("    XHR.addEventListener(\"progress\", updateProgress, false);\n");
+                sb.append("    XHR.addEventListener('progress', updateProgress, false);\n");
             }
             sb.append("\n")
-                    .append("    XHR.open(\"POST\", \"").append(invokerPath).append("/").append(simpleClassname).append("/").append(methodFilter).append("\");\n");
+                    .append("    XHR.open('POST', '").append(invokerPath).append("/").append(simpleClassname).append("/").append(methodFilter).append("');\n");
             if (resultClass.isAssignableFrom(Downloadable.class)) {
                 sb.append("    XHR.responseType='arraybuffer';\n");
             } else {
@@ -200,9 +218,9 @@ public class MethodInvokerPage extends Page {
             sb.append("  function updateProgress(event) {\n")
                     .append("   if (event.lengthComputable) {\n")
                     .append("     var percentageComplete = event.loaded*100 / event.total;\n")
-                    .append("     document.getElementById(\"queryResult\").innerHTML='Downloading: ' + percentageComplete + '%';\n")
+                    .append("     document.getElementById('queryResult').innerHTML='Downloading: ' + percentageComplete + '%';\n")
                     .append("   } else {\n")
-                    .append("     document.getElementById(\"queryResult\").innerHTML='Downloading file...';\n")
+                    .append("     document.getElementById('queryResult').innerHTML='Downloading file...';\n")
                     .append("   }\n")
                     .append(" }");
             sb.append("</script>");
@@ -223,14 +241,15 @@ public class MethodInvokerPage extends Page {
         HTMLDiv responseDiv = new HTMLDiv("responseDiv");
         responseDiv.setAttribute("style", "display:none");
         responseDiv.append((HTMLElement) () -> {
-            StringBuilder sb = new StringBuilder("<script type=\"text/javascript\">");
+            StringBuilder sb = new StringBuilder("<script type='text/javascript'>");
             sb.append("function goBack() {\n")
-                    .append("   document.getElementById(\"mainDiv\").style.display='block';\n")
-                    .append("   document.getElementById(\"responseDiv\").style.display='none'\n")
+                    .append("   document.getElementById('mainDiv').style.display='block';\n")
+                    .append("   document.getElementById('responseDiv').style.display='none'\n")
                     .append("}");
             sb.append("</script>");
             return sb.toString();
         });
+        //Buttons-------
         HTMLInput backButton = new HTMLInput();
         backButton.setType(HTMLInput.Type.button);
         backButton.setValue("Back");
@@ -241,6 +260,30 @@ public class MethodInvokerPage extends Page {
         retryButton.setValue("Resend request");
         retryButton.setAttribute("onClick", "sendData()");
         responseDiv.append(retryButton);
+        //---------------
+
+        //@@ Request part @@@@@@@@@@@@@@4
+        responseDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Request")));
+
+        HTMLInput showJSONrequestButton = new HTMLInput();
+        showJSONrequestButton.setType(HTMLInput.Type.button);
+        showJSONrequestButton.setValue("Show JSON request");
+        showJSONrequestButton.setAttribute("onClick", "show_hideRequestJSON()");
+        responseDiv.append(showJSONrequestButton);
+
+        HTMLHeading noteHeader = new HTMLHeading(HTMLHeading.Level.H4, new HTMLPre("Note: \nMaps in JSON request below are rendered incorrectly. It will be fixed soon."));
+//        noteHeader.setAttribute("id", "noteHeader");
+//        noteHeader.setAttribute("hidden", true);
+        responseDiv.append(noteHeader);
+
+        HTMLParagraph requestJSON = new HTMLParagraph("requestJSON");
+        requestJSON.setAttribute("style", "white-space:pre-wrap;font-family:monospace");
+        responseDiv.append(requestJSON);
+        //@@@@@@@@@@@@@@@@@@@@@@@@@
+
+        //@@ Response part @@@@@@@@@@@@@@        
+        responseDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Response")));
+
         HTMLParagraph responseQueryResult = new HTMLParagraph("queryResult");
         responseQueryResult.setAttribute("style", "white-space:pre-wrap;font-family:monospace");
         responseDiv.append(responseQueryResult);
@@ -282,16 +325,16 @@ public class MethodInvokerPage extends Page {
         if (result[3].equals("ok")) {
             fieldsInput = fieldsInput.substring(0, fieldsInput.length() - 2);
             String function = "this." + methodName + " = function(" + fields + "onSuccess, onException){";
-            String call = " this.call(\"" + handerClass.getSimpleName() + "\", \""
-                    + methodName + "\",{";
-            String input = "inputType: \"PROPERTIES\", " + fieldsInput + " } , onSuccess, onException)}";
+            String call = " this.call('" + handerClass.getSimpleName() + "', '"
+                    + methodName + "',{";
+            String input = "inputType: 'PROPERTIES', " + fieldsInput + " } , onSuccess, onException)}";
             result[0] = function;
             result[1] = call;
             result[2] = input;
         } else {
             String function = "this." + methodName + " = function(onSuccess, onException){";
-            String call = " this.call(\"" + handerClass.getSimpleName() + "\", \""
-                    + methodName + "\",{} , onSuccess, onException);};";
+            String call = " this.call('" + handerClass.getSimpleName() + "', '"
+                    + methodName + "',{} , onSuccess, onException);};";
             result[0] = function;
             result[1] = call;
             result[2] = "";
@@ -437,7 +480,7 @@ public class MethodInvokerPage extends Page {
                 renderFieldInputRow(request, table, parentFieldName + propertyName,
                         parentFieldName + propertyName, defaultValue, paramType, -1);//
             }
-            
+
         }
     }
 

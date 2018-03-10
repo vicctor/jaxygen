@@ -9,5 +9,5 @@ package org.jaxygen.netserviceapisample.business.dto;
  * @author artur
  */
 public enum Sex {
- Famle, Male
+ Female, Male
 }
