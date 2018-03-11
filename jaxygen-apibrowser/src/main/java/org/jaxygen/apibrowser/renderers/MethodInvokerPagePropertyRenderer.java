@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.HasImplementation;
 import org.jaxygen.annotations.HiddenField;
+import org.jaxygen.annotations.LeaveEmptyField;
 import org.jaxygen.annotations.MandatoryField;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.apibrowser.APIBrowserException;
@@ -181,11 +182,21 @@ public class MethodInvokerPagePropertyRenderer {
     private HTMLTable.Row addLabeledRow(Field field, HTMLTable table) {
         HTMLTable.Row row = new HTMLTable.Row();
         table.addRow(row);
-        StringBuilder labels = new StringBuilder();
+        List<HTMLLabel> labels = new ArrayList();
         if (field.isAnnotationPresent(MandatoryField.class)) {
-            labels.append("M");
+            labels.add((HTMLLabel) new HTMLLabel("M").setStyleInfo("color:red").setLabelTooltip("This field is mandatory"));
         }
-        row.addColumn(new HTMLLabel(labels.toString()));
+        if (field.isAnnotationPresent(LeaveEmptyField.class)) {
+            labels.add((HTMLLabel) new HTMLLabel("E").setStyleInfo("color:blue").setLabelTooltip("Leave this field empty"));
+        }
+//        if (labels.isEmpty()) {
+//            labels.add((HTMLLabel) new HTMLLabel(""));
+//        }        
+        HTMLDiv div = new HTMLDiv();
+        for (HTMLLabel label : labels) {
+                    div.append(label);
+        }
+        row.addColumn(div);
         return row;
     }
 
@@ -294,7 +305,7 @@ public class MethodInvokerPagePropertyRenderer {
             final String fieldName, final String counterName, Object defaultValue,
             Class<?> paramType, int multiplicity) throws InstantiationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
-        
+
         String propertyName = fieldName;
         row.addColumn(new HTMLLabel(paramType.getSimpleName(), paramType.getCanonicalName()));
         if (propertyName.contains("<impl>")) {
@@ -317,7 +328,7 @@ public class MethodInvokerPagePropertyRenderer {
             IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
         Class<?> keyType = keyValueTypes[0];
         Class<?> valueType = keyValueTypes[1];
-        
+
         String keyInputName = fieldName + "<key>";
         String valueInputName = fieldName + "<value>";
         String propertyName = fieldName;
