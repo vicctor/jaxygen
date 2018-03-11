@@ -189,12 +189,9 @@ public class MethodInvokerPagePropertyRenderer {
         if (field.isAnnotationPresent(LeaveEmptyField.class)) {
             labels.add((HTMLLabel) new HTMLLabel("E").setStyleInfo("color:blue").setLabelTooltip("Leave this field empty"));
         }
-//        if (labels.isEmpty()) {
-//            labels.add((HTMLLabel) new HTMLLabel(""));
-//        }        
         HTMLDiv div = new HTMLDiv();
         for (HTMLLabel label : labels) {
-                    div.append(label);
+            div.append(label);
         }
         row.addColumn(div);
         return row;
