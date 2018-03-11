@@ -4,19 +4,14 @@
  */
 package org.jaxygen.netserviceapisample.business.dto;
 
-import org.jaxygen.annotations.MandatoryField;
-import org.jaxygen.annotations.HiddenField;
-
 /**
  *
  * @author artur
  */
 public class UserDTO {
 
-    @MandatoryField
     private String name;
     private int age;
-    @HiddenField
     private Sex sex;
 
     public int getAge() {
