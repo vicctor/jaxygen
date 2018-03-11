@@ -29,6 +29,10 @@ import org.jaxygen.exceptions.InstantiateClassException;
  */
 public class ClassTypeUtil {
 
+    public static  boolean isSimpleResultType(final Class<?> returnType) {
+        return returnType.isPrimitive() || returnType.equals(Integer.class) || returnType.equals(Double.class) || returnType.equals(Float.class) || returnType.equals(String.class) || returnType.equals(double.class) || returnType.equals(float.class);
+    }
+    
     public static List<Field> getFields(final Class<?> clazz) {
         List<Field> fields = new ArrayList<>();
         Class c = clazz;
