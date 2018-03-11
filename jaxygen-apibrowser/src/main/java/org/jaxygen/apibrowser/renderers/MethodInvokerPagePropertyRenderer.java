@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.jaxygen.annotations.HasImplementation;
 import org.jaxygen.annotations.HiddenField;
+import org.jaxygen.annotations.MandatoryField;
 import org.jaxygen.annotations.NetAPI;
 import org.jaxygen.apibrowser.APIBrowserException;
 import org.jaxygen.converters.properties.PropertiesToBeanConverter;
@@ -55,15 +56,15 @@ import org.jaxygen.util.FieldNameComparator;
 public class MethodInvokerPagePropertyRenderer {
 
     private String browserPath;
-    
+
     public MethodInvokerPagePropertyRenderer(String browserPath) {
         this.browserPath = browserPath;
     }
-    
-    private String capitalise(String str){
-        return str.substring(0, 1).toUpperCase()+ str.substring(1);
+
+    private String capitalise(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
-    
+
     private Method getMethodByName(Class clazz, String methodName) {
         for (Method method : clazz.getMethods()) {
             if (method.getName().equals(methodName)) {
@@ -123,7 +124,7 @@ public class MethodInvokerPagePropertyRenderer {
         }
         return result;
     }
-    
+
     public Method renderMethod(Class handlerClass, final String methodFilter, HTMLDiv pointer, HTMLForm propertiesInputForm, HttpServletRequest request) {
         Method method = getMethodByName(handlerClass, methodFilter);
         Type[] parameters = method.getParameterTypes();
@@ -143,10 +144,10 @@ public class MethodInvokerPagePropertyRenderer {
             }
         }
         propertiesInputForm.append(table);
-        
+
         return method;
     }
-    
+
     public HTMLElement renderOutputObject(Class<?> paramClass) {
         HTMLElement rc;
         if (paramClass != null) {
@@ -176,7 +177,17 @@ public class MethodInvokerPagePropertyRenderer {
         }
         return rc;
     }
-    
+
+    private HTMLTable.Row addLabeledRow(Field field, HTMLTable table) {
+        HTMLTable.Row row = new HTMLTable.Row();
+        table.addRow(row);
+        StringBuilder labels = new StringBuilder();
+        if (field.isAnnotationPresent(MandatoryField.class)) {
+            labels.append("M");
+        }
+        row.addColumn(new HTMLLabel(labels.toString()));
+        return row;
+    }
 
     /**
      * Add list of parameters from bean class passed in the parameter paramClass
@@ -195,18 +206,17 @@ public class MethodInvokerPagePropertyRenderer {
             throws InstantiationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
         Object inputObject = ClassInstanceCreator.createObject(paramClass).getObject();
-                
+
         List<Field> filteredFields = ClassTypeUtil.getFields(paramClass).stream()
                 .filter(m -> !m.isAnnotationPresent(HiddenField.class))
                 .collect(Collectors.toList());
-        Collections.sort(filteredFields, new FieldNameComparator());        
-        
+        Collections.sort(filteredFields, new FieldNameComparator());
+
         for (Field field : filteredFields) {
             final String propertyName = field.getName();
             Class<?> paramType = field.getType();
             Method getter = paramClass.getMethod("get" + capitalise(propertyName));
             Object defaultValue = "";
-                       
             if (getter != null) {
                 defaultValue = getter.invoke(inputObject);
             }
@@ -218,24 +228,28 @@ public class MethodInvokerPagePropertyRenderer {
             if ((HashMap.class.isAssignableFrom(paramType)) || paramType.isAssignableFrom(HashMap.class)) {
                 Class<?>[] componentsTypes = ClassTypeUtil.retrieveMapTypes(paramClass, propertyName);
                 if (multiplicity == 0) {
-                    renderMapFieldInputRow(request, table, parentFieldName + propertyName
-                            + "[]", counterName, null, componentsTypes, 0);
+                    HTMLTable.Row row = addLabeledRow(field, table);
+                    String newKeyFieldName = parentFieldName + propertyName + "[]";
+                    renderMapFieldInputRow(request, row, newKeyFieldName, counterName, null, componentsTypes, 0);
                 } else {
                     for (int i = 0; i < multiplicity; i++) {
+                        HTMLTable.Row row = addLabeledRow(field, table);
                         String newKeyFieldName = parentFieldName + propertyName + "[" + i + "]";
-                        renderMapFieldInputRow(request, table, newKeyFieldName, counterName, null, componentsTypes, multiplicity); //TODO: add heredefault value object
+                        renderMapFieldInputRow(request, row, newKeyFieldName, counterName, null, componentsTypes, multiplicity); //TODO: add heredefault value object
                     }
                 }
 
             } else if (paramType.isAssignableFrom(ArrayList.class) || paramType.isAssignableFrom(LinkedList.class) || (List.class).isAssignableFrom(paramType)) {
                 Class<?> componentType = ClassTypeUtil.retrieveListType(paramClass, propertyName);
                 if (multiplicity == 0) {
+                    HTMLTable.Row row = addLabeledRow(field, table);
                     String newFieldName = parentFieldName + propertyName + "[]";
-                    renderFieldInputRow(request, table, newFieldName, counterName, null, componentType, 0);
+                    renderFieldInputRow(request, row, newFieldName, counterName, null, componentType, 0);
                 } else {
                     for (int i = 0; i < multiplicity; i++) {
+                        HTMLTable.Row row = addLabeledRow(field, table);
                         String newFieldName = parentFieldName + propertyName + "[" + i + "]";
-                        renderFieldInputRow(request, table, newFieldName, counterName, null, componentType, multiplicity); //TODO: add heredefault value object
+                        renderFieldInputRow(request, row, newFieldName, counterName, null, componentType, multiplicity); //TODO: add heredefault value object
                     }
                 }
             } else if (paramType.isArray()) {
@@ -245,17 +259,20 @@ public class MethodInvokerPagePropertyRenderer {
                     componentType = (Class<?>) t;
                 }
                 if (multiplicity == 0) {
-                    renderFieldInputRow(request, table, parentFieldName + propertyName
-                            + "[]", counterName, null, componentType, 0);
+                    HTMLTable.Row row = addLabeledRow(field, table);
+                    String newFieldName = parentFieldName + propertyName + "[]";
+                    renderFieldInputRow(request, row, newFieldName, counterName, null, componentType, 0);
                 } else {
                     for (int i = 0; i < multiplicity; i++) {
-                        renderFieldInputRow(request, table, parentFieldName + propertyName
-                                + "[" + i + "]", counterName, null, componentType, multiplicity);
+                        HTMLTable.Row row = addLabeledRow(field, table);
+                        String newFieldName = parentFieldName + propertyName + "[" + i + "]";
+                        renderFieldInputRow(request, row, newFieldName, counterName, null, componentType, multiplicity);
                     }
                 }
             } else {
-                renderFieldInputRow(request, table, parentFieldName + propertyName,
-                        parentFieldName + propertyName, defaultValue, paramType, -1);//
+                HTMLTable.Row row = addLabeledRow(field, table);
+                String newFieldName = parentFieldName + propertyName;
+                renderFieldInputRow(request, row, newFieldName, parentFieldName + propertyName, defaultValue, paramType, -1);
             }
 
         }
@@ -273,12 +290,11 @@ public class MethodInvokerPagePropertyRenderer {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private void renderFieldInputRow(HttpServletRequest request, HTMLTable table,
+    private void renderFieldInputRow(HttpServletRequest request, HTMLTable.Row row,
             final String fieldName, final String counterName, Object defaultValue,
             Class<?> paramType, int multiplicity) throws InstantiationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
-        HTMLTable.Row row = new HTMLTable.Row();
-        table.addRow(row);
+        
         String propertyName = fieldName;
         row.addColumn(new HTMLLabel(paramType.getSimpleName(), paramType.getCanonicalName()));
         if (propertyName.contains("<impl>")) {
@@ -295,14 +311,13 @@ public class MethodInvokerPagePropertyRenderer {
         }
     }
 
-    private void renderMapFieldInputRow(HttpServletRequest request, HTMLTable table,
+    private void renderMapFieldInputRow(HttpServletRequest request, HTMLTable.Row row,
             final String fieldName, final String counterName, Object defaultValue,
             Class<?>[] keyValueTypes, int multiplicity) throws InstantiationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
         Class<?> keyType = keyValueTypes[0];
         Class<?> valueType = keyValueTypes[1];
-        HTMLTable.Row row = new HTMLTable.Row();
-        table.addRow(row);
+        
         String keyInputName = fieldName + "<key>";
         String valueInputName = fieldName + "<value>";
         String propertyName = fieldName;
@@ -444,7 +459,7 @@ public class MethodInvokerPagePropertyRenderer {
             row.addColumn(new HTMLLabel(""));
         }
     }
-    
+
     private static HTMLElement enumValues(Class enumeration) {
         HTMLTable table = new HTMLTable();
         HTMLTable.Row row = table.addRow();
@@ -465,5 +480,5 @@ public class MethodInvokerPagePropertyRenderer {
 
         return table;
     }
-    
+
 }

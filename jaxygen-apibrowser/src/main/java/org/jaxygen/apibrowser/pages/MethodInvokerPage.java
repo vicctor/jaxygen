@@ -20,7 +20,7 @@ import org.jaxygen.netservice.html.*;
 public class MethodInvokerPage extends Page {
 
     public static final String NAME = "MethodInvokerPage";
-    
+
     private final MethodInvokerPagePropertyRenderer renderer = new MethodInvokerPagePropertyRenderer(this.browserPath);
 
     public MethodInvokerPage(ServletContext context,
@@ -76,13 +76,12 @@ public class MethodInvokerPage extends Page {
 
         Class handerClass = Thread.currentThread().getContextClassLoader().loadClass(classFilter);
         Method method = renderer.renderMethod(handerClass, methodFilter, pointer, propertiesInputForm, request);
-        final Class resultClass =  method.getReturnType();
+        final Class resultClass = method.getReturnType();
         Type[] exceptions = method.getExceptionTypes();
 
         for (Type exceptionType : exceptions) {
             renderer.addExceptionHelp(exceptionType, exceptionsTable);
         }
-
 
         propertiesInputForm.appendInput(HTMLInput.Type.submit, "submit", null);
         HTMLDiv mainDiv = new HTMLDiv("mainDiv");
@@ -133,7 +132,6 @@ public class MethodInvokerPage extends Page {
                     .append("     var requestJSONArray = $('#submitForm').serializeArray();")
                     .append("     var requestJSON = str(toJSONRequest(requestJSONArray));")
                     .append("     requestJSONParagraph.innerHTML=requestJSON;\n")
-                    //                    .append("     console.log('request ' + requestJSON);")
                     .append("   }else{\n")
                     .append("	  requestJSONParagraph.innerHTML='{ ... }';\n")
                     .append("   }\n")
@@ -201,12 +199,13 @@ public class MethodInvokerPage extends Page {
         HTMLDiv responseDiv = new HTMLDiv("responseDiv");
         responseDiv.setAttribute("style", "display:none");
         responseDiv.append((HTMLElement) () -> {
-            StringBuilder sb = new StringBuilder("<script type='text/javascript'>");
-            sb.append("function goBack() {\n")
+            StringBuilder sb = new StringBuilder()
+                    .append("<script type='text/javascript'>")
+                    .append("function goBack() {\n")
                     .append("   document.getElementById('mainDiv').style.display='block';\n")
                     .append("   document.getElementById('responseDiv').style.display='none'\n")
-                    .append("}");
-            sb.append("</script>");
+                    .append("}")
+                    .append("</script>");
             return sb.toString();
         });
         //Buttons-------
@@ -232,8 +231,6 @@ public class MethodInvokerPage extends Page {
         responseDiv.append(showJSONrequestButton);
 
         HTMLHeading noteHeader = new HTMLHeading(HTMLHeading.Level.H4, new HTMLPre("Note: \nMaps in JSON request below are rendered incorrectly. It will be fixed soon."));
-//        noteHeader.setAttribute("id", "noteHeader");
-//        noteHeader.setAttribute("hidden", true);
         responseDiv.append(noteHeader);
 
         HTMLParagraph requestJSON = new HTMLParagraph("requestJSON");
