@@ -215,7 +215,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
      * @throws InstantiationException
      * @throws WrongProperyIndex
      */
-    private static Object fillBeanValueByName(final String name, Object value,
+    public static Object fillBeanValueByName(final String name, Object value,
             Class<?> beanClass, Object baseBean)
             throws IntrospectionException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException,

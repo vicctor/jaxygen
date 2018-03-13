@@ -80,7 +80,7 @@ public class Prop2JSONConverterTest {
         properties.put("baseStringField", "foo");
         String expected = "{\"baseStringField\":\"foo\"}";
         //when
-        String result = Prop2JSONConverter.convertPropertiesToJSON(properties, null);
+        String result = Prop2JSONConverter.convertPropertiesToJSON(properties);
 
         //then
         Assertions.assertThat(result).isEqualTo(expected);
@@ -111,7 +111,7 @@ public class Prop2JSONConverterTest {
                 + "}]}"
                 + "}";
         //when
-        String result = Prop2JSONConverter.convertPropertiesToJSON(properties, null);
+        String result = Prop2JSONConverter.convertPropertiesToJSON(properties);
 
         //then
 //        System.out.println("exp " + expected);
@@ -158,7 +158,7 @@ public class Prop2JSONConverterTest {
 
         UserTestPojo expected = new UserTestPojo("Andrzej", 23, Sex.male);
         //when
-        String resultJson = Prop2JSONConverter.convertPropertiesToJSON(properties, null);
+        String resultJson = Prop2JSONConverter.convertPropertiesToJSON(properties);
         Object resultPojo = Prop2JSONConverter.convertJSONToPojo(resultJson, UserTestPojo.class);
 
         //then
@@ -182,7 +182,7 @@ public class Prop2JSONConverterTest {
         expected.getList().add(new UserTestPojo("Anita", 43, Sex.female));
 
         //when
-        String resultJson = Prop2JSONConverter.convertPropertiesToJSON(properties, null);
+        String resultJson = Prop2JSONConverter.convertPropertiesToJSON(properties);
         Object resultPojo = Prop2JSONConverter.convertJSONToPojo(resultJson, ArrayListTestPojo.class);
 
         //then
@@ -206,7 +206,7 @@ public class Prop2JSONConverterTest {
         expected.getInterfacesListField().add(new ImplTestPojo("pole w liscie"));
 
         //when
-        String resultJson = Prop2JSONConverter.convertPropertiesToJSON(properties, null);
+        String resultJson = Prop2JSONConverter.convertPropertiesToJSON(properties);
         Object resultPojo = Prop2JSONConverter.convertJSONToPojo(resultJson, TestInterfaceRequest.class);
 
         //then
