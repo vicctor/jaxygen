@@ -54,6 +54,17 @@ public class MethodInvokerPage extends Page {
         pointer.append(new HTMLLabel("className=" + classFilter),
                 new HTMLLabel("  "),
                 new HTMLLabel("methodName=" + methodFilter));
+        
+        HTMLDiv inputJsonDiv = new HTMLDiv();
+        HTMLInput inputJsonButton = new HTMLInput();
+        inputJsonButton.setType(HTMLInput.Type.button);
+        inputJsonButton.setValue("Read input json");
+        inputJsonButton.setAttribute("onClick", "readInputJsonFunction()");
+        inputJsonDiv.append(
+                new HTMLLabel("input json"),
+                new HTMLLabel("  "),
+                new HTMLInput(HTMLInput.Type.text, "inputJson", "inputJson", "inputJson", ""),
+                inputJsonButton);
 
         HTMLForm propertiesInputForm = new HTMLForm("submitForm");
         //propertiesInputForm.setMethod(HTMLForm.Action.post);
@@ -87,6 +98,7 @@ public class MethodInvokerPage extends Page {
         HTMLDiv mainDiv = new HTMLDiv("mainDiv");
 
         mainDiv.append(pointer);
+        mainDiv.append(inputJsonDiv);
         mainDiv.append(propertiesInputForm);
         mainDiv.append((HTMLElement) () -> {
             StringBuilder sb = new StringBuilder("<script type='text/javascript'>");
@@ -114,26 +126,45 @@ public class MethodInvokerPage extends Page {
 
         Page page = this;
         // append script responsible for saving files
-        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/FileSaver.js'></script>");
-        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/AnchorUpdater.js'></script>");
-        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/shareThisPage.js'></script>");
-        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/jquery.min.js'></script>");
-        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/formArrayToJSON.js'></script>");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/FileSaver.js'></script>\n");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/AnchorUpdater.js'></script>\n");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/shareThisPage.js'></script>\n");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/jquery.min.js'></script>\n");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/formArrayToJSON.js'></script>\n");
+        page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/jsonToFormData.js'></script>\n\n");
         // append script responsible for sending data to service
 
         mainDiv.append(new HTMLInput(HTMLInput.Type.button, "copyButton", "copyButton", "copyButton", "Copy"));
 
+        String pageHrefEnding = "?page=" + NAME + "&className=" + classFilter + "&methodName=" + methodFilter;
+        String cutHref = "function cutHref() {\n"
+                + " return window.location.protocol + '//' + window.location.host + window.location.pathname + '" + pageHrefEnding + "';\n"
+                + "}\n";
+        
         page.append((HTMLElement) () -> {
             StringBuilder sb = new StringBuilder()
                     .append("<script type='text/javascript'>\n")
                     .append("function show_hideRequestJSON() {\n")
                     .append("   var requestJSONParagraph = document.getElementById('requestJSON');\n")
                     .append("   if(requestJSONParagraph.innerHTML==='{ ... }'){\n")
-                    .append("     var requestJSONArray = $('#submitForm').serializeArray();")
-                    .append("     var requestJSON = str(toJSONRequest(requestJSONArray));")
+                    .append("     var requestJSONArray = $('#submitForm').serializeArray();\n")
+                    .append("     var requestJSON = str(toJSONRequest(requestJSONArray));\n")
                     .append("     requestJSONParagraph.innerHTML=requestJSON;\n")
                     .append("   }else{\n")
                     .append("	  requestJSONParagraph.innerHTML='{ ... }';\n")
+                    .append("   }\n")
+                    .append("}\n")
+                    .append(cutHref)
+                    .append("function readInputJsonFunction() {\n")
+                    .append("   var inputJsonElement = document.getElementById('inputJson');\n")
+                    .append("   if(inputJsonElement){\n")
+                    .append("       console.log('window.location.href ' + window.location.href)\n")
+                    .append("       console.log(inputJsonElement.value)\n")
+                    .append("       var href = cutHref()\n")
+                    .append("       console.log('cuttedHref ' + href)\n")
+                    .append("       var newUrl = href + jsonToFormString(inputJsonElement.value);\n")
+                    .append("       console.log(newUrl)\n")
+                    .append("       window.location = newUrl\n")
                     .append("   }\n")
                     .append("}\n")
                     .append("  function sendData() {\n")
