@@ -38,7 +38,7 @@ public class BeanUtil {
                                 Object copyVal = PropertyUtils.getProperty(from, pd.getName());
                                 PropertyUtils.setProperty(to, wd.getName(), copyVal);
                             } else {
-                                Logger.getAnonymousLogger().log(Level.WARNING, "Method {0}.{1} of type {2} is not compatible to {3}.{4} of type{5}", new Object[]{from.getClass().getName(), pd.getName(), pd.getPropertyType(), to.getClass().getName(), wd.getName(), wd.getPropertyType()});
+                                Logger.getLogger(BeanUtil.class.getCanonicalName()).log(Level.WARNING, "Method {0}.{1} of type {2} is not compatible to {3}.{4} of type{5}", new Object[]{from.getClass().getName(), pd.getName(), pd.getPropertyType(), to.getClass().getName(), wd.getName(), wd.getPropertyType()});
                             }
                         } catch (IllegalAccessException ex) {
                             throw new java.lang.IllegalArgumentException("Could not translate bean", ex);
