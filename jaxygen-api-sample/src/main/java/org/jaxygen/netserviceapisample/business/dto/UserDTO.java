@@ -9,31 +9,32 @@ package org.jaxygen.netserviceapisample.business.dto;
  * @author artur
  */
 public class UserDTO {
-  private String name;
-  private int    age;
-  private Sex    sex;
 
- public int getAge() {
-  return age;
- }
+    private String name;
+    private int age;
+    private Sex sex;
 
- public void setAge(int age) {
-  this.age = age;
- }
+    public int getAge() {
+        return age;
+    }
 
- public String getName() {
-  return name;
- }
+    public void setAge(int age) {
+        this.age = age;
+    }
 
- public void setName(String name) {
-  this.name = name;
- }
+    public String getName() {
+        return name;
+    }
 
- public Sex getSex() {
-  return sex;
- }
+    public void setName(String name) {
+        this.name = name;
+    }
 
- public void setSex(Sex sex) {
-  this.sex = sex;
- }  
+    public Sex getSex() {
+        return sex;
+    }
+
+    public void setSex(Sex sex) {
+        this.sex = sex;
+    }
 }

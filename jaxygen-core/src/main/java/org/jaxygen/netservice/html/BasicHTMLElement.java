@@ -28,32 +28,36 @@ public abstract class BasicHTMLElement implements HTMLElement {
         this.tag = tag;
     }
 
-    public void setAttribute(final String key, final Object value) {
+    public BasicHTMLElement setAttribute(final String key, final Object value) {
         attributes.put(key, value);
+        return this;
     }
 
     public String getCSSClassName() {
         return attributes.get("class").toString();
     }
 
-    public void setCSSClassName(String className) {
+    public BasicHTMLElement setCSSClassName(String className) {
         attributes.put("class", className);
+        return this;
     }
 
     public String getStyleInfo() {
         return attributes.get("style").toString();
     }
 
-    public void setStyleInfo(String styleInfo) {
+    public BasicHTMLElement setStyleInfo(String styleInfo) {
         attributes.put("style", styleInfo);
+        return this;
     }
 
     public String getLabelTooltip() {
         return attributes.get("style").toString();
     }
 
-    public void setLabelTooltip(String tooltip) {
+    public BasicHTMLElement setLabelTooltip(String tooltip) {
         attributes.put("title", tooltip);
+        return this;
     }
 
     /**
@@ -93,8 +97,8 @@ public abstract class BasicHTMLElement implements HTMLElement {
 
     /**
      * Override this method in order to instruct the renderer if the given tag
-     * could be written in the short for (e.g. &lt;br /&gt; or nor (e.g. &lt;link&gt;&lt;/link&gt;)
-     * even if does not contain any content
+     * could be written in the short for (e.g. &lt;br /&gt; or nor (e.g.
+     * &lt;link&gt;&lt;/link&gt;) even if does not contain any content
      *
      * @return true if allowed.
      */

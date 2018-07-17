@@ -23,6 +23,7 @@ import java.util.Map;
 import org.jaxygen.converters.RequestConverter;
 import org.jaxygen.converters.exceptions.DeserialisationError;
 import org.jaxygen.converters.json.JSONBuilderRegistry;
+import org.jaxygen.converters.properties.PropertiesToBeanConverter;
 import org.jaxygen.dto.Uploadable;
 import org.jaxygen.http.HttpRequestParams;
 
@@ -38,24 +39,25 @@ public class Prop2JSONConverter implements RequestConverter {
     @Override
     public Object deserialise(HttpRequestParams params, Class<?> beanClass) throws DeserialisationError {
         try {
-            String json = convertPropertiesToJSON(params.getParameters(), params.getFiles());
-            return convertJSONToPojo(json, beanClass);
+            String json = convertPropertiesToJSON(params.getParameters());
+            Object pojo = convertJSONToPojo(json, beanClass);
+            
+            for (final String key : params.getFiles().keySet()) {
+                final Uploadable value = params.getFiles().get(key);
+                pojo = PropertiesToBeanConverter.fillBeanValueByName(key, value, beanClass, pojo);
+            }
+            return pojo;
         } catch (Exception ex) {
             throw new DeserialisationError("Could not parse input parameters for class " + beanClass, ex);
         }
     }
 
     public static Object convertJSONToPojo(String json, Class<?> beanClass) {
-
         Object ret = gson.fromJson(json, beanClass);
         return ret;
     }
 
-    public static String convertPropertiesToJSON(Map<String, String> properties, Map<String, Uploadable> files) {
-        return convertPropertiesToJSON(properties);
-    }
-
-    private static String convertPropertiesToJSON(Map<String, String> properties) {
+    public static String convertPropertiesToJSON(Map<String, String> properties) {
         JsonObject root = new JsonObject();
         return addPropertiesToObject(root, properties);
     }

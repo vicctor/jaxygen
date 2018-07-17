@@ -18,6 +18,9 @@ package org.jaxygen.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.jaxygen.exceptions.InstantiateClassException;
 
 /**
@@ -25,6 +28,20 @@ import org.jaxygen.exceptions.InstantiateClassException;
  * @author jknast
  */
 public class ClassTypeUtil {
+
+    public static  boolean isSimpleResultType(final Class<?> returnType) {
+        return returnType.isPrimitive() || returnType.equals(Integer.class) || returnType.equals(Double.class) || returnType.equals(Float.class) || returnType.equals(String.class) || returnType.equals(double.class) || returnType.equals(float.class);
+    }
+    
+    public static List<Field> getFields(final Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class c = clazz;
+        while (c != Object.class) {
+            fields.addAll(Arrays.asList(c.getDeclaredFields()));
+            c = c.getSuperclass();
+        }
+        return fields;
+    }
 
     private static Type obtainGenericPropertyType(final Class<?> paramClass, String propertyName) {
         Class c = paramClass;

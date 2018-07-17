@@ -123,6 +123,7 @@ public class PropertiesToBeanConverter implements RequestConverter {
      * @throws IntrospectionException .
      * @throws IllegalArgumentException .
      * @throws WrongProperyIndex Exception thrown on property validation errors.
+     * @throws NoSuchFieldException .
      */
     public static Object convertPropertiesToBean(Map<String, String> properties,
             Map<String, Uploadable> files,
@@ -199,14 +200,13 @@ public class PropertiesToBeanConverter implements RequestConverter {
 
     /**
      * Fill the field in bean by the value pointed by the name. Name format
-     * name=<(KEY([N])?)+> where KEY bean property name, N index in table (if
+     * name=(KEY([N])?)+ where KEY bean property name, N index in table (if
      * bean field is List of java array).
      *
      * @param name
      * @param value
      * @param beanClass
      * @param baseBean
-     * @param conversionReport
      * @return
      * @throws IntrospectionException
      * @throws IllegalArgumentException
@@ -214,8 +214,9 @@ public class PropertiesToBeanConverter implements RequestConverter {
      * @throws InvocationTargetException
      * @throws InstantiationException
      * @throws WrongProperyIndex
+     * @throws NoSuchFieldException
      */
-    private static Object fillBeanValueByName(final String name, Object value,
+    public static Object fillBeanValueByName(final String name, Object value,
             Class<?> beanClass, Object baseBean)
             throws IntrospectionException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException,

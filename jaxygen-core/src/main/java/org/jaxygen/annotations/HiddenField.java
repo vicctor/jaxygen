@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * @author jknast jakub.knast@gmail.com
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface HidenField {
+@Target(ElementType.FIELD)
+public @interface HiddenField {
 
 }
