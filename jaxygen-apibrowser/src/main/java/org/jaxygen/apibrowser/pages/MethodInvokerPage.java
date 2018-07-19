@@ -54,7 +54,7 @@ public class MethodInvokerPage extends Page {
         pointer.append(new HTMLLabel("className=" + classFilter),
                 new HTMLLabel("  "),
                 new HTMLLabel("methodName=" + methodFilter));
-        
+
         HTMLDiv inputJsonDiv = new HTMLDiv();
         HTMLInput inputJsonButton = new HTMLInput();
         inputJsonButton.setType(HTMLInput.Type.button);
@@ -137,10 +137,7 @@ public class MethodInvokerPage extends Page {
         mainDiv.append(new HTMLInput(HTMLInput.Type.button, "copyButton", "copyButton", "copyButton", "Copy"));
 
         String pageHrefEnding = "?page=" + NAME + "&className=" + classFilter + "&methodName=" + methodFilter;
-        String cutHref = "function cutHref() {\n"
-                + " return window.location.protocol + '//' + window.location.host + window.location.pathname + '" + pageHrefEnding + "';\n"
-                + "}\n";
-        
+
         page.append((HTMLElement) () -> {
             StringBuilder sb = new StringBuilder()
                     .append("<script type='text/javascript'>\n")
@@ -154,7 +151,9 @@ public class MethodInvokerPage extends Page {
                     .append("	  requestJSONParagraph.innerHTML='{ ... }';\n")
                     .append("   }\n")
                     .append("}\n")
-                    .append(cutHref)
+                    .append("function cutHref() {\n")
+                    .append("   return window.location.protocol + '//' + window.location.host + window.location.pathname + '" + pageHrefEnding + "';\n")
+                    .append("}\n")
                     .append("function readInputJsonFunction() {\n")
                     .append("   var inputJsonElement = document.getElementById('inputJson');\n")
                     .append("   if(inputJsonElement){\n")
