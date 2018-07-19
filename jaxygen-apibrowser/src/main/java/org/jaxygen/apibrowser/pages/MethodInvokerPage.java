@@ -182,8 +182,10 @@ public class MethodInvokerPage extends Page {
                     .append("      }\n");
             if (resultClass.isAssignableFrom(Downloadable.class)) {
                 sb.append("      var blob=new Blob([event.target.response], {type:event.target.getResponseHeader('Content-Type')});\n")
-                        .append("      var regex = /.*filename='(.*)'.*/g;\n")
-                        .append("      saveAs(blob, regex.exec(event.target.getResponseHeader('Content-Disposition'))[1]);\n");
+                        .append("      var regex = /.*filename=\"(.*)\".*/g;\n")
+                        .append("      var contentTypeDispositionHeader = event.target.getResponseHeader('Content-Disposition');\n")
+                        .append("      var splited =  regex.exec(contentTypeDispositionHeader);\n")
+                        .append("      saveAs(blob, splited[1]);\n");
             } else {
                 sb.append("      document.getElementById('queryResult').innerHTML=JSON.stringify(event.target.response, null, 2);\n");
             }
