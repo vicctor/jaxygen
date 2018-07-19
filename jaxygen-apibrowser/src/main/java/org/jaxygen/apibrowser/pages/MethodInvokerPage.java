@@ -119,6 +119,9 @@ public class MethodInvokerPage extends Page {
 
             return sb.toString();
         });
+        mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Share this page")));
+        mainDiv.append(new HTMLInput(HTMLInput.Type.text, "share it", "share_it", "share_it", "change sth in upper form"));
+        mainDiv.append(new HTMLInput(HTMLInput.Type.button, "copyButton", "copyButton", "copyButton", "Copy"));
         mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Return type")));
         mainDiv.append(renderer.renderOutputObject(resultClass));
         mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Exceptions thrown by the method")));
@@ -220,10 +223,6 @@ public class MethodInvokerPage extends Page {
         mainDiv.append(new HTMLPre("js1", codes[0]));
         mainDiv.append(new HTMLPre("js2", codes[1]));
         mainDiv.append(new HTMLPre("js3", codes[2]));
-
-        mainDiv.append(new HTMLHeading(HTMLHeading.Level.H2, new HTMLLabel("Share this page")));
-        mainDiv.append(new HTMLInput(HTMLInput.Type.text, "share it", "share_it", "share_it", "value"));
-        mainDiv.append(new HTMLInput(HTMLInput.Type.button, "copyButton", "copyButton", "copyButton", "Copy"));
 
         page.append(mainDiv);
         HTMLDiv responseDiv = new HTMLDiv("responseDiv");
