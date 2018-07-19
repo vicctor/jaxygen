@@ -132,12 +132,10 @@ public class MethodInvokerPage extends Page {
         page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/jquery.min.js'></script>\n");
         page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/formArrayToJSON.js'></script>\n");
         page.append((HTMLElement) () -> "<script type='application/ecmascript' async src='js/jsonToFormData.js'></script>\n\n");
-        // append script responsible for sending data to service
-
-        mainDiv.append(new HTMLInput(HTMLInput.Type.button, "copyButton", "copyButton", "copyButton", "Copy"));
 
         String pageHrefEnding = "?page=" + NAME + "&className=" + classFilter + "&methodName=" + methodFilter;
 
+        // append script responsible for sending data to service
         page.append((HTMLElement) () -> {
             StringBuilder sb = new StringBuilder()
                     .append("<script type='text/javascript'>\n")

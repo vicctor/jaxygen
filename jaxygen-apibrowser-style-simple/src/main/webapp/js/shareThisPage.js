@@ -1,11 +1,11 @@
-function registerCopyButtonEventListener(form){
-    document.getElementById("copyButton").addEventListener("click", function() {
+function registerCopyButtonEventListener(form) {
+    document.getElementById("copyButton").addEventListener("click", function () {
         copyToClipboard(document.getElementById("share_it"));
     });
 }
 
 function copyToClipboard(elem) {
-	  // create hidden text element, if it doesn't already exist
+    // create hidden text element, if it doesn't already exist
     var targetId = "_hiddenCopyText_";
     var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
     var origSelectionStart, origSelectionEnd;
@@ -30,20 +30,24 @@ function copyToClipboard(elem) {
     // select the content
     var currentFocus = document.activeElement;
     target.focus();
-    target.setSelectionRange(0, target.value.length);
-    
+//    target.setSelectionRange(0, target.value.length);
+    target.select()
+
     // copy the selection
     var succeed;
     try {
-    	  succeed = document.execCommand("copy");
-    } catch(e) {
+        succeed = document.execCommand("copy");
+        var msg = succeed ? 'successful' : 'unsuccessful';
+        console.log('Copying text command was ' + msg);
+    } catch (e) {
         succeed = false;
+        console.log('Oops, unable to copy');
     }
     // restore original focus
     if (currentFocus && typeof currentFocus.focus === "function") {
         currentFocus.focus();
     }
-    
+
     if (isInput) {
         // restore prior selection
         elem.setSelectionRange(origSelectionStart, origSelectionEnd);
