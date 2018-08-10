@@ -197,6 +197,23 @@ public class MethodInvokerPagePropertyRenderer {
         return row;
     }
 
+    private Method provideGetter(Class<?> clazz, String fieldName) throws NoSuchMethodException {
+        try {
+            return clazz.getMethod("get" + capitalise(fieldName));
+        } catch (NoSuchMethodException ex) {
+
+        }
+        try {
+            return clazz.getMethod("is" + capitalise(fieldName));
+        } catch (NoSuchMethodException ex) {
+
+        }
+        String get = "get" + capitalise(fieldName);
+        String is = "is" + capitalise(fieldName);
+        throw new APIBrowserException("Cannot render page, there is no getter for field: \"" + fieldName + "\". We looked for \"" + get + "\" and for \"" + is + "\"");
+
+    }
+
     /**
      * Add list of parameters from bean class passed in the parameter paramClass
      * as a list of rows to the table.
@@ -223,7 +240,7 @@ public class MethodInvokerPagePropertyRenderer {
         for (Field field : filteredFields) {
             final String propertyName = field.getName();
             Class<?> paramType = field.getType();
-            Method getter = paramClass.getMethod("get" + capitalise(propertyName));
+            Method getter = provideGetter(paramClass, propertyName);
             Object defaultValue = "";
             if (getter != null) {
                 defaultValue = getter.invoke(inputObject);
